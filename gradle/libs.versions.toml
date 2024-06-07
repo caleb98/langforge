@@ -1,0 +1,11 @@
+# https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
+
+[versions]
+graalvm = "24.0.1"
+
+[libraries]
+graalvm-polyglot = { module = "org.graalvm.polyglot:polyglot", version.ref = "graalvm" }
+graalvm-js = { module = "org.graalvm.polyglot:js", version.ref = "graalvm" }
+
+[bundles]
+graalvm = ["graalvm-polyglot", "graalvm-js"]

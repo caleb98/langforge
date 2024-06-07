@@ -1,0 +1,11 @@
+plugins {
+    id 'buildlogic.java-application-conventions'
+}
+
+dependencies {
+    implementation project(':langtool-core')
+}
+
+application {
+    mainClass = 'org.example.app.App'
+}
