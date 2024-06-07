@@ -1,8 +1,11 @@
 package net.calebscode.langtool.app;
 
-import net.calebscode.langtool.GreedyPhonemeParser;
-import net.calebscode.langtool.Phoneme;
-import net.calebscode.langtool.SyllableGenerator;
+import net.calebscode.langtool.Word;
+import net.calebscode.langtool.phonology.phoneme.GreedyPhonemeParser;
+import net.calebscode.langtool.phonology.phoneme.Phoneme;
+import net.calebscode.langtool.phonology.phoneme.PhonemeSequence;
+import net.calebscode.langtool.phonology.phoneme.PhonologicalRule;
+import net.calebscode.langtool.phonology.syllable.SyllableGenerator;
 
 public class TestMain {
 	public static void main(String[] args) throws Exception {
@@ -14,31 +17,21 @@ public class TestMain {
 //			System.out.printf("%s -> %s%n", p.getRepresentation(), p.getName());
 //		}
 
-		var gen = new SyllableGenerator("C(G)V(C)");
+		var gen = new SyllableGenerator("(O)V");
 		var pp = GreedyPhonemeParser.createGreedyIPAParser();
 		
-		var vs = pp.parse("aiueo");
-		var cs = pp.parse("tdpb");
-		var gs = pp.parse("ljw");
+		var vs = pp.parse("a");
 		
 		gen.addClassPhonemes('V', vs.toArray(new Phoneme[]{}));
-		gen.addClassPhonemes('C', cs.toArray(new Phoneme[]{}));
-		gen.addClassPhonemes('G', gs.toArray(new Phoneme[]{}));
+		gen.addClassPhonemeSequences('O',
+			new PhonemeSequence(pp.parse("t")),
+			new PhonemeSequence(pp.parse("v")),
+			new PhonemeSequence(pp.parse("st")),
+			new PhonemeSequence(pp.parse("zt"))
+		);
 
-		for (int i = 0; i < 10; i++) {
-			System.out.printf(
-				"%-6s%-6s%-6s%-6s%-6s\n",
-				gen.generateSyllable(),
-				gen.generateSyllable(),
-				gen.generateSyllable(),
-				gen.generateSyllable(),
-				gen.generateSyllable()
-			);
-		}
-
-		System.out.println();
-		var all = gen.generateAllSyllables();
-		all.forEach(System.out::println);
-		System.out.printf("%d syllables\n", all.size());
+		Word word = new Word(gen.generateSyllable(), gen.generateSyllable(), gen.generateSyllable());
+		System.out.println(word);
+		new PhonologicalRule("a", "", "_a").applyTo(word);
 	}
 }

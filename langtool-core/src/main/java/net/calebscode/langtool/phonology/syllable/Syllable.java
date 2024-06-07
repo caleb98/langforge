@@ -1,6 +1,8 @@
-package net.calebscode.langtool;
+package net.calebscode.langtool.phonology.syllable;
 
 import java.util.Optional;
+
+import net.calebscode.langtool.phonology.phoneme.PhonemeSequence;
 
 public class Syllable {
 

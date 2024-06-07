@@ -1,4 +1,4 @@
-package net.calebscode.langtool;
+package net.calebscode.langtool.phonology.phoneme;
 
 public class StandardPhonemeFeatures {
 

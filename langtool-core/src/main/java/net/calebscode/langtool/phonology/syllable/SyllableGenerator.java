@@ -1,9 +1,10 @@
-package net.calebscode.langtool;
+package net.calebscode.langtool.phonology.syllable;
 
-import static net.calebscode.langtool.StandardPhonemeFeatures.CATEGORY_VOWEL;
-import static net.calebscode.langtool.StandardPhonemeFeatures.FEATURE_PHONEME_CATEGORY;
+import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.CATEGORY_VOWEL;
+import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.FEATURE_PHONEME_CATEGORY;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,11 +12,13 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import net.calebscode.langtool.SyllableRuleCompiler.SyllableRule;
+import net.calebscode.langtool.phonology.phoneme.Phoneme;
+import net.calebscode.langtool.phonology.phoneme.PhonemeSequence;
+import net.calebscode.langtool.phonology.syllable.SyllableRuleCompiler.SyllableRule;
 
 public class SyllableGenerator {
 
-	private Map<Character, List<Phoneme>> phonemeClasses = new HashMap<>();
+	private Map<Character, List<PhonemeSequence>> phonemeClasses = new HashMap<>();
 	private SyllableRule rule;
 	private Random rand = new Random();
 
@@ -23,14 +26,26 @@ public class SyllableGenerator {
 		rule = new SyllableRuleCompiler().compile(pattern);
 	}
 	
+	public void addClassPhonemeSequence(Character classChar, PhonemeSequence sequence) {
+		var existing = phonemeClasses.computeIfAbsent(classChar, c -> new ArrayList<PhonemeSequence>());
+		existing.add(sequence);
+	}
+	
+	public void addClassPhonemeSequences(Character classChar, PhonemeSequence... sequences) {
+		var existing = phonemeClasses.computeIfAbsent(classChar, c -> new ArrayList<PhonemeSequence>());
+		existing.addAll(List.of(sequences));
+	}
+	
 	public void addClassPhoneme(Character classChar, Phoneme phoneme) {
-		var phonemes = phonemeClasses.computeIfAbsent(classChar, c -> new ArrayList<Phoneme>());
-		phonemes.add(phoneme);
+		var existing = phonemeClasses.computeIfAbsent(classChar, c -> new ArrayList<PhonemeSequence>());
+		existing.add(new PhonemeSequence(phoneme));
 	}
 	
 	public void addClassPhonemes(Character classChar, Phoneme... phonemes) {
-		var existing = phonemeClasses.computeIfAbsent(classChar, c -> new ArrayList<Phoneme>());
-		existing.addAll(List.of(phonemes));
+		var existing = phonemeClasses.computeIfAbsent(classChar, c -> new ArrayList<PhonemeSequence>());
+		for (var phoneme : phonemes) {
+			existing.add(new PhonemeSequence(phoneme));
+		}
 	}
 	
 	public Set<String> generateAllSyllables() {
@@ -39,7 +54,7 @@ public class SyllableGenerator {
 				var all = Set.of("");
 				for (var classChar : pattern.toCharArray()) {
 					all = all.stream().flatMap(
-						existing -> phonemeClasses.get(classChar).stream().map(phoneme -> existing + phoneme.getRepresentation())
+						existing -> phonemeClasses.get(classChar).stream().map(phonemeSeq -> existing + phonemeSeq.toString())
 					).collect(Collectors.toSet());
 				}
 				return all.stream();
@@ -49,7 +64,8 @@ public class SyllableGenerator {
 	public Syllable generateSyllable() {
 		String pattern = rule.generateSyllable();
 		var phonemes = pattern.chars()
-				.mapToObj(classChar -> getRandomPhonemeForClass((char) classChar))
+				.mapToObj(classChar -> getRandomPhonemeSequenceForClass((char) classChar))
+				.flatMap(phonemeSeq -> phonemeSeq.getPhonemes().stream())
 				.toList();
 		
 		var onset = new ArrayList<Phoneme>();
@@ -75,7 +91,7 @@ public class SyllableGenerator {
 		return new Syllable(new PhonemeSequence(onset), new PhonemeSequence(nucleus), new PhonemeSequence(coda));
 	}
 	
-	private Phoneme getRandomPhonemeForClass(Character classChar) {
+	private PhonemeSequence getRandomPhonemeSequenceForClass(Character classChar) {
 		if (!phonemeClasses.containsKey(classChar)) {
 			throw new RuntimeException("Invalid class character '" + classChar + "'. No phonemes available for this class.");
 		}

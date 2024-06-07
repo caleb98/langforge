@@ -1,4 +1,14 @@
-package net.calebscode.langtool;
+package net.calebscode.langtool.phonology.phoneme;
+
+import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.CATEGORY_VOWEL;
+import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.FEATURE_ARTICULATION_PLACE;
+import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.FEATURE_ARTICULATION_TYPE;
+import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.FEATURE_BACKNESS;
+import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.FEATURE_OPENNESS;
+import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.FEATURE_PHONEME_CATEGORY;
+import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.FEATURE_ROUNDEDNESS;
+import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.FEATURE_VOICING;
+import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.VOICING_VOICED;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -8,16 +18,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import static net.calebscode.langtool.StandardPhonemeFeatures.CATEGORY_VOWEL;
-import static net.calebscode.langtool.StandardPhonemeFeatures.FEATURE_ARTICULATION_PLACE;
-import static net.calebscode.langtool.StandardPhonemeFeatures.FEATURE_ARTICULATION_TYPE;
-import static net.calebscode.langtool.StandardPhonemeFeatures.FEATURE_BACKNESS;
-import static net.calebscode.langtool.StandardPhonemeFeatures.FEATURE_OPENNESS;
-import static net.calebscode.langtool.StandardPhonemeFeatures.FEATURE_PHONEME_CATEGORY;
-import static net.calebscode.langtool.StandardPhonemeFeatures.FEATURE_ROUNDEDNESS;
-import static net.calebscode.langtool.StandardPhonemeFeatures.FEATURE_VOICING;
-import static net.calebscode.langtool.StandardPhonemeFeatures.VOICING_VOICED;
 
 public class Phoneme {
 

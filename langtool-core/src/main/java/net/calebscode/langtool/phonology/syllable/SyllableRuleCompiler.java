@@ -1,4 +1,4 @@
-package net.calebscode.langtool;
+package net.calebscode.langtool.phonology.syllable;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,6 @@
-package net.calebscode.langtool;
+package net.calebscode.langtool.phonology.phoneme;
 
-import static net.calebscode.langtool.StandardPhonemes.*;
+import static net.calebscode.langtool.phonology.phoneme.StandardPhonemes.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
