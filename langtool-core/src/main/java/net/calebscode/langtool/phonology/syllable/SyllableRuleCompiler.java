@@ -18,11 +18,11 @@ public class SyllableRuleCompiler {
 	}
 	
 	private SyllableRule rule() {
-		SyllableRule seq = new SyllableRule(new ArrayList<>());
+		var parts = new ArrayList<LiteralResolver>();
 		while(!isAtEnd()) {
-			seq.parts.add(part());
+			parts.add(part());
 		}
-		return seq;
+		return new SyllableRule(parts);
 	}
 	
 	private LiteralResolver part() {
@@ -129,29 +129,7 @@ public class SyllableRuleCompiler {
 	
 	private static Random resolverRandom = new Random();
 	
-	public record SyllableRule(List<LiteralResolver> parts) {
-		
-		public String generateSyllable() {
-			StringBuilder sb = new StringBuilder();
-			for (var part : parts) {
-				sb.append(part.resolve());
-			}
-			return sb.toString();
-		}
-		
-		public Set<String> allSyllables() {
-			var all = Set.of("");
-			for (var part : parts) {
-				all = all.stream().flatMap(
-					existing -> part.resolveAll().stream().map(resolved -> existing + resolved)
-				).collect(Collectors.toSet());
-			}
-			return all;
-		}
-		
-	}
-	
-	public record Group(List<GroupOption> options, int totalWeight) implements LiteralResolver {
+	private record Group(List<GroupOption> options, int totalWeight) implements LiteralResolver {
 		@Override
 		public String resolve() {
 			if (options.size() == 1) {
@@ -182,7 +160,7 @@ public class SyllableRuleCompiler {
 		}
 	}
 	
-	public record GroupOption(List<LiteralResolver> parts, int weight) implements LiteralResolver {
+	private record GroupOption(List<LiteralResolver> parts, int weight) implements LiteralResolver {
 		@Override
 		public String resolve() {
 			StringBuilder sb = new StringBuilder();
@@ -204,7 +182,7 @@ public class SyllableRuleCompiler {
 		}
 	}
 	
-	public record Literal(char value) implements LiteralResolver {
+	private record Literal(char value) implements LiteralResolver {
 		@Override
 		public String resolve() {
 			return String.valueOf(value);

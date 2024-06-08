@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 
 import net.calebscode.langtool.phonology.phoneme.Phoneme;
 import net.calebscode.langtool.phonology.phoneme.PhonemeSequence;
-import net.calebscode.langtool.phonology.syllable.SyllableRuleCompiler.SyllableRule;
 
 public class SyllableGenerator {
 
