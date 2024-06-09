@@ -3,8 +3,8 @@ package net.calebscode.langtool.phonology.phoneme;
 import static net.calebscode.langtool.phonology.phoneme.StandardPhonemes.*;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GreedyPhonemeParser implements PhonemeParser {
@@ -13,7 +13,7 @@ public class GreedyPhonemeParser implements PhonemeParser {
 	private Map<String, Phoneme> registeredPhonemes = new HashMap<>();
 
 	public void registerPhoneme(Phoneme phoneme) {
-		String repr = phoneme.getRepresentation();
+		String repr = phoneme.representation();
 		if (registeredPhonemes.containsKey(repr)) {
 			throw new RuntimeException("Cannot register two phonemes with the same representation.");
 		}
@@ -32,7 +32,7 @@ public class GreedyPhonemeParser implements PhonemeParser {
 	}
 
 	@Override
-	public Collection<Phoneme> parse(String raw) {
+	public List<Phoneme> parse(String raw) {
 		int start = 0;
 		int end = 1;
 

@@ -1,7 +1,9 @@
 package net.calebscode.langtool.phonology.syllable;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
+import net.calebscode.langtool.phonology.phoneme.Phoneme;
 import net.calebscode.langtool.phonology.phoneme.PhonemeSequence;
 
 public class Syllable {
@@ -16,6 +18,14 @@ public class Syllable {
 		this.coda = Optional.ofNullable(coda);
 	}
 
+	public PhonemeSequence asPhonemeSequence() {
+		var phonemes = new ArrayList<Phoneme>();
+		onset.ifPresent(seq -> phonemes.addAll(seq.phonemes()));
+		nucleus.ifPresent(seq -> phonemes.addAll(seq.phonemes()));
+		coda.ifPresent(seq -> phonemes.addAll(seq.phonemes()));
+		return new PhonemeSequence(phonemes);
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

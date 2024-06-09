@@ -6,23 +6,25 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class SyllableRuleCompiler {
+public class SyllablePatternCompiler {
 
 	private String pattern;
+	
 	private int start;
 	
-	public SyllableRule compile(String pattern) {
+	public SyllablePattern compile(String pattern, SyllablePatternCategoryMap categoryMap) {
 		this.pattern = pattern;
 		start = 0;
-		return rule();
+		
+		return new SyllablePattern(categoryMap, rule());
 	}
 	
-	private SyllableRule rule() {
+	private List<LiteralResolver> rule() {
 		var parts = new ArrayList<LiteralResolver>();
 		while(!isAtEnd()) {
 			parts.add(part());
 		}
-		return new SyllableRule(parts);
+		return parts;
 	}
 	
 	private LiteralResolver part() {

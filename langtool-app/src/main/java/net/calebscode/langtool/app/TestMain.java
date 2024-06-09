@@ -1,11 +1,9 @@
 package net.calebscode.langtool.app;
 
-import net.calebscode.langtool.Word;
 import net.calebscode.langtool.phonology.phoneme.GreedyPhonemeParser;
 import net.calebscode.langtool.phonology.phoneme.Phoneme;
-import net.calebscode.langtool.phonology.phoneme.PhonemeSequence;
-import net.calebscode.langtool.phonology.phoneme.PhonologicalRule;
-import net.calebscode.langtool.phonology.syllable.SyllableGenerator;
+import net.calebscode.langtool.phonology.syllable.SyllablePatternCategoryMap;
+import net.calebscode.langtool.phonology.syllable.SyllablePatternCompiler;
 
 public class TestMain {
 	public static void main(String[] args) throws Exception {
@@ -17,21 +15,22 @@ public class TestMain {
 //			System.out.printf("%s -> %s%n", p.getRepresentation(), p.getName());
 //		}
 
-		var gen = new SyllableGenerator("(O)V");
 		var pp = GreedyPhonemeParser.createGreedyIPAParser();
+		var categories = new SyllablePatternCategoryMap();
 		
 		var vs = pp.parse("a");
 		
-		gen.addClassPhonemes('V', vs.toArray(new Phoneme[]{}));
-		gen.addClassPhonemeSequences('O',
-			new PhonemeSequence(pp.parse("t")),
-			new PhonemeSequence(pp.parse("v")),
-			new PhonemeSequence(pp.parse("st")),
-			new PhonemeSequence(pp.parse("zt"))
-		);
-
-		Word word = new Word(gen.generateSyllable(), gen.generateSyllable(), gen.generateSyllable());
-		System.out.println(word);
-		new PhonologicalRule("a", "", "_a").applyTo(word);
+		categories.addCategoryPhonemes('V', pp.parse("a").toArray(new Phoneme[]{}));
+		categories.addCategoryPhonemes('C', pp.parse("st").toArray(new Phoneme[]{}));
+		categories.addCategoryPhonemes('S', pp.parse("st").toArray(new Phoneme[]{}));
+		
+		var spc = new SyllablePatternCompiler();
+		var sp = spc.compile("C(S)V", categories);
+		
+		System.out.println("All Patterns:");
+		sp.allPatterns().forEach(pattern -> System.out.printf("\t%s%n", pattern));
+		
+		System.out.println("\nAll Syllables:");
+		sp.allSyllables().forEach(syllable -> System.out.printf("\t%s%n", syllable));
 	}
 }

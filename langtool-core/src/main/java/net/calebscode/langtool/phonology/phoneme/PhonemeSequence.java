@@ -1,26 +1,18 @@
 package net.calebscode.langtool.phonology.phoneme;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class PhonemeSequence {
+public record PhonemeSequence(List<Phoneme> phonemes) {
 
 	public static final PhonemeSequence EMPTY = new PhonemeSequence();
-
-	final List<Phoneme> phonemes;
-
-	public PhonemeSequence(Collection<Phoneme> phonemes) {
-		this.phonemes = new ArrayList<>(phonemes);
+	
+	public PhonemeSequence(List<Phoneme> phonemes) {
+		this.phonemes = Collections.unmodifiableList(phonemes);
 	}
 	
 	public PhonemeSequence(Phoneme... phonemes) {
-		this.phonemes = List.of(phonemes);
-	}
-
-	public List<Phoneme> getPhonemes() {
-		return Collections.unmodifiableList(phonemes);
+		this(List.of(phonemes));
 	}
 	
 	@Override
