@@ -11,24 +11,23 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import net.calebscode.langtool.phonology.phoneme.Phoneme;
-import net.calebscode.langtool.phonology.phoneme.PhonemeSequence;
 import net.calebscode.langtool.phonology.syllable.SyllablePatternCompiler.LiteralResolver;
 
 public class SyllablePattern {
-	
+
 	private SyllablePatternCategoryMap categoryMap;
 	private List<LiteralResolver> parts;
-	
+
 	private Set<String> allPatterns;
 	private Set<String> allSyllables;
-	
+
 	private Random rand = new Random();
-	
+
 	public SyllablePattern(SyllablePatternCategoryMap categoryMap, List<LiteralResolver> parts) {
 		this.categoryMap = categoryMap;
 		this.parts = parts;
 	}
-	
+
 	public String randomPattern() {
 		StringBuilder sb = new StringBuilder();
 		for (var part : parts) {
@@ -36,7 +35,7 @@ public class SyllablePattern {
 		}
 		return sb.toString();
 	}
-	
+
 	public Set<String> allPatterns() {
 		if (allPatterns == null) {
 			allPatterns = Set.of("");
@@ -46,39 +45,43 @@ public class SyllablePattern {
 				).collect(Collectors.toSet());
 			}
 		}
-		
+
 		return Collections.unmodifiableSet(allPatterns);
 	}
-	
+
 	public Syllable randomSyllable() {
 		String pattern = randomPattern();
 		var phonemes = pattern.chars()
 				.mapToObj(categoryChar -> getRandomPhonemeForCategory((char) categoryChar))
 				.toList();
-		
+
 		var onset = new ArrayList<Phoneme>();
 		var nucleus = new ArrayList<Phoneme>();
 		var coda = new ArrayList<Phoneme>();
-		
+
 		int current = 0;
 		while (current < phonemes.size() && !phonemes.get(current).getFeature(FEATURE_PHONEME_CATEGORY).equals(CATEGORY_VOWEL)) {
 			onset.add(phonemes.get(current));
 			current++;
 		}
-		
+
 		while (current < phonemes.size() && phonemes.get(current).getFeature(FEATURE_PHONEME_CATEGORY).equals(CATEGORY_VOWEL)) {
 			nucleus.add(phonemes.get(current));
 			current++;
 		}
-		
+
 		while (current < phonemes.size()) {
 			coda.add(phonemes.get(current));
 			current++;
 		}
-		
-		return new Syllable(new PhonemeSequence(onset), new PhonemeSequence(nucleus), new PhonemeSequence(coda));
+
+		return new Syllable(
+			onset.toArray(new Phoneme[onset.size()]),
+			nucleus.toArray(new Phoneme[nucleus.size()]),
+			coda.toArray(new Phoneme[coda.size()])
+		);
 	}
-	
+
 	public Set<String> allSyllables() {
 		if (allSyllables == null) {
 			allSyllables = allPatterns.stream()
@@ -92,7 +95,7 @@ public class SyllablePattern {
 					return all.stream();
 				}).collect(Collectors.toSet());
 		}
-		
+
 		return allSyllables;
 	}
 
@@ -103,5 +106,5 @@ public class SyllablePattern {
 		}
 		return options.stream().skip(rand.nextInt(options.size())).findFirst().get();
 	}
-	
+
 }

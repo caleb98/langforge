@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GreedyPhonemeParser implements PhonemeParser {
+public class GreedyPhonemeParser {
 
 	private int maxPhonemeLength = 0;
 	private Map<String, Phoneme> registeredPhonemes = new HashMap<>();
@@ -31,7 +31,6 @@ public class GreedyPhonemeParser implements PhonemeParser {
 		}
 	}
 
-	@Override
 	public List<Phoneme> parse(String raw) {
 		int start = 0;
 		int end = 1;

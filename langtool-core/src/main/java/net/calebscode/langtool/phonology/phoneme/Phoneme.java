@@ -54,8 +54,8 @@ public record Phoneme(String representation, Map<String, PhonemeFeature> feature
 		return features.containsKey(featureType);
 	}
 
-	public PhonemeFeature getFeature(String featureName) {
-		return features.get(featureName);
+	public PhonemeFeature getFeature(String featureType) {
+		return features.get(featureType);
 	}
 
 	public String getName() {

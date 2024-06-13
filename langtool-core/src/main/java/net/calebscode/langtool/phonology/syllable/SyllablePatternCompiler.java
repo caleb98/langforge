@@ -6,16 +6,20 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class SyllablePatternCompiler {
+import net.calebscode.langtool.util.Compiler;
 
+public class SyllablePatternCompiler extends Compiler<SyllablePattern> {
+
+	private final SyllablePatternCategoryMap categoryMap;
 	private String pattern;
-	
 	private int start;
 	
-	public SyllablePattern compile(String pattern, SyllablePatternCategoryMap categoryMap) {
-		this.pattern = pattern;
-		start = 0;
-		
+	public SyllablePatternCompiler(SyllablePatternCategoryMap categoryMap) {
+		this.categoryMap = categoryMap;
+	}
+	
+	public SyllablePattern compile(String pattern) {
+		init(pattern);		
 		return new SyllablePattern(categoryMap, rule());
 	}
 	
@@ -29,7 +33,7 @@ public class SyllablePatternCompiler {
 	
 	private LiteralResolver part() {
 		char current = pattern.charAt(start);
-		if (consumeIf('(')) {
+		if (match('(')) {
 			return group();
 		}
 		else if (Character.isAlphabetic(current)) {
@@ -45,11 +49,11 @@ public class SyllablePatternCompiler {
 	private Group group() {
 		var options = new ArrayList<GroupOption>();
 		options.add(groupOption());
-		while (consumeIf('|')) {
+		while (match('|')) {
 			options.add(groupOption());
 		}
 		
-		consumeExact(')', "Expected ')' at end of group.");
+		expect(')', "Expected ')' at end of group.");
 		int totalWeight = options.stream().mapToInt(opt -> opt.weight).sum();
 		return new Group(options, totalWeight);
 	}
@@ -62,7 +66,7 @@ public class SyllablePatternCompiler {
 		}
 		
 		int weight = 1;
-		if (consumeIf(':')) {
+		if (match(':')) {
 			weight = number();
 		}
 		
@@ -90,41 +94,7 @@ public class SyllablePatternCompiler {
 		return number;
 	}
 	
-	private boolean isAtEnd() {
-		return start == pattern.length();
-	}
-	
-	private char current() {
-		return pattern.charAt(start);
-	}
-	
-	private boolean consumeIf(char match) {
-		if (current() == match) {
-			start++;
-			return true;
-		}
-		
-		return false;
-	}
-	
-	private void consumeExact(char match, String errorMessage) {
-		if (current() != match) {
-			error(errorMessage);
-		}
-		
-		start++;
-	}
-	
-	private void error(String message) {
-		throw new RuntimeException(String.format(
-				"Error parsing rule at character '%c' (position %d): %s",
-				pattern.charAt(start),
-				start,
-				message
-		));
-	}
-	
-	public interface LiteralResolver {		
+	interface LiteralResolver {		
 		public String resolve();
 		public Set<String> resolveAll();
 	}

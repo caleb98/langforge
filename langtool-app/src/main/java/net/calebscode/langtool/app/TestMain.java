@@ -1,36 +1,36 @@
 package net.calebscode.langtool.app;
 
+import static net.calebscode.langtool.phonology.phoneme.StandardPhonemes.STANDARD_IPA_PHONEMES;
+
+import net.calebscode.langtool.Word;
 import net.calebscode.langtool.phonology.phoneme.GreedyPhonemeParser;
 import net.calebscode.langtool.phonology.phoneme.Phoneme;
-import net.calebscode.langtool.phonology.syllable.SyllablePatternCategoryMap;
-import net.calebscode.langtool.phonology.syllable.SyllablePatternCompiler;
+import net.calebscode.langtool.phonology.phoneme.PhonemeSequenceBuilder;
+import net.calebscode.langtool.phonology.rules.PhonologicalRuleCompiler;
+import net.calebscode.langtool.phonology.syllable.Syllable;
 
 public class TestMain {
 	public static void main(String[] args) throws Exception {
 
-//		var parser = GreedyPhonemeParser.createGreedyIPAParser();
-//		var parsed = parser.parse("kəlɛkʃən");
-//
-//		for (var p : parsed) {
-//			System.out.printf("%s -> %s%n", p.getRepresentation(), p.getName());
-//		}
+		var parser = GreedyPhonemeParser.createGreedyIPAParser();
+		var parsed = parser.parse("kəlɛkʃən");
 
-		var pp = GreedyPhonemeParser.createGreedyIPAParser();
-		var categories = new SyllablePatternCategoryMap();
-		
-		var vs = pp.parse("a");
-		
-		categories.addCategoryPhonemes('V', pp.parse("a").toArray(new Phoneme[]{}));
-		categories.addCategoryPhonemes('C', pp.parse("st").toArray(new Phoneme[]{}));
-		categories.addCategoryPhonemes('S', pp.parse("st").toArray(new Phoneme[]{}));
-		
-		var spc = new SyllablePatternCompiler();
-		var sp = spc.compile("C(S)V", categories);
-		
-		System.out.println("All Patterns:");
-		sp.allPatterns().forEach(pattern -> System.out.printf("\t%s%n", pattern));
-		
-		System.out.println("\nAll Syllables:");
-		sp.allSyllables().forEach(syllable -> System.out.printf("\t%s%n", syllable));
+		var first = new Syllable(parser.parse("k").toArray(new Phoneme[]{}), parser.parse("ə").toArray(new Phoneme[]{}), null);
+		var second = new Syllable(parser.parse("l").toArray(new Phoneme[]{}), parser.parse("ɛ").toArray(new Phoneme[]{}), parser.parse("k").toArray(new Phoneme[]{}));
+		var third = new Syllable(parser.parse("ʃ").toArray(new Phoneme[]{}), parser.parse("ə").toArray(new Phoneme[]{}), parser.parse("n").toArray(new Phoneme[]{}));
+
+		var word = new Word(first, second, third);
+
+		var psb = new PhonemeSequenceBuilder();
+		psb.append(word);
+		var seq = psb.build();
+
+		System.out.println(seq);
+
+		var prc = new PhonologicalRuleCompiler(STANDARD_IPA_PHONEMES);
+		var rule = prc.compile("[+place of articulation : bilabial , +voiced] -> [ʃ] /");
+
+		System.out.println("");
+
 	}
 }
