@@ -43,6 +43,7 @@ public class PhonemeSequence {
 			.collect(Collectors.joining());
 
 		var lastMeta = metadata[metadata.length - 1];
+
 		if (lastMeta.isWordEnd) {
 			return stringValue + "#";
 		}
