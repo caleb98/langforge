@@ -11,21 +11,25 @@ public class IpaPhonemeMap implements IpaPhonemeMapper {
 		if (ipaMap.containsKey(phoneme.representation())) {
 			throw new IllegalArgumentException("Phoneme with ipa '" + phoneme.representation() + "' already exists in this mapper.");
 		}
-		
+
 		ipaMap.put(phoneme.representation(), phoneme);
 	}
-	
+
+	public void remove(String ipa) {
+		ipaMap.remove(ipa);
+	}
+
 	public void remove(Phoneme phoneme) {
 		ipaMap.remove(phoneme.representation());
 	}
-	
+
 	@Override
 	public boolean hasIpa(String ipa) {
 		return ipaMap.containsKey(ipa);
 	}
-	
+
 	@Override
-	public boolean hasPhoneme(Phoneme phoneme) {
+	public boolean canMapTo(Phoneme phoneme) {
 		return ipaMap.containsValue(phoneme);
 	}
 
@@ -33,5 +37,5 @@ public class IpaPhonemeMap implements IpaPhonemeMapper {
 	public Phoneme getPhoneme(String ipa) {
 		return ipaMap.get(ipa);
 	}
-	
+
 }

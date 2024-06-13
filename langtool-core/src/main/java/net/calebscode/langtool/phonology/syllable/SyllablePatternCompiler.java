@@ -11,18 +11,17 @@ import net.calebscode.langtool.util.Compiler;
 public class SyllablePatternCompiler extends Compiler<SyllablePattern> {
 
 	private final SyllablePatternCategoryMap categoryMap;
-	private String pattern;
-	private int start;
-	
+
 	public SyllablePatternCompiler(SyllablePatternCategoryMap categoryMap) {
 		this.categoryMap = categoryMap;
 	}
-	
+
+	@Override
 	public SyllablePattern compile(String pattern) {
-		init(pattern);		
+		init(pattern);
 		return new SyllablePattern(categoryMap, rule());
 	}
-	
+
 	private List<LiteralResolver> rule() {
 		var parts = new ArrayList<LiteralResolver>();
 		while(!isAtEnd()) {
@@ -30,7 +29,7 @@ public class SyllablePatternCompiler extends Compiler<SyllablePattern> {
 		}
 		return parts;
 	}
-	
+
 	private LiteralResolver part() {
 		char current = pattern.charAt(start);
 		if (match('(')) {
@@ -45,69 +44,69 @@ public class SyllablePatternCompiler extends Compiler<SyllablePattern> {
 			return null;
 		}
 	}
-	
+
 	private Group group() {
 		var options = new ArrayList<GroupOption>();
 		options.add(groupOption());
 		while (match('|')) {
 			options.add(groupOption());
 		}
-		
+
 		expect(')', "Expected ')' at end of group.");
 		int totalWeight = options.stream().mapToInt(opt -> opt.weight).sum();
 		return new Group(options, totalWeight);
 	}
-	
+
 	private GroupOption groupOption() {
 		var parts = new ArrayList<LiteralResolver>();
 		parts.add(part());
 		while (current() != ':' && current() != ')' && current() != '|') {
 			parts.add(part());
 		}
-		
+
 		int weight = 1;
 		if (match(':')) {
 			weight = number();
 		}
-		
+
 		return new GroupOption(parts, weight);
 	}
-	
+
 	private Literal literal() {
 		var lit = new Literal(pattern.charAt(start));
 		start++;
 		return lit;
 	}
-	
+
 	private int number() {
 		if (!Character.isDigit(current())) {
 			error("Expected integer.");
 		}
-		
+
 		int end = start;
 		while (end < pattern.length() && Character.isDigit(pattern.charAt(end))) {
 			end++;
 		}
-		
+
 		int number = Integer.parseInt(pattern.substring(start, end));
 		start = end;
 		return number;
 	}
-	
-	interface LiteralResolver {		
+
+	interface LiteralResolver {
 		public String resolve();
 		public Set<String> resolveAll();
 	}
-	
+
 	private static Random resolverRandom = new Random();
-	
+
 	private record Group(List<GroupOption> options, int totalWeight) implements LiteralResolver {
 		@Override
 		public String resolve() {
 			if (options.size() == 1) {
 				return resolverRandom.nextBoolean() ? options.get(0).resolve() : "";
 			}
-			
+
 			int select = resolverRandom.nextInt(totalWeight);
 			int current = 0;
 			for (var opt : options) {
@@ -116,7 +115,7 @@ public class SyllablePatternCompiler extends Compiler<SyllablePattern> {
 				}
 				current += opt.weight;
 			}
-			
+
 			throw new RuntimeException("Invalid group option weights.");
 		}
 
@@ -125,13 +124,15 @@ public class SyllablePatternCompiler extends Compiler<SyllablePattern> {
 			var all = options.stream()
 					.flatMap(opt -> opt.resolveAll().stream())
 					.collect(Collectors.toSet());
-			
-			if (options.size() == 1) all.add("");
-			
+
+			if (options.size() == 1) {
+				all.add("");
+			}
+
 			return all;
 		}
 	}
-	
+
 	private record GroupOption(List<LiteralResolver> parts, int weight) implements LiteralResolver {
 		@Override
 		public String resolve() {
@@ -153,7 +154,7 @@ public class SyllablePatternCompiler extends Compiler<SyllablePattern> {
 			return all;
 		}
 	}
-	
+
 	private record Literal(char value) implements LiteralResolver {
 		@Override
 		public String resolve() {
@@ -165,5 +166,5 @@ public class SyllablePatternCompiler extends Compiler<SyllablePattern> {
 			return Set.of(resolve());
 		}
 	}
-	
+
 }

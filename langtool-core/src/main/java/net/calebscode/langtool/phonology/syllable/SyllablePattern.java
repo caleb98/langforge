@@ -84,7 +84,7 @@ public class SyllablePattern {
 
 	public Set<String> allSyllables() {
 		if (allSyllables == null) {
-			allSyllables = allPatterns.stream()
+			allSyllables = allPatterns().stream()
 				.flatMap(pattern -> {
 					var all = Set.of("");
 					for (var categoryChar : pattern.toCharArray()) {

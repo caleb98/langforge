@@ -3,6 +3,7 @@ package net.calebscode.langtool.phonology.syllable;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import net.calebscode.langtool.phonology.phoneme.Phoneme;
@@ -32,13 +33,9 @@ public class Syllable {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append(onset.orElse(EMPTY_PHONEME_ARRAY).toString());
-		sb.append(nucleus.orElse(EMPTY_PHONEME_ARRAY).toString());
-		sb.append(coda.orElse(EMPTY_PHONEME_ARRAY).toString());
-
-		return sb.toString();
+		return phonemeStream()
+				.map(phoneme -> phoneme.representation())
+				.collect(Collectors.joining());
 	}
 
 }
