@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -45,7 +46,7 @@ public record Phoneme(String representation, Map<String, PhonemeFeature> feature
 		this.representation = representation;
 		this.features = Collections.unmodifiableMap(features);
 	}
-	
+
 	public Phoneme(String representation, PhonemeFeature... features) {
 		this(representation, Arrays.stream(features).collect(Collectors.toMap(PhonemeFeature::featureType, feat -> feat)));
 	}
@@ -56,6 +57,12 @@ public record Phoneme(String representation, Map<String, PhonemeFeature> feature
 
 	public PhonemeFeature getFeature(String featureType) {
 		return features.get(featureType);
+	}
+
+	public Optional<String> getFeatureValue(String featureType) {
+		return features.containsKey(featureType)
+				? Optional.of(features.get(featureType).featureValue())
+				: Optional.empty();
 	}
 
 	public String getName() {

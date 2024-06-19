@@ -1,6 +1,7 @@
 package net.calebscode.langtool.phonology.phoneme;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -8,29 +9,58 @@ public class PhonemeSequence {
 
 	public static final PhonemeSequence EMPTY = new PhonemeSequence();
 
-	private Phoneme[] phonemes;
-	private PhonemeMetadata[] metadata;
+	private List<Phoneme> phonemes;
+	private List<PhonemeMetadata> metadata;
 
 	public PhonemeSequence() {
-		phonemes = new Phoneme[0];
-		metadata = new PhonemeMetadata[0];
+		phonemes = new ArrayList<>();
+		metadata = new ArrayList<>();
 	}
 
-	public PhonemeSequence(Phoneme[] phonemes, PhonemeMetadata[] metadata) {
+	public PhonemeSequence(List<Phoneme> phonemes, List<PhonemeMetadata> metadata) {
+		if (phonemes.size() != metadata.size()) {
+			throw new IllegalArgumentException("PhonemeSequence phonemes and metadata must be same size.");
+		}
+
 		this.phonemes = phonemes;
 		this.metadata = metadata;
 	}
 
+	public Phoneme phonemeAt(int position) {
+		return phonemes.get(position);
+	}
+
+	public int length() {
+		return phonemes.size();
+	}
+
+	public PhonemeTransition getTransition(int from) {
+		if (phonemes.isEmpty()) {
+			return new PhonemeTransition(false, false, false);
+		}
+
+		int to = from + 1;
+
+		if (from == -1) {
+			var toMeta = metadata.get(to);
+			return new PhonemeTransition(toMeta.isWordStart, toMeta.isSyllableStart, true);
+		}
+		else {
+			var fromMeta = metadata.get(from);
+			return new PhonemeTransition(fromMeta.isWordEnd, fromMeta.isSyllableEnd, from == phonemes.size());
+		}
+	}
+
 	@Override
 	public String toString() {
-		if (phonemes.length == 0) {
+		if (phonemes.size() == 0) {
 			return "";
 		}
 
-		var stringValue = IntStream.range(0, phonemes.length)
+		var stringValue = IntStream.range(0, phonemes.size())
 			.mapToObj(index -> {
-				var phoneme = phonemes[index];
-				var meta = metadata[index];
+				var phoneme = phonemes.get(index);
+				var meta = metadata.get(index);
 
 				if (meta.isWordStart) {
 					return "#" + phoneme.representation();
@@ -42,7 +72,7 @@ public class PhonemeSequence {
 			})
 			.collect(Collectors.joining());
 
-		var lastMeta = metadata[metadata.length - 1];
+		var lastMeta = metadata.getLast();
 
 		if (lastMeta.isWordEnd) {
 			return stringValue + "#";
@@ -55,89 +85,17 @@ public class PhonemeSequence {
 		}
 	}
 
-	public record PhonemeMetadata(
+	public record PhonemeMetadata (
 		boolean isSyllableStart,
 		boolean isSyllableEnd,
 		boolean isWordStart,
 		boolean isWordEnd
-	) {
+	) {}
 
-		private PhonemeMetadata() {
-			this(false, false, false, false);
-		}
-
-	}
-
-	public record PhonemeTransition(
+	public record PhonemeTransition (
 		boolean crossedWordBoundary,
 		boolean crossedSyllableBoundary,
 		boolean crossedSequenceBoundary
 	) {}
-
-	public class PhonemeSequenceReader {
-
-		private int position;
-
-		private PhonemeSequenceReader() {
-			this(0);
-		}
-
-		private PhonemeSequenceReader(int position) {
-			this.position = position;
-		}
-
-		public Optional<Phoneme> current() {
-			return Optional.ofNullable(position < 0 || position >= phonemes.length ? null : phonemes[position]);
-		}
-
-		public PhonemeMetadata currentMetadata() {
-			return position < 0 || position >= phonemes.length ? new PhonemeMetadata() : metadata[position];
-		}
-
-		public PhonemeTransition prev() {
-			var fromPhoneme = current();
-			var fromMeta = currentMetadata();
-
-			position--;
-
-			var toPhoneme = current();
-			var toMeta = currentMetadata();
-
-			// If we're moving from an empty position, we're already outside the sequence so
-			// there's no need to check specific transition flags.
-			if (fromPhoneme.isEmpty()) {
-				return new PhonemeTransition(false, false, false);
-			}
-
-			boolean crossedWordBoundary = fromMeta.isWordStart && toMeta.isWordEnd;
-			boolean crossedSyllableBoundary = fromMeta.isSyllableStart && toMeta.isSyllableEnd;
-			boolean crossedSequenceBoundary = toPhoneme.isEmpty();
-
-			return new PhonemeTransition(crossedWordBoundary, crossedSyllableBoundary, crossedSequenceBoundary);
-		}
-
-		public PhonemeTransition next() {
-			var fromPhoneme = current();
-			var fromMeta = currentMetadata();
-
-			position++;
-
-			var toPhoneme = current();
-			var toMeta = currentMetadata();
-
-			// If we're moving from an empty position, we're already outside the sequence so
-			// there's no need to check specific transition flags.
-			if (fromPhoneme.isEmpty()) {
-				return new PhonemeTransition(false, false, false);
-			}
-
-			boolean crossedWordBoundary = fromMeta.isWordEnd && toMeta.isWordStart;
-			boolean crossedSyllableBoundary = fromMeta.isSyllableEnd && toMeta.isSyllableStart;
-			boolean crossedSequenceBoundary = toPhoneme.isEmpty();
-
-			return new PhonemeTransition(crossedWordBoundary, crossedSyllableBoundary, crossedSequenceBoundary);
-		}
-
-	}
 
 }

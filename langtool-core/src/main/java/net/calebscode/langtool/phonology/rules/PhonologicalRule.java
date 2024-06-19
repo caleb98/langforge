@@ -2,9 +2,7 @@ package net.calebscode.langtool.phonology.rules;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import net.calebscode.langtool.Word;
 import net.calebscode.langtool.phonology.phoneme.Phoneme;
 import net.calebscode.langtool.phonology.rules.PhonologicalRuleCompiler.PhonemeRepresentation;
 
@@ -24,13 +22,20 @@ public class PhonologicalRule {
 		this.postMatches = Collections.unmodifiableList(postMatches);
 	}
 
-	public Word applyTo(Word initial) {
-		String ipa = initial.getSyllables().stream().map(syllable -> syllable.toString())
-				.collect(Collectors.joining("."));
-		ipa = "#" + ipa + "#";
+	public PhonemeRepresentation getMatch() {
+		return match;
+	}
 
-		System.out.println(ipa);
-		return null;
+	public Phoneme getReplacement() {
+		return replacement;
+	}
+
+	public List<PhonemeRepresentation> getPreMatches() {
+		return Collections.unmodifiableList(preMatches);
+	}
+
+	public List<PhonemeRepresentation> getPostMatches() {
+		return Collections.unmodifiableList(postMatches);
 	}
 
 }

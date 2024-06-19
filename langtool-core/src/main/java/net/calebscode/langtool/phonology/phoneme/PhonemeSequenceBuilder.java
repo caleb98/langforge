@@ -45,10 +45,7 @@ public class PhonemeSequenceBuilder {
 
 	public PhonemeSequence build() {
 		finalizePreviousPhonemeMetadata();
-		return new PhonemeSequence(
-			phonemes.toArray(new Phoneme[phonemes.size()]),
-			metadata.toArray(new PhonemeMetadata[metadata.size()])
-		);
+		return new PhonemeSequence(phonemes, metadata);
 	}
 
 	private void finalizePreviousPhonemeMetadata() {
@@ -58,8 +55,8 @@ public class PhonemeSequenceBuilder {
 					prevMeta.isSyllableStart(),
 					foundSyllableBoundary,
 					prevMeta.isWordStart(),
-					foundSyllableBoundary
-					);
+					foundWordBoundary
+				);
 			metadata.set(metadata.size() - 1, prevMetaUpdated);
 		}
 

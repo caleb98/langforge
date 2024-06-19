@@ -43,7 +43,7 @@ public class StandardPhonemeFeatures {
 	public static final PhonemeFeature TYPE_AFFRICATE = new PhonemeFeature(FEATURE_ARTICULATION_TYPE, "affricate");
 	public static final PhonemeFeature TYPE_LATERAL_FRICATIVE = new PhonemeFeature(FEATURE_ARTICULATION_TYPE, "lateral fricative");
 	public static final PhonemeFeature TYPE_APPROXIMATE = new PhonemeFeature(FEATURE_ARTICULATION_TYPE, "approximate");
-	public static final PhonemeFeature TYPE_LATERAL_APPROXIMATE = new PhonemeFeature(FEATURE_ARTICULATION_TYPE, "lateral approxiamte");
+	public static final PhonemeFeature TYPE_LATERAL_APPROXIMATE = new PhonemeFeature(FEATURE_ARTICULATION_TYPE, "lateral approximate");
 
 	// Openness Features
 	public static final PhonemeFeature OPENNESS_CLOSE = new PhonemeFeature(FEATURE_OPENNESS, "close");

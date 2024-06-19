@@ -2,13 +2,9 @@ package net.calebscode.langtool.phonology.rules;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import net.calebscode.langtool.phonology.phoneme.IpaPhonemeMapper;
 import net.calebscode.langtool.phonology.phoneme.Phoneme;
-import net.calebscode.langtool.phonology.phoneme.PhonemeFeature;
 import net.calebscode.langtool.util.Compiler;
 
 public class PhonologicalRuleCompiler extends Compiler<PhonologicalRule> {
@@ -138,7 +134,15 @@ public class PhonologicalRuleCompiler extends Compiler<PhonologicalRule> {
 	}
 
 	private Feature literalFeature(boolean negate) {
-		return featureDefinition(negate, -1);
+		String first = literal();
+		String second = match(':') ? literal() : "";
+
+		if (second.equals("")) {
+			return new Feature("", first, negate, -1);
+		}
+		else {
+			return new Feature(first, second, negate, -1);
+		}
 	}
 
 	private Feature boundFeature(boolean negate) {
@@ -151,19 +155,9 @@ public class PhonologicalRuleCompiler extends Compiler<PhonologicalRule> {
 
 		expect('_', "Expected underscore after feature bind number.");
 
-		return featureDefinition(negate, bindNumber);
-	}
+		String featureType = literal();
 
-	private Feature featureDefinition(boolean negate, int bindNumber) {
-		String first = literal();
-		String second = match(':') ? literal() : "";
-
-		if (second.equals("")) {
-			return new Feature("", first, negate, bindNumber);
-		}
-		else {
-			return new Feature(first, second, negate, bindNumber);
-		}
+		return new Feature(featureType, "", negate, bindNumber);
 	}
 
 	private String ipa() {
@@ -220,46 +214,12 @@ public class PhonologicalRuleCompiler extends Compiler<PhonologicalRule> {
 		public boolean match(PhonemeRepresentationMatcher matcher) {
 			return matcher.matchesPhonemeLiteral(this);
 		}
-
-		public boolean matches(Phoneme phoneme) {
-			return this.phoneme.equals(phoneme);
-		}
 	}
 
 	record PhonemeFeatureset(List<Feature> features) implements PhonemeRepresentation {
 		@Override
 		public boolean match(PhonemeRepresentationMatcher matcher) {
 			return matcher.matchesPhonemeFeatureset(this);
-		}
-
-		public boolean matches(Phoneme phoneme) {
-			var phonemeFeatureValues = phoneme.features().values().stream()
-					.map(PhonemeFeature::featureValue)
-					.collect(Collectors.toSet());
-
-			boolean matches = true;
-			for (var feature : features) {
-				if (!matchesAnyFeatureValue(phonemeFeatureValues, feature)
-					&& !matchesExactFeatureValue(phoneme, feature)) {
-					matches = false;
-					break;
-				}
-			}
-
-			return matches;
-		}
-
-		private static boolean matchesExactFeatureValue(Phoneme phoneme, Feature feature) {
-			return !feature.featureType().isEmpty()
-					&& Objects.equals(
-						phoneme.getFeature(feature.featureType()).featureValue(),
-						feature.featureValue()
-					);
-		}
-
-		private static boolean matchesAnyFeatureValue(Set<String> phonemeFeatureValues, Feature feature) {
-			return feature.featureType().isEmpty()
-					&& phonemeFeatureValues.contains(feature.featureValue());
 		}
 	}
 
