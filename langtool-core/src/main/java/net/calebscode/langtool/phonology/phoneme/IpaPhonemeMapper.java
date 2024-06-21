@@ -1,5 +1,7 @@
 package net.calebscode.langtool.phonology.phoneme;
 
+import java.util.Map;
+
 public interface IpaPhonemeMapper {
 
 	/**
@@ -22,5 +24,20 @@ public interface IpaPhonemeMapper {
 	 * @return the <code>Phoneme</code> associated with the ipa string; null if no mapping
 	 */
 	public Phoneme getPhoneme(String ipa);
+
+	/**
+	 * Retrieves an IPA String for a Phoneme with the specified features.
+	 * @param features
+	 * @return
+	 */
+	public String getIpa(Map<String, String> features);
+
+	/**
+	 * Returns whether or not this mapper can convert the given feature set into
+	 * an IPA String.
+	 * @param features
+	 * @return
+	 */
+	public boolean hasIpaForFeatures(Map<String, String> features);
 
 }

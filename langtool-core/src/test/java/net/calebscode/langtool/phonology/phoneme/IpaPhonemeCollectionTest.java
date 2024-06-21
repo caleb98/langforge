@@ -67,4 +67,34 @@ public class IpaPhonemeCollectionTest {
 		assertNull(collection.getPhoneme("c"));
 	}
 
+	@Test
+	void getIpa() {
+		collection.addPhonemeMap(firstMapper);
+		collection.addPhonemeMap(secondMapper);
+
+		assertEquals("a", collection.getIpa(Map.of("foo", "bar")));
+		assertEquals("b", collection.getIpa(Map.of("zig", "zag")));
+		assertEquals("a", collection.getIpa(Map.of("up", "down")));
+		assertNull(collection.getIpa(Map.of()));
+		assertNull(collection.getIpa(Map.of("foo", "")));
+		assertNull(collection.getIpa(Map.of("", "bar")));
+	}
+
+	@Test
+	void hasIpaForFeatures() {
+		collection.addPhonemeMap(firstMapper);
+		collection.addPhonemeMap(secondMapper);
+
+		assertTrue(collection.hasIpaForFeatures(Map.of("foo", "bar")));
+		assertTrue(collection.hasIpaForFeatures(Map.of("zig", "zag")));
+		assertTrue(collection.hasIpaForFeatures(Map.of("up", "down")));
+	}
+
+	@Test
+	void hasIpaForFeaturesNoMappers() {
+		assertFalse(collection.hasIpaForFeatures(Map.of("foo", "bar")));
+		assertFalse(collection.hasIpaForFeatures(Map.of("zig", "zag")));
+		assertFalse(collection.hasIpaForFeatures(Map.of("up", "down")));
+	}
+
 }

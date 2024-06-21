@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 public class IpaPhonemeMapTest {
 
-	private final Phoneme testPhoneme = new Phoneme("a", Map.of());
+	private final Phoneme testPhoneme = new Phoneme("a", Map.of("foo", "bar"));
 
 	private IpaPhonemeMap phonemeMap;
 
@@ -41,10 +41,12 @@ public class IpaPhonemeMapTest {
 		phonemeMap.add(testPhoneme);
 
 		assertTrue(phonemeMap.hasIpa("a"));
+		assertTrue(phonemeMap.hasIpaForFeatures(Map.of("foo", "bar")));
 
 		phonemeMap.remove("a");
 
 		assertFalse(phonemeMap.hasIpa("a"));
+		assertFalse(phonemeMap.hasIpaForFeatures(Map.of("foo", "bar")));
 	}
 
 	@Test
@@ -52,10 +54,12 @@ public class IpaPhonemeMapTest {
 		phonemeMap.add(testPhoneme);
 
 		assertTrue(phonemeMap.hasIpa("a"));
+		assertTrue(phonemeMap.hasIpaForFeatures(Map.of("foo", "bar")));
 
 		phonemeMap.remove(testPhoneme);
 
 		assertFalse(phonemeMap.hasIpa("a"));
+		assertFalse(phonemeMap.hasIpaForFeatures(Map.of("foo", "bar")));
 	}
 
 	@Test
@@ -88,5 +92,20 @@ public class IpaPhonemeMapTest {
 		assertNull(phonemeMap.getPhoneme("a"));
 	}
 
+	@Test
+	void getIpa() {
+		phonemeMap.add(testPhoneme);
+
+		assertEquals("a", phonemeMap.getIpa(Map.of("foo", "bar")));
+	}
+
+	@Test
+	void hasIpaForFeatures() {
+		assertFalse(phonemeMap.hasIpaForFeatures(Map.of("foo", "bar")));
+
+		phonemeMap.add(testPhoneme);
+
+		assertTrue(phonemeMap.hasIpaForFeatures(Map.of("foo", "bar")));
+	}
 
 }

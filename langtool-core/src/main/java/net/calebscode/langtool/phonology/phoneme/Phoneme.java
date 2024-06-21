@@ -24,9 +24,4 @@ public record Phoneme(String representation, Map<String, String> features) {
 		return Optional.ofNullable(features.get(featureName));
 	}
 
-	@Override
-	public String toString() {
-		return representation;
-	}
-
 }

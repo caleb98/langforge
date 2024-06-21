@@ -2,6 +2,7 @@ package net.calebscode.langtool.phonology.phoneme;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class IpaPhonemeCollection implements IpaPhonemeMapper {
@@ -36,6 +37,26 @@ public class IpaPhonemeCollection implements IpaPhonemeMapper {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public String getIpa(Map<String, String> features) {
+		for (var map : maps) {
+			if (map.hasIpaForFeatures(features)) {
+				return map.getIpa(features);
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public boolean hasIpaForFeatures(Map<String, String> features) {
+		for (var map : maps) {
+			if (map.hasIpaForFeatures(features)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
