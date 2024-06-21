@@ -26,12 +26,59 @@ public class PhonemeSequence {
 		this.metadata = metadata;
 	}
 
+	/**
+	 * Returns a new PhonemeSequence with the phoneme at the given index replaced with the new
+	 * phoneme. Metadata will be preserved from the phoneme that is already at the given index.
+	 * @param index
+	 * @param replacementPhoneme
+	 * @return
+	 */
+	public PhonemeSequence replaceAt(int index, Phoneme replacementPhoneme) {
+		return replaceAt(index, replacementPhoneme, metadata.get(index));
+	}
+
+	/**
+	 * Returns a new PhonemeSequence with the phoneme at the given index replaced with the new
+	 * phoneme and metadata.
+	 * @param index
+	 * @param replacementPhoneme
+	 * @param replacementMetadata
+	 * @return
+	 */
+	public PhonemeSequence replaceAt(int index, Phoneme replacementPhoneme, PhonemeMetadata replacementMetadata) {
+		var newPhonemes = new ArrayList<>(phonemes);
+		var newMetadata = new ArrayList<>(metadata);
+
+		newPhonemes.set(index, replacementPhoneme);
+		newMetadata.set(index, replacementMetadata);
+
+		return new PhonemeSequence(newPhonemes, newMetadata);
+	}
+
+	public PhonemeSequence append(PhonemeSequence other) {
+		var appendedPhonemes = new ArrayList<>(phonemes);
+		var appendedMetadata = new ArrayList<>(metadata);
+
+		appendedPhonemes.addAll(other.phonemes);
+		appendedMetadata.addAll(other.metadata);
+
+		return new PhonemeSequence(appendedPhonemes, appendedMetadata);
+	}
+
 	public Phoneme phonemeAt(int position) {
 		return phonemes.get(position);
 	}
 
 	public int length() {
 		return phonemes.size();
+	}
+
+	public PhonemeSequence subsequence(int beginIndex) {
+		return subsequence(beginIndex, length());
+	}
+
+	public PhonemeSequence subsequence(int beginIndex, int endIndex) {
+		return new PhonemeSequence(phonemes.subList(beginIndex, endIndex), metadata.subList(beginIndex, endIndex));
 	}
 
 	public PhonemeTransition getTransition(int from) {
@@ -83,6 +130,19 @@ public class PhonemeSequence {
 		else {
 			return stringValue;
 		}
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+
+		if (!(obj instanceof PhonemeSequence other)) {
+			return false;
+		}
+
+		return phonemes.equals(other.phonemes) && metadata.equals(other.metadata);
 	}
 
 	public record PhonemeMetadata (

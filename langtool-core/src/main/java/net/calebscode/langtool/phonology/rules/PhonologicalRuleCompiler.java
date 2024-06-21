@@ -223,6 +223,6 @@ public class PhonologicalRuleCompiler extends Compiler<PhonologicalRule> {
 		}
 	}
 
-	record Feature(String featureType, String featureValue, boolean negate, int bindNumber) {}
+	record Feature(String featureName, String featureValue, boolean negate, int bindNumber) {}
 
 }
