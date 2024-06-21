@@ -1,7 +1,7 @@
 package net.calebscode.langtool.phonology.syllable;
 
+import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.CATEGORY;
 import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.CATEGORY_VOWEL;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.FEATURE_PHONEME_CATEGORY;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,12 +60,12 @@ public class SyllablePattern {
 		var coda = new ArrayList<Phoneme>();
 
 		int current = 0;
-		while (current < phonemes.size() && !phonemes.get(current).getFeature(FEATURE_PHONEME_CATEGORY).equals(CATEGORY_VOWEL)) {
+		while (current < phonemes.size() && !phonemes.get(current).featureValueMatches(CATEGORY, CATEGORY_VOWEL)) {
 			onset.add(phonemes.get(current));
 			current++;
 		}
 
-		while (current < phonemes.size() && phonemes.get(current).getFeature(FEATURE_PHONEME_CATEGORY).equals(CATEGORY_VOWEL)) {
+		while (current < phonemes.size() && phonemes.get(current).featureValueMatches(CATEGORY, CATEGORY_VOWEL)) {
 			nucleus.add(phonemes.get(current));
 			current++;
 		}

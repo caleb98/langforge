@@ -1,10 +1,6 @@
 package net.calebscode.langtool.phonology.phoneme;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Map;
 
@@ -33,7 +29,7 @@ public class IpaPhonemeMapTest {
 
 	@Test
 	void addThrowsIfPhonemePresent() {
-		var sameIpaPhoneme = new Phoneme("a", Map.of("foo", new PhonemeFeature("foo", "bar")));
+		var sameIpaPhoneme = new Phoneme("a", Map.of("foo", "bar"));
 		phonemeMap.add(testPhoneme);
 
 		assertThrows(IllegalArgumentException.class, () -> phonemeMap.add(sameIpaPhoneme));

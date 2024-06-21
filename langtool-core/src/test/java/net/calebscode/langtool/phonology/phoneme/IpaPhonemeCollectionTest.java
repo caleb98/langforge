@@ -1,9 +1,6 @@
 package net.calebscode.langtool.phonology.phoneme;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Map;
 
@@ -16,9 +13,9 @@ public class IpaPhonemeCollectionTest {
 	private static final IpaPhonemeMap firstMapper = new IpaPhonemeMap();
 	private static final IpaPhonemeMap secondMapper = new IpaPhonemeMap();
 
-	private static final Phoneme phonemeOne = new Phoneme("a", Map.of("foo", new PhonemeFeature("foo", "bar")));
-	private static final Phoneme phonemeTwo = new Phoneme("b", Map.of("zig", new PhonemeFeature("zig", "zag")));
-	private static final Phoneme phonemeThree = new Phoneme("a", Map.of("up", new PhonemeFeature("up", "down")));
+	private static final Phoneme phonemeOne = new Phoneme("a", Map.of("foo", "bar"));
+	private static final Phoneme phonemeTwo = new Phoneme("b", Map.of("zig", "zag"));
+	private static final Phoneme phonemeThree = new Phoneme("a", Map.of("up", "down"));
 
 	private IpaPhonemeCollection collection;
 

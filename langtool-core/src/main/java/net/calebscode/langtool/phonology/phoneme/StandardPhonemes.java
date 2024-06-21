@@ -1,227 +1,910 @@
 package net.calebscode.langtool.phonology.phoneme;
 
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.BACKNESS_BACK;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.BACKNESS_CENTRAL;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.BACKNESS_FRONT;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.CATEGORY_CONSONANT;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.CATEGORY_VOWEL;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.OPENNESS_CLOSE;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.OPENNESS_CLOSE_MID;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.OPENNESS_MID;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.OPENNESS_NEAR_CLOSE;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.OPENNESS_NEAR_OPEN;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.OPENNESS_OPEN;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.OPENNESS_OPEN_MID;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.PLACE_ALVEOLAR;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.PLACE_ALVEOLO_PALATAL;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.PLACE_BILABIAL;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.PLACE_DENTAL;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.PLACE_GLOTTAL;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.PLACE_LABIODENTAL;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.PLACE_LABIOVELAR;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.PLACE_PALATAL;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.PLACE_PALATO_ALVEOLAR;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.PLACE_PHARYNGEAL;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.PLACE_POST_ALVEOLAR;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.PLACE_RETROFLEX;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.PLACE_UVULAR;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.PLACE_VELAR;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.ROUNDEDNESS_ROUNDED;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.ROUNDEDNESS_UNROUNDED;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.TYPE_AFFRICATE;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.TYPE_APPROXIMATE;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.TYPE_FLAP;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.TYPE_FRICATIVE;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.TYPE_LATERAL_APPROXIMATE;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.TYPE_LATERAL_FRICATIVE;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.TYPE_NASAL;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.TYPE_PLOSIVE;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.TYPE_TRILL;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.VOICING_VOICED;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.VOICING_VOICELESS;
+import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.*;
 
 public class StandardPhonemes {
 
 	// Vowels
-	public static final Phoneme CLOSE_FRONT_UNROUNDED_VOWEL = new Phoneme("i", VOICING_VOICED, OPENNESS_CLOSE, BACKNESS_FRONT, ROUNDEDNESS_UNROUNDED, CATEGORY_VOWEL);
-	public static final Phoneme CLOSE_FRONT_ROUNDED_VOWEL = new Phoneme("y", VOICING_VOICED, OPENNESS_CLOSE, BACKNESS_FRONT, ROUNDEDNESS_ROUNDED, CATEGORY_VOWEL);
+	public static final Phoneme CLOSE_FRONT_UNROUNDED_VOWEL;
+	public static final Phoneme CLOSE_FRONT_ROUNDED_VOWEL;
 
-	public static final Phoneme CLOSE_CENTRAL_UNROUNDED_VOWEL = new Phoneme("ɨ", VOICING_VOICED, OPENNESS_CLOSE, BACKNESS_CENTRAL, ROUNDEDNESS_UNROUNDED, CATEGORY_VOWEL);
-	public static final Phoneme CLOSE_CENTRAL_ROUNDED_VOWEL = new Phoneme("ʉ", VOICING_VOICED, OPENNESS_CLOSE, BACKNESS_CENTRAL, ROUNDEDNESS_ROUNDED, CATEGORY_VOWEL);
+	public static final Phoneme CLOSE_CENTRAL_UNROUNDED_VOWEL;
+	public static final Phoneme CLOSE_CENTRAL_ROUNDED_VOWEL;
 
-	public static final Phoneme CLOSE_BRACK_UNROUNDED_VOWEL = new Phoneme("ɯ", VOICING_VOICED, OPENNESS_CLOSE, BACKNESS_BACK, ROUNDEDNESS_UNROUNDED, CATEGORY_VOWEL);
-	public static final Phoneme CLOSE_BRACK_ROUNDED_VOWEL = new Phoneme("u", VOICING_VOICED, OPENNESS_CLOSE, BACKNESS_BACK, ROUNDEDNESS_ROUNDED, CATEGORY_VOWEL);
-
-
-	public static final Phoneme NEAR_CLOSE_FRONT_UNROUNDED_VOWEL = new Phoneme("ɪ", VOICING_VOICED, OPENNESS_NEAR_CLOSE, BACKNESS_FRONT, ROUNDEDNESS_UNROUNDED, CATEGORY_VOWEL);
-	public static final Phoneme NEAR_CLOSE_FRONT_ROUNDED_VOWEL = new Phoneme("ʏ", VOICING_VOICED, OPENNESS_NEAR_CLOSE, BACKNESS_FRONT, ROUNDEDNESS_ROUNDED, CATEGORY_VOWEL);
-
-	public static final Phoneme NEAR_CLOSE_BRACK_ROUNDED_VOWEL = new Phoneme("ʊ", VOICING_VOICED, OPENNESS_NEAR_CLOSE, BACKNESS_BACK, ROUNDEDNESS_ROUNDED, CATEGORY_VOWEL);
+	public static final Phoneme CLOSE_BRACK_UNROUNDED_VOWEL;
+	public static final Phoneme CLOSE_BRACK_ROUNDED_VOWEL;
 
 
-	public static final Phoneme CLOSE_MID_FRONT_UNROUNDED_VOWEL = new Phoneme("e", VOICING_VOICED, OPENNESS_CLOSE_MID, BACKNESS_FRONT, ROUNDEDNESS_UNROUNDED, CATEGORY_VOWEL);
-	public static final Phoneme CLOSE_MID_FRONT_ROUNDED_VOWEL = new Phoneme("ø", VOICING_VOICED, OPENNESS_CLOSE_MID, BACKNESS_FRONT, ROUNDEDNESS_ROUNDED, CATEGORY_VOWEL);
+	public static final Phoneme NEAR_CLOSE_FRONT_UNROUNDED_VOWEL;
+	public static final Phoneme NEAR_CLOSE_FRONT_ROUNDED_VOWEL;
 
-	public static final Phoneme CLOSE_MID_CENTRAL_UNROUNDED_VOWEL = new Phoneme("ɘ", VOICING_VOICED, OPENNESS_CLOSE_MID, BACKNESS_CENTRAL, ROUNDEDNESS_UNROUNDED, CATEGORY_VOWEL);
-	public static final Phoneme CLOSE_MID_CENTRAL_ROUNDED_VOWEL = new Phoneme("ɵ", VOICING_VOICED, OPENNESS_CLOSE_MID, BACKNESS_CENTRAL, ROUNDEDNESS_ROUNDED, CATEGORY_VOWEL);
-
-	public static final Phoneme CLOSE_MID_BRACK_UNROUNDED_VOWEL = new Phoneme("ɤ", VOICING_VOICED, OPENNESS_CLOSE_MID, BACKNESS_BACK, ROUNDEDNESS_UNROUNDED, CATEGORY_VOWEL);
-	public static final Phoneme CLOSE_MID_BRACK_ROUNDED_VOWEL = new Phoneme("o", VOICING_VOICED, OPENNESS_CLOSE_MID, BACKNESS_BACK, ROUNDEDNESS_ROUNDED, CATEGORY_VOWEL);
+	public static final Phoneme NEAR_CLOSE_BRACK_ROUNDED_VOWEL;
 
 
-	public static final Phoneme MID_FRONT_UNROUNDED_VOWEL = new Phoneme("e̞", VOICING_VOICED, OPENNESS_MID, BACKNESS_FRONT, ROUNDEDNESS_UNROUNDED, CATEGORY_VOWEL);
-	public static final Phoneme MID_FRONT_ROUNDED_VOWEL = new Phoneme("ø̞", VOICING_VOICED, OPENNESS_MID, BACKNESS_FRONT, ROUNDEDNESS_ROUNDED, CATEGORY_VOWEL);
+	public static final Phoneme CLOSE_MID_FRONT_UNROUNDED_VOWEL;
+	public static final Phoneme CLOSE_MID_FRONT_ROUNDED_VOWEL;
 
-	public static final Phoneme MID_CENTRAL_VOWEL = new Phoneme("ə", VOICING_VOICED, OPENNESS_MID, BACKNESS_CENTRAL, CATEGORY_VOWEL);
+	public static final Phoneme CLOSE_MID_CENTRAL_UNROUNDED_VOWEL;
+	public static final Phoneme CLOSE_MID_CENTRAL_ROUNDED_VOWEL;
 
-	public static final Phoneme MID_BRACK_UNROUNDED_VOWEL = new Phoneme("ɤ̞", VOICING_VOICED, OPENNESS_MID, BACKNESS_BACK, ROUNDEDNESS_UNROUNDED, CATEGORY_VOWEL);
-	public static final Phoneme MID_BRACK_ROUNDED_VOWEL = new Phoneme("o̞", VOICING_VOICED, OPENNESS_MID, BACKNESS_BACK, ROUNDEDNESS_ROUNDED, CATEGORY_VOWEL);
-
-
-	public static final Phoneme OPEN_MID_FRONT_UNROUNDED_VOWEL = new Phoneme("ɛ", VOICING_VOICED, OPENNESS_OPEN_MID, BACKNESS_FRONT, ROUNDEDNESS_UNROUNDED, CATEGORY_VOWEL);
-	public static final Phoneme OPEN_MID_FRONT_ROUNDED_VOWEL = new Phoneme("œ", VOICING_VOICED, OPENNESS_OPEN_MID, BACKNESS_FRONT, ROUNDEDNESS_ROUNDED, CATEGORY_VOWEL);
-
-	public static final Phoneme OPEN_MID_CENTRAL_UNROUNDED_VOWEL = new Phoneme("ɜ", VOICING_VOICED, OPENNESS_OPEN_MID, BACKNESS_CENTRAL, ROUNDEDNESS_UNROUNDED, CATEGORY_VOWEL);
-	public static final Phoneme OPEN_MID_CENTRAL_ROUNDED_VOWEL = new Phoneme("ɞ", VOICING_VOICED, OPENNESS_OPEN_MID, BACKNESS_CENTRAL, ROUNDEDNESS_ROUNDED, CATEGORY_VOWEL);
-
-	public static final Phoneme OPEN_MID_BRACK_UNROUNDED_VOWEL = new Phoneme("ʌ", VOICING_VOICED, OPENNESS_OPEN_MID, BACKNESS_BACK, ROUNDEDNESS_UNROUNDED, CATEGORY_VOWEL);
-	public static final Phoneme OPEN_MID_BRACK_ROUNDED_VOWEL = new Phoneme("ɔ", VOICING_VOICED, OPENNESS_OPEN_MID, BACKNESS_BACK, ROUNDEDNESS_ROUNDED, CATEGORY_VOWEL);
+	public static final Phoneme CLOSE_MID_BRACK_UNROUNDED_VOWEL;
+	public static final Phoneme CLOSE_MID_BRACK_ROUNDED_VOWEL;
 
 
-	public static final Phoneme NEAR_OPEN_FRONT_UNROUNDED_VOWEL = new Phoneme("æ", VOICING_VOICED, OPENNESS_NEAR_OPEN, BACKNESS_FRONT, ROUNDEDNESS_UNROUNDED, CATEGORY_VOWEL);
-	public static final Phoneme NEAR_OPEN_CENTRAL_VOWEL = new Phoneme("ɐ", VOICING_VOICED, OPENNESS_NEAR_OPEN, BACKNESS_CENTRAL, CATEGORY_VOWEL);
+	public static final Phoneme MID_FRONT_UNROUNDED_VOWEL;
+	public static final Phoneme MID_FRONT_ROUNDED_VOWEL;
+
+	public static final Phoneme MID_CENTRAL_VOWEL;
+
+	public static final Phoneme MID_BRACK_UNROUNDED_VOWEL;
+	public static final Phoneme MID_BRACK_ROUNDED_VOWEL;
 
 
-	public static final Phoneme OPEN_FRONT_UNROUNDED_VOWEL = new Phoneme("a", VOICING_VOICED, OPENNESS_OPEN, BACKNESS_FRONT, ROUNDEDNESS_UNROUNDED, CATEGORY_VOWEL);
-	public static final Phoneme OPEN_FRONT_ROUNDED_VOWEL = new Phoneme("ɶ", VOICING_VOICED, OPENNESS_OPEN, BACKNESS_FRONT, ROUNDEDNESS_ROUNDED, CATEGORY_VOWEL);
+	public static final Phoneme OPEN_MID_FRONT_UNROUNDED_VOWEL;
+	public static final Phoneme OPEN_MID_FRONT_ROUNDED_VOWEL;
 
-	public static final Phoneme OPEN_CENTRAL_UNROUNDED_VOWEL = new Phoneme("ä", VOICING_VOICED, OPENNESS_OPEN, BACKNESS_CENTRAL, ROUNDEDNESS_UNROUNDED, CATEGORY_VOWEL);
+	public static final Phoneme OPEN_MID_CENTRAL_UNROUNDED_VOWEL;
+	public static final Phoneme OPEN_MID_CENTRAL_ROUNDED_VOWEL;
 
-	public static final Phoneme OPEN_BRACK_UNROUNDED_VOWEL = new Phoneme("ɑ", VOICING_VOICED, OPENNESS_OPEN, BACKNESS_BACK, ROUNDEDNESS_UNROUNDED, CATEGORY_VOWEL);
-	public static final Phoneme OPEN_BRACK_ROUNDED_VOWEL = new Phoneme("ɒ", VOICING_VOICED, OPENNESS_OPEN, BACKNESS_BACK, ROUNDEDNESS_ROUNDED, CATEGORY_VOWEL);
+	public static final Phoneme OPEN_MID_BRACK_UNROUNDED_VOWEL;
+	public static final Phoneme OPEN_MID_BRACK_ROUNDED_VOWEL;
+
+
+	public static final Phoneme NEAR_OPEN_FRONT_UNROUNDED_VOWEL;
+	public static final Phoneme NEAR_OPEN_CENTRAL_VOWEL;
+
+
+	public static final Phoneme OPEN_FRONT_UNROUNDED_VOWEL;
+	public static final Phoneme OPEN_FRONT_ROUNDED_VOWEL;
+
+	public static final Phoneme OPEN_CENTRAL_UNROUNDED_VOWEL;
+
+	public static final Phoneme OPEN_BRACK_UNROUNDED_VOWEL;
+	public static final Phoneme OPEN_BRACK_ROUNDED_VOWEL;
 
 
 	// Plosives
-	public static final Phoneme VOICELESS_BILABIAL_PLOSIVE = new Phoneme("p", VOICING_VOICELESS, PLACE_BILABIAL, TYPE_PLOSIVE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_BILABIAL_PLOSIVE = new Phoneme("b", VOICING_VOICED, PLACE_BILABIAL, TYPE_PLOSIVE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICELESS_BILABIAL_PLOSIVE;
+	public static final Phoneme VOICED_BILABIAL_PLOSIVE;
 
-	public static final Phoneme VOICELESS_DENTAL_PLOSIVE = new Phoneme("t̪", VOICING_VOICELESS, PLACE_DENTAL, TYPE_PLOSIVE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_DENTAL_PLOSIVE = new Phoneme("d̪", VOICING_VOICED, PLACE_DENTAL, TYPE_PLOSIVE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICELESS_DENTAL_PLOSIVE;
+	public static final Phoneme VOICED_DENTAL_PLOSIVE;
 
-	public static final Phoneme VOICELESS_ALVEOLAR_PLOSIVE = new Phoneme("t", VOICING_VOICELESS, PLACE_ALVEOLAR, TYPE_PLOSIVE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_ALVEOLAR_PLOSIVE = new Phoneme("d", VOICING_VOICED, PLACE_ALVEOLAR, TYPE_PLOSIVE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICELESS_ALVEOLAR_PLOSIVE;
+	public static final Phoneme VOICED_ALVEOLAR_PLOSIVE;
 
-	public static final Phoneme VOICELESS_RETROFLEX_PLOSIVE = new Phoneme("ʈ", VOICING_VOICELESS, PLACE_RETROFLEX, TYPE_PLOSIVE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_RETROFLEX_PLOSIVE = new Phoneme("ɖ", VOICING_VOICED, PLACE_RETROFLEX, TYPE_PLOSIVE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICELESS_RETROFLEX_PLOSIVE;
+	public static final Phoneme VOICED_RETROFLEX_PLOSIVE;
 
-	public static final Phoneme VOICELESS_PALATAL_PLOSIVE = new Phoneme("c", VOICING_VOICELESS, PLACE_PALATAL, TYPE_PLOSIVE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_PALATAL_PLOSIVE = new Phoneme("ɟ", VOICING_VOICED, PLACE_PALATAL, TYPE_PLOSIVE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICELESS_PALATAL_PLOSIVE;
+	public static final Phoneme VOICED_PALATAL_PLOSIVE;
 
-	public static final Phoneme VOICELESS_VELAR_PLOSIVE = new Phoneme("k", VOICING_VOICELESS, PLACE_VELAR, TYPE_PLOSIVE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_VELAR_PLOSIVE = new Phoneme("g", VOICING_VOICED, PLACE_VELAR, TYPE_PLOSIVE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICELESS_VELAR_PLOSIVE;
+	public static final Phoneme VOICED_VELAR_PLOSIVE;
 
-	public static final Phoneme VOICELESS_UVULAR_PLOSIVE = new Phoneme("q", VOICING_VOICELESS, PLACE_UVULAR, TYPE_PLOSIVE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_UVULAR_PLOSIVE = new Phoneme("ɢ", VOICING_VOICED, PLACE_UVULAR, TYPE_PLOSIVE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICELESS_UVULAR_PLOSIVE;
+	public static final Phoneme VOICED_UVULAR_PLOSIVE;
 
-	public static final Phoneme VOICELESS_GLOTTAL_PLOSIVE = new Phoneme("ʔ", VOICING_VOICELESS, PLACE_GLOTTAL, TYPE_PLOSIVE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICELESS_GLOTTAL_PLOSIVE;
 
 
 	// Nasals
-	public static final Phoneme VOICED_BILABIAL_NASAL = new Phoneme("m", VOICING_VOICED, PLACE_BILABIAL, TYPE_NASAL, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_LABIODENTAL_NASAL = new Phoneme("ɱ", VOICING_VOICED, PLACE_LABIODENTAL, TYPE_NASAL, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_ALVEOLAR_NASAL = new Phoneme("n", VOICING_VOICED, PLACE_ALVEOLAR, TYPE_NASAL, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_RETROFLEX_NASAL = new Phoneme("ɳ", VOICING_VOICED, PLACE_RETROFLEX, TYPE_NASAL, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_PALATAL_NASAL = new Phoneme("ɲ", VOICING_VOICED, PLACE_PALATAL, TYPE_NASAL, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_VELAR_NASAL = new Phoneme("ŋ", VOICING_VOICED, PLACE_VELAR, TYPE_NASAL, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_UVULAR_NASAL = new Phoneme("ɴ", VOICING_VOICED, PLACE_UVULAR, TYPE_NASAL, CATEGORY_CONSONANT);
+	public static final Phoneme VOICED_BILABIAL_NASAL;
+	public static final Phoneme VOICED_LABIODENTAL_NASAL;
+	public static final Phoneme VOICED_ALVEOLAR_NASAL;
+	public static final Phoneme VOICED_RETROFLEX_NASAL;
+	public static final Phoneme VOICED_PALATAL_NASAL;
+	public static final Phoneme VOICED_VELAR_NASAL;
+	public static final Phoneme VOICED_UVULAR_NASAL;
 
 
 	// Trills
-	public static final Phoneme VOICED_BILABIAL_TRILL = new Phoneme("ʙ", VOICING_VOICED, PLACE_BILABIAL, TYPE_TRILL, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_ALVEOLAR_TRILL = new Phoneme("r", VOICING_VOICED, PLACE_ALVEOLAR, TYPE_TRILL, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_UVULAR_TRILL = new Phoneme("ʀ", VOICING_VOICED, PLACE_UVULAR, TYPE_TRILL, CATEGORY_CONSONANT);
+	public static final Phoneme VOICED_BILABIAL_TRILL;
+	public static final Phoneme VOICED_ALVEOLAR_TRILL;
+	public static final Phoneme VOICED_UVULAR_TRILL;
 
 
 	// Flaps
-	public static final Phoneme VOICED_LABIODENTAL_FLAP = new Phoneme("ⱱ", VOICING_VOICED, PLACE_LABIODENTAL, TYPE_FLAP, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_ALVEOLAR_FLAP = new Phoneme("ɾ", VOICING_VOICED, PLACE_ALVEOLAR, TYPE_FLAP, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_RETROFLEX_FLAP = new Phoneme("ɽ", VOICING_VOICED, PLACE_RETROFLEX, TYPE_FLAP, CATEGORY_CONSONANT);
+	public static final Phoneme VOICED_LABIODENTAL_FLAP;
+	public static final Phoneme VOICED_ALVEOLAR_FLAP;
+	public static final Phoneme VOICED_RETROFLEX_FLAP;
 
 
 	// Fricatives
-	public static final Phoneme VOICELESS_BILABIAL_FRICATIVE = new Phoneme("ɸ", VOICING_VOICELESS, PLACE_BILABIAL, TYPE_FRICATIVE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_BILABIAL_FRICATIVE = new Phoneme("β", VOICING_VOICED, PLACE_BILABIAL, TYPE_FRICATIVE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICELESS_BILABIAL_FRICATIVE;
+	public static final Phoneme VOICED_BILABIAL_FRICATIVE;
 
-	public static final Phoneme VOICELESS_LABIODENTAL_FRICATIVE = new Phoneme("f", VOICING_VOICELESS, PLACE_LABIODENTAL, TYPE_FRICATIVE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_LABIODENTAL_FRICATIVE = new Phoneme("v", VOICING_VOICED, PLACE_LABIODENTAL, TYPE_FRICATIVE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICELESS_LABIODENTAL_FRICATIVE;
+	public static final Phoneme VOICED_LABIODENTAL_FRICATIVE;
 
-	public static final Phoneme VOICELESS_DENTAL_FRICATIVE = new Phoneme("θ", VOICING_VOICELESS, PLACE_DENTAL, TYPE_FRICATIVE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_DENTAL_FRICATIVE = new Phoneme("ð", VOICING_VOICED, PLACE_DENTAL, TYPE_FRICATIVE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICELESS_DENTAL_FRICATIVE;
+	public static final Phoneme VOICED_DENTAL_FRICATIVE;
 
-	public static final Phoneme VOICELESS_ALVEOLAR_FRICATIVE = new Phoneme("s", VOICING_VOICELESS, PLACE_ALVEOLAR, TYPE_FRICATIVE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_ALVEOLAR_FRICATIVE = new Phoneme("z", VOICING_VOICED, PLACE_ALVEOLAR, TYPE_FRICATIVE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICELESS_ALVEOLAR_FRICATIVE;
+	public static final Phoneme VOICED_ALVEOLAR_FRICATIVE;
 
-	public static final Phoneme VOICELESS_POST_ALVEOLAR_FRICATIVE = new Phoneme("ʃ", VOICING_VOICELESS, PLACE_POST_ALVEOLAR, TYPE_FRICATIVE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_POST_ALVEOLAR_FRICATIVE = new Phoneme("ʒ", VOICING_VOICED, PLACE_POST_ALVEOLAR, TYPE_FRICATIVE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICELESS_POST_ALVEOLAR_FRICATIVE;
+	public static final Phoneme VOICED_POST_ALVEOLAR_FRICATIVE;
 
-	public static final Phoneme VOICELESS_RETROFLEX_FRICATIVE = new Phoneme("ʂ", VOICING_VOICELESS, PLACE_RETROFLEX, TYPE_FRICATIVE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_RETROFLEX_FRICATIVE = new Phoneme("ʐ", VOICING_VOICED, PLACE_RETROFLEX, TYPE_FRICATIVE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICELESS_RETROFLEX_FRICATIVE;
+	public static final Phoneme VOICED_RETROFLEX_FRICATIVE;
 
-	public static final Phoneme VOICELESS_PALATAL_FRICATIVE = new Phoneme("ç", VOICING_VOICELESS, PLACE_PALATAL, TYPE_FRICATIVE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_PALATAL_FRICATIVE = new Phoneme("ʝ", VOICING_VOICED, PLACE_PALATAL, TYPE_FRICATIVE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICELESS_PALATAL_FRICATIVE;
+	public static final Phoneme VOICED_PALATAL_FRICATIVE;
 
-	public static final Phoneme VOICELESS_VELAR_FRICATIVE = new Phoneme("x", VOICING_VOICELESS, PLACE_VELAR, TYPE_FRICATIVE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_VELAR_FRICATIVE = new Phoneme("ɣ", VOICING_VOICED, PLACE_VELAR, TYPE_FRICATIVE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICELESS_VELAR_FRICATIVE;
+	public static final Phoneme VOICED_VELAR_FRICATIVE;
 
-	public static final Phoneme VOICELESS_UVULAR_FRICATIVE = new Phoneme("χ", VOICING_VOICELESS, PLACE_UVULAR, TYPE_FRICATIVE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_UVULAR_FRICATIVE = new Phoneme("ʁ", VOICING_VOICED, PLACE_UVULAR, TYPE_FRICATIVE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICELESS_UVULAR_FRICATIVE;
+	public static final Phoneme VOICED_UVULAR_FRICATIVE;
 
-	public static final Phoneme VOICELESS_PHARYNGEAL_FRICATIVE = new Phoneme("ħ", VOICING_VOICELESS, PLACE_PHARYNGEAL, TYPE_FRICATIVE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_PHARYNGEAL_FRICATIVE = new Phoneme("ʕ", VOICING_VOICED, PLACE_PHARYNGEAL, TYPE_FRICATIVE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICELESS_PHARYNGEAL_FRICATIVE;
+	public static final Phoneme VOICED_PHARYNGEAL_FRICATIVE;
 
-	public static final Phoneme VOICELESS_GLOTTAL_FRICATIVE = new Phoneme("h", VOICING_VOICELESS, PLACE_GLOTTAL, TYPE_FRICATIVE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_GLOTTAL_FRICATIVE = new Phoneme("ɦ", VOICING_VOICED, PLACE_GLOTTAL, TYPE_FRICATIVE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICELESS_GLOTTAL_FRICATIVE;
+	public static final Phoneme VOICED_GLOTTAL_FRICATIVE;
 
 
 	// Lateral Fricatives
-	public static final Phoneme VOICELESS_ALVEOLAR_LATERAL_FRICATIVE = new Phoneme("ɬ", VOICING_VOICELESS, PLACE_ALVEOLAR, TYPE_LATERAL_FRICATIVE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_ALVEOLAR_LATERAL_FRICATIVE = new Phoneme("ɮ", VOICING_VOICED, PLACE_ALVEOLAR, TYPE_LATERAL_FRICATIVE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICELESS_ALVEOLAR_LATERAL_FRICATIVE;
+	public static final Phoneme VOICED_ALVEOLAR_LATERAL_FRICATIVE;
 
 
 	// Approximates
-	public static final Phoneme VOICED_LABIODENTAL_APPROXIMATE = new Phoneme("ʋ", VOICING_VOICED, PLACE_LABIODENTAL, TYPE_APPROXIMATE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_ALVEOLAR_APPROXIMATE = new Phoneme("ɹ", VOICING_VOICED, PLACE_ALVEOLAR, TYPE_APPROXIMATE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_RETROFLEX_APPROXIMATE = new Phoneme("ɻ", VOICING_VOICED, PLACE_RETROFLEX, TYPE_APPROXIMATE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_PALATAL_APPROXIMATE = new Phoneme("j", VOICING_VOICED, PLACE_PALATAL, TYPE_APPROXIMATE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_VELAR_APPROXIMATE = new Phoneme("ɰ", VOICING_VOICED, PLACE_VELAR, TYPE_APPROXIMATE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_LABIOVELAR_APPROXIXIMATE = new Phoneme("w", VOICING_VOICED, PLACE_LABIOVELAR, TYPE_APPROXIMATE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICED_LABIODENTAL_APPROXIMATE;
+	public static final Phoneme VOICED_ALVEOLAR_APPROXIMATE;
+	public static final Phoneme VOICED_RETROFLEX_APPROXIMATE;
+	public static final Phoneme VOICED_PALATAL_APPROXIMATE;
+	public static final Phoneme VOICED_VELAR_APPROXIMATE;
+	public static final Phoneme VOICED_LABIOVELAR_APPROXIXIMATE;
 
 
 	// Lateral Approximates
-	public static final Phoneme VOICED_ALVEOLAR_LATERAL_APPROXIMATE = new Phoneme("l", VOICING_VOICED, PLACE_ALVEOLAR, TYPE_LATERAL_APPROXIMATE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_RETROFLEX_LATERAL_APPROXIMATE = new Phoneme("ɭ", VOICING_VOICED, PLACE_RETROFLEX, TYPE_LATERAL_APPROXIMATE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_PALATAL_LATERAL_APPROXIMATE = new Phoneme("ʎ", VOICING_VOICED, PLACE_PALATAL, TYPE_LATERAL_APPROXIMATE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_VELAR_LATERAL_APPROXIMATE = new Phoneme("ʟ", VOICING_VOICED, PLACE_VELAR, TYPE_LATERAL_APPROXIMATE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICED_ALVEOLAR_LATERAL_APPROXIMATE;
+	public static final Phoneme VOICED_RETROFLEX_LATERAL_APPROXIMATE;
+	public static final Phoneme VOICED_PALATAL_LATERAL_APPROXIMATE;
+	public static final Phoneme VOICED_VELAR_LATERAL_APPROXIMATE;
 
 
 	// Affricates
-	public static final Phoneme VOICELESS_ALVEOLAR_AFFRICATE = new Phoneme("t͡s", VOICING_VOICELESS, PLACE_ALVEOLAR, TYPE_AFFRICATE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_ALVEOLAR_AFFRICATE = new Phoneme("d͡z", VOICING_VOICED, PLACE_ALVEOLAR, TYPE_AFFRICATE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICELESS_ALVEOLAR_AFFRICATE;
+	public static final Phoneme VOICED_ALVEOLAR_AFFRICATE;
 
-	public static final Phoneme VOICELESS_PALATO_ALVEOLAR_AFFRICATE = new Phoneme("t͡ʃ", VOICING_VOICELESS, PLACE_PALATO_ALVEOLAR, TYPE_AFFRICATE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_PALATO_ALVEOLAR_AFFRICATE = new Phoneme("d͡ʒ", VOICING_VOICED, PLACE_PALATO_ALVEOLAR, TYPE_AFFRICATE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICELESS_PALATO_ALVEOLAR_AFFRICATE;
+	public static final Phoneme VOICED_PALATO_ALVEOLAR_AFFRICATE;
 
-	public static final Phoneme VOICELESS_ALVEOLO_PALATAL_AFFRICATE = new Phoneme("t͡ɕ", VOICING_VOICELESS, PLACE_ALVEOLO_PALATAL, TYPE_AFFRICATE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_ALVEOLO_PALATAL_AFFRICATE = new Phoneme("d͡ʑ", VOICING_VOICED, PLACE_ALVEOLO_PALATAL, TYPE_AFFRICATE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICELESS_ALVEOLO_PALATAL_AFFRICATE;
+	public static final Phoneme VOICED_ALVEOLO_PALATAL_AFFRICATE;
 
-	public static final Phoneme VOICELESS_RETROFLEX_AFFRICATE = new Phoneme("ʈ͡ʂ", VOICING_VOICELESS, PLACE_RETROFLEX, TYPE_AFFRICATE, CATEGORY_CONSONANT);
-	public static final Phoneme VOICED_RETROFLEX_AFFRICATE = new Phoneme("ɖ͡ʐ", VOICING_VOICED, PLACE_RETROFLEX, TYPE_AFFRICATE, CATEGORY_CONSONANT);
+	public static final Phoneme VOICELESS_RETROFLEX_AFFRICATE;
+	public static final Phoneme VOICED_RETROFLEX_AFFRICATE;
 
-	
+
 	// Standard Phoneme Map
 	public static final IpaPhonemeMap STANDARD_IPA_PHONEMES = new IpaPhonemeMap();
-	
+
+
 	static {
+		CLOSE_FRONT_UNROUNDED_VOWEL = new PhonemeBuilder("i")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_CLOSE)
+			.withFeature(BACKNESS, BACKNESS_FRONT)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_UNROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+		CLOSE_FRONT_ROUNDED_VOWEL = new PhonemeBuilder("y")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_CLOSE)
+			.withFeature(BACKNESS, BACKNESS_FRONT)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_ROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+
+		CLOSE_CENTRAL_UNROUNDED_VOWEL = new PhonemeBuilder("ɨ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_CLOSE)
+			.withFeature(BACKNESS, BACKNESS_CENTRAL)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_UNROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+		CLOSE_CENTRAL_ROUNDED_VOWEL = new PhonemeBuilder("ʉ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_CLOSE)
+			.withFeature(BACKNESS, BACKNESS_CENTRAL)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_ROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+
+		CLOSE_BRACK_UNROUNDED_VOWEL = new PhonemeBuilder("ɯ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_CLOSE)
+			.withFeature(BACKNESS, BACKNESS_BACK)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_UNROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+		CLOSE_BRACK_ROUNDED_VOWEL = new PhonemeBuilder("u")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_CLOSE)
+			.withFeature(BACKNESS, BACKNESS_BACK)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_ROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+
+
+		NEAR_CLOSE_FRONT_UNROUNDED_VOWEL = new PhonemeBuilder("ɪ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_NEAR_CLOSE)
+			.withFeature(BACKNESS, BACKNESS_FRONT)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_UNROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+		NEAR_CLOSE_FRONT_ROUNDED_VOWEL = new PhonemeBuilder("ʏ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_NEAR_CLOSE)
+			.withFeature(BACKNESS, BACKNESS_FRONT)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_ROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+
+		NEAR_CLOSE_BRACK_ROUNDED_VOWEL = new PhonemeBuilder("ʊ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_NEAR_CLOSE)
+			.withFeature(BACKNESS, BACKNESS_BACK)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_ROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+
+
+		CLOSE_MID_FRONT_UNROUNDED_VOWEL = new PhonemeBuilder("e")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_CLOSE_MID)
+			.withFeature(BACKNESS, BACKNESS_FRONT)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_UNROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+		CLOSE_MID_FRONT_ROUNDED_VOWEL = new PhonemeBuilder("ø")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_CLOSE_MID)
+			.withFeature(BACKNESS, BACKNESS_FRONT)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_ROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+
+		CLOSE_MID_CENTRAL_UNROUNDED_VOWEL = new PhonemeBuilder("ɘ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_CLOSE_MID)
+			.withFeature(BACKNESS, BACKNESS_CENTRAL)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_UNROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+		CLOSE_MID_CENTRAL_ROUNDED_VOWEL = new PhonemeBuilder("ɵ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_CLOSE_MID)
+			.withFeature(BACKNESS, BACKNESS_CENTRAL)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_ROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+
+		CLOSE_MID_BRACK_UNROUNDED_VOWEL = new PhonemeBuilder("ɤ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_CLOSE_MID)
+			.withFeature(BACKNESS, BACKNESS_BACK)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_UNROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+		CLOSE_MID_BRACK_ROUNDED_VOWEL = new PhonemeBuilder("o")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_CLOSE_MID)
+			.withFeature(BACKNESS, BACKNESS_BACK)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_ROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+
+
+		MID_FRONT_UNROUNDED_VOWEL = new PhonemeBuilder("e̞")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_MID)
+			.withFeature(BACKNESS, BACKNESS_FRONT)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_UNROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+		MID_FRONT_ROUNDED_VOWEL = new PhonemeBuilder("ø̞")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_MID)
+			.withFeature(BACKNESS, BACKNESS_FRONT)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_ROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+
+		MID_CENTRAL_VOWEL = new PhonemeBuilder("ə")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_MID)
+			.withFeature(BACKNESS, BACKNESS_CENTRAL)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+
+		MID_BRACK_UNROUNDED_VOWEL = new PhonemeBuilder("ɤ̞")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_MID)
+			.withFeature(BACKNESS, BACKNESS_BACK)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_UNROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+		MID_BRACK_ROUNDED_VOWEL = new PhonemeBuilder("o̞")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_MID)
+			.withFeature(BACKNESS, BACKNESS_BACK)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_ROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+
+
+		OPEN_MID_FRONT_UNROUNDED_VOWEL = new PhonemeBuilder("ɛ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_OPEN_MID)
+			.withFeature(BACKNESS, BACKNESS_FRONT)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_UNROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+		OPEN_MID_FRONT_ROUNDED_VOWEL = new PhonemeBuilder("œ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_OPEN_MID)
+			.withFeature(BACKNESS, BACKNESS_FRONT)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_ROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+
+		OPEN_MID_CENTRAL_UNROUNDED_VOWEL = new PhonemeBuilder("ɜ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_OPEN_MID)
+			.withFeature(BACKNESS, BACKNESS_CENTRAL)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_UNROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+		OPEN_MID_CENTRAL_ROUNDED_VOWEL = new PhonemeBuilder("ɞ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_OPEN_MID)
+			.withFeature(BACKNESS, BACKNESS_CENTRAL)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_ROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+
+		OPEN_MID_BRACK_UNROUNDED_VOWEL = new PhonemeBuilder("ʌ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_OPEN_MID)
+			.withFeature(BACKNESS, BACKNESS_BACK)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_UNROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+		OPEN_MID_BRACK_ROUNDED_VOWEL = new PhonemeBuilder("ɔ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_OPEN_MID)
+			.withFeature(BACKNESS, BACKNESS_BACK)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_ROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+
+
+		NEAR_OPEN_FRONT_UNROUNDED_VOWEL = new PhonemeBuilder("æ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_NEAR_OPEN)
+			.withFeature(BACKNESS, BACKNESS_FRONT)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_UNROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+		NEAR_OPEN_CENTRAL_VOWEL = new PhonemeBuilder("ɐ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_NEAR_OPEN)
+			.withFeature(BACKNESS, BACKNESS_CENTRAL)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+
+
+		OPEN_FRONT_UNROUNDED_VOWEL = new PhonemeBuilder("a")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_OPEN)
+			.withFeature(BACKNESS, BACKNESS_FRONT)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_UNROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+		OPEN_FRONT_ROUNDED_VOWEL = new PhonemeBuilder("ɶ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_OPEN)
+			.withFeature(BACKNESS, BACKNESS_FRONT)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_ROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+
+		OPEN_CENTRAL_UNROUNDED_VOWEL = new PhonemeBuilder("ä")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_OPEN)
+			.withFeature(BACKNESS, BACKNESS_CENTRAL)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_UNROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+
+		OPEN_BRACK_UNROUNDED_VOWEL = new PhonemeBuilder("ɑ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_OPEN)
+			.withFeature(BACKNESS, BACKNESS_BACK)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_UNROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+		OPEN_BRACK_ROUNDED_VOWEL = new PhonemeBuilder("ɒ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(OPENNESS, OPENNESS_OPEN)
+			.withFeature(BACKNESS, BACKNESS_BACK)
+			.withFeature(ROUNDEDNESS, ROUNDEDNESS_ROUNDED)
+			.withFeature(CATEGORY, CATEGORY_VOWEL)
+			.build();
+
+
+			// Plosives
+		VOICELESS_BILABIAL_PLOSIVE = new PhonemeBuilder("p")
+			.withFeature(VOICING, VOICING_VOICELESS)
+			.withFeature(PLACE, PLACE_BILABIAL)
+			.withFeature(TYPE, TYPE_PLOSIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_BILABIAL_PLOSIVE = new PhonemeBuilder("b")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_BILABIAL)
+			.withFeature(TYPE, TYPE_PLOSIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+		VOICELESS_DENTAL_PLOSIVE = new PhonemeBuilder("t̪")
+			.withFeature(VOICING, VOICING_VOICELESS)
+			.withFeature(PLACE, PLACE_DENTAL)
+			.withFeature(TYPE, TYPE_PLOSIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_DENTAL_PLOSIVE = new PhonemeBuilder("d̪")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_DENTAL)
+			.withFeature(TYPE, TYPE_PLOSIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+		VOICELESS_ALVEOLAR_PLOSIVE = new PhonemeBuilder("t")
+			.withFeature(VOICING, VOICING_VOICELESS)
+			.withFeature(PLACE, PLACE_ALVEOLAR)
+			.withFeature(TYPE, TYPE_PLOSIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_ALVEOLAR_PLOSIVE = new PhonemeBuilder("d")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_ALVEOLAR)
+			.withFeature(TYPE, TYPE_PLOSIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+		VOICELESS_RETROFLEX_PLOSIVE = new PhonemeBuilder("ʈ")
+			.withFeature(VOICING, VOICING_VOICELESS)
+			.withFeature(PLACE, PLACE_RETROFLEX)
+			.withFeature(TYPE, TYPE_PLOSIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_RETROFLEX_PLOSIVE = new PhonemeBuilder("ɖ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_RETROFLEX)
+			.withFeature(TYPE, TYPE_PLOSIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+		VOICELESS_PALATAL_PLOSIVE = new PhonemeBuilder("c")
+			.withFeature(VOICING, VOICING_VOICELESS)
+			.withFeature(PLACE, PLACE_PALATAL)
+			.withFeature(TYPE, TYPE_PLOSIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_PALATAL_PLOSIVE = new PhonemeBuilder("ɟ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_PALATAL)
+			.withFeature(TYPE, TYPE_PLOSIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+		VOICELESS_VELAR_PLOSIVE = new PhonemeBuilder("k")
+			.withFeature(VOICING, VOICING_VOICELESS)
+			.withFeature(PLACE, PLACE_VELAR)
+			.withFeature(TYPE, TYPE_PLOSIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_VELAR_PLOSIVE = new PhonemeBuilder("g")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_VELAR)
+			.withFeature(TYPE, TYPE_PLOSIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+		VOICELESS_UVULAR_PLOSIVE = new PhonemeBuilder("q")
+			.withFeature(VOICING, VOICING_VOICELESS)
+			.withFeature(PLACE, PLACE_UVULAR)
+			.withFeature(TYPE, TYPE_PLOSIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_UVULAR_PLOSIVE = new PhonemeBuilder("ɢ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_UVULAR)
+			.withFeature(TYPE, TYPE_PLOSIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+		VOICELESS_GLOTTAL_PLOSIVE = new PhonemeBuilder("ʔ")
+			.withFeature(VOICING, VOICING_VOICELESS)
+			.withFeature(PLACE, PLACE_GLOTTAL)
+			.withFeature(TYPE, TYPE_PLOSIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+
+			// Nasals
+		VOICED_BILABIAL_NASAL = new PhonemeBuilder("m")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_BILABIAL)
+			.withFeature(TYPE, TYPE_NASAL)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_LABIODENTAL_NASAL = new PhonemeBuilder("ɱ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_LABIODENTAL)
+			.withFeature(TYPE, TYPE_NASAL)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_ALVEOLAR_NASAL = new PhonemeBuilder("n")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_ALVEOLAR)
+			.withFeature(TYPE, TYPE_NASAL)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_RETROFLEX_NASAL = new PhonemeBuilder("ɳ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_RETROFLEX)
+			.withFeature(TYPE, TYPE_NASAL)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_PALATAL_NASAL = new PhonemeBuilder("ɲ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_PALATAL)
+			.withFeature(TYPE, TYPE_NASAL)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_VELAR_NASAL = new PhonemeBuilder("ŋ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_VELAR)
+			.withFeature(TYPE, TYPE_NASAL)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_UVULAR_NASAL = new PhonemeBuilder("ɴ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_UVULAR)
+			.withFeature(TYPE, TYPE_NASAL)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+
+			// Trills
+		VOICED_BILABIAL_TRILL = new PhonemeBuilder("ʙ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_BILABIAL)
+			.withFeature(TYPE, TYPE_TRILL)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_ALVEOLAR_TRILL = new PhonemeBuilder("r")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_ALVEOLAR)
+			.withFeature(TYPE, TYPE_TRILL)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_UVULAR_TRILL = new PhonemeBuilder("ʀ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_UVULAR)
+			.withFeature(TYPE, TYPE_TRILL)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+
+			// Flaps
+		VOICED_LABIODENTAL_FLAP = new PhonemeBuilder("ⱱ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_LABIODENTAL)
+			.withFeature(TYPE, TYPE_FLAP)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_ALVEOLAR_FLAP = new PhonemeBuilder("ɾ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_ALVEOLAR)
+			.withFeature(TYPE, TYPE_FLAP)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_RETROFLEX_FLAP = new PhonemeBuilder("ɽ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_RETROFLEX)
+			.withFeature(TYPE, TYPE_FLAP)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+
+			// Fricatives
+		VOICELESS_BILABIAL_FRICATIVE = new PhonemeBuilder("ɸ")
+			.withFeature(VOICING, VOICING_VOICELESS)
+			.withFeature(PLACE, PLACE_BILABIAL)
+			.withFeature(TYPE, TYPE_FRICATIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_BILABIAL_FRICATIVE = new PhonemeBuilder("β")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_BILABIAL)
+			.withFeature(TYPE, TYPE_FRICATIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+		VOICELESS_LABIODENTAL_FRICATIVE = new PhonemeBuilder("f")
+			.withFeature(VOICING, VOICING_VOICELESS)
+			.withFeature(PLACE, PLACE_LABIODENTAL)
+			.withFeature(TYPE, TYPE_FRICATIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_LABIODENTAL_FRICATIVE = new PhonemeBuilder("v")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_LABIODENTAL)
+			.withFeature(TYPE, TYPE_FRICATIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+		VOICELESS_DENTAL_FRICATIVE = new PhonemeBuilder("θ")
+			.withFeature(VOICING, VOICING_VOICELESS)
+			.withFeature(PLACE, PLACE_DENTAL)
+			.withFeature(TYPE, TYPE_FRICATIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_DENTAL_FRICATIVE = new PhonemeBuilder("ð")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_DENTAL)
+			.withFeature(TYPE, TYPE_FRICATIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+		VOICELESS_ALVEOLAR_FRICATIVE = new PhonemeBuilder("s")
+			.withFeature(VOICING, VOICING_VOICELESS)
+			.withFeature(PLACE, PLACE_ALVEOLAR)
+			.withFeature(TYPE, TYPE_FRICATIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_ALVEOLAR_FRICATIVE = new PhonemeBuilder("z")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_ALVEOLAR)
+			.withFeature(TYPE, TYPE_FRICATIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+		VOICELESS_POST_ALVEOLAR_FRICATIVE = new PhonemeBuilder("ʃ")
+			.withFeature(VOICING, VOICING_VOICELESS)
+			.withFeature(PLACE, PLACE_POST_ALVEOLAR)
+			.withFeature(TYPE, TYPE_FRICATIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_POST_ALVEOLAR_FRICATIVE = new PhonemeBuilder("ʒ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_POST_ALVEOLAR)
+			.withFeature(TYPE, TYPE_FRICATIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+		VOICELESS_RETROFLEX_FRICATIVE = new PhonemeBuilder("ʂ")
+			.withFeature(VOICING, VOICING_VOICELESS)
+			.withFeature(PLACE, PLACE_RETROFLEX)
+			.withFeature(TYPE, TYPE_FRICATIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_RETROFLEX_FRICATIVE = new PhonemeBuilder("ʐ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_RETROFLEX)
+			.withFeature(TYPE, TYPE_FRICATIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+		VOICELESS_PALATAL_FRICATIVE = new PhonemeBuilder("ç")
+			.withFeature(VOICING, VOICING_VOICELESS)
+			.withFeature(PLACE, PLACE_PALATAL)
+			.withFeature(TYPE, TYPE_FRICATIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_PALATAL_FRICATIVE = new PhonemeBuilder("ʝ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_PALATAL)
+			.withFeature(TYPE, TYPE_FRICATIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+		VOICELESS_VELAR_FRICATIVE = new PhonemeBuilder("x")
+			.withFeature(VOICING, VOICING_VOICELESS)
+			.withFeature(PLACE, PLACE_VELAR)
+			.withFeature(TYPE, TYPE_FRICATIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_VELAR_FRICATIVE = new PhonemeBuilder("ɣ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_VELAR)
+			.withFeature(TYPE, TYPE_FRICATIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+		VOICELESS_UVULAR_FRICATIVE = new PhonemeBuilder("χ")
+			.withFeature(VOICING, VOICING_VOICELESS)
+			.withFeature(PLACE, PLACE_UVULAR)
+			.withFeature(TYPE, TYPE_FRICATIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_UVULAR_FRICATIVE = new PhonemeBuilder("ʁ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_UVULAR)
+			.withFeature(TYPE, TYPE_FRICATIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+		VOICELESS_PHARYNGEAL_FRICATIVE = new PhonemeBuilder("ħ")
+			.withFeature(VOICING, VOICING_VOICELESS)
+			.withFeature(PLACE, PLACE_PHARYNGEAL)
+			.withFeature(TYPE, TYPE_FRICATIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_PHARYNGEAL_FRICATIVE = new PhonemeBuilder("ʕ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_PHARYNGEAL)
+			.withFeature(TYPE, TYPE_FRICATIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+		VOICELESS_GLOTTAL_FRICATIVE = new PhonemeBuilder("h")
+			.withFeature(VOICING, VOICING_VOICELESS)
+			.withFeature(PLACE, PLACE_GLOTTAL)
+			.withFeature(TYPE, TYPE_FRICATIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_GLOTTAL_FRICATIVE = new PhonemeBuilder("ɦ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_GLOTTAL)
+			.withFeature(TYPE, TYPE_FRICATIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+
+			// Lateral Fricatives
+		VOICELESS_ALVEOLAR_LATERAL_FRICATIVE = new PhonemeBuilder("ɬ")
+			.withFeature(VOICING, VOICING_VOICELESS)
+			.withFeature(PLACE, PLACE_ALVEOLAR)
+			.withFeature(TYPE, TYPE_LATERAL_FRICATIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_ALVEOLAR_LATERAL_FRICATIVE = new PhonemeBuilder("ɮ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_ALVEOLAR)
+			.withFeature(TYPE, TYPE_LATERAL_FRICATIVE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+
+			// Approximates
+		VOICED_LABIODENTAL_APPROXIMATE = new PhonemeBuilder("ʋ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_LABIODENTAL)
+			.withFeature(TYPE, TYPE_APPROXIMATE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_ALVEOLAR_APPROXIMATE = new PhonemeBuilder("ɹ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_ALVEOLAR)
+			.withFeature(TYPE, TYPE_APPROXIMATE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_RETROFLEX_APPROXIMATE = new PhonemeBuilder("ɻ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_RETROFLEX)
+			.withFeature(TYPE, TYPE_APPROXIMATE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_PALATAL_APPROXIMATE = new PhonemeBuilder("j")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_PALATAL)
+			.withFeature(TYPE, TYPE_APPROXIMATE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_VELAR_APPROXIMATE = new PhonemeBuilder("ɰ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_VELAR)
+			.withFeature(TYPE, TYPE_APPROXIMATE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_LABIOVELAR_APPROXIXIMATE = new PhonemeBuilder("w")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_LABIOVELAR)
+			.withFeature(TYPE, TYPE_APPROXIMATE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+
+			// Lateral Approximates
+		VOICED_ALVEOLAR_LATERAL_APPROXIMATE = new PhonemeBuilder("l")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_ALVEOLAR)
+			.withFeature(TYPE, TYPE_LATERAL_APPROXIMATE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_RETROFLEX_LATERAL_APPROXIMATE = new PhonemeBuilder("ɭ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_RETROFLEX)
+			.withFeature(TYPE, TYPE_LATERAL_APPROXIMATE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_PALATAL_LATERAL_APPROXIMATE = new PhonemeBuilder("ʎ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_PALATAL)
+			.withFeature(TYPE, TYPE_LATERAL_APPROXIMATE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_VELAR_LATERAL_APPROXIMATE = new PhonemeBuilder("ʟ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_VELAR)
+			.withFeature(TYPE, TYPE_LATERAL_APPROXIMATE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+
+			// Affricates
+		VOICELESS_ALVEOLAR_AFFRICATE = new PhonemeBuilder("t͡s")
+			.withFeature(VOICING, VOICING_VOICELESS)
+			.withFeature(PLACE, PLACE_ALVEOLAR)
+			.withFeature(TYPE, TYPE_AFFRICATE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_ALVEOLAR_AFFRICATE = new PhonemeBuilder("d͡z")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_ALVEOLAR)
+			.withFeature(TYPE, TYPE_AFFRICATE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+		VOICELESS_PALATO_ALVEOLAR_AFFRICATE = new PhonemeBuilder("t͡ʃ")
+			.withFeature(VOICING, VOICING_VOICELESS)
+			.withFeature(PLACE, PLACE_PALATO_ALVEOLAR)
+			.withFeature(TYPE, TYPE_AFFRICATE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_PALATO_ALVEOLAR_AFFRICATE = new PhonemeBuilder("d͡ʒ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_PALATO_ALVEOLAR)
+			.withFeature(TYPE, TYPE_AFFRICATE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+		VOICELESS_ALVEOLO_PALATAL_AFFRICATE = new PhonemeBuilder("t͡ɕ")
+			.withFeature(VOICING, VOICING_VOICELESS)
+			.withFeature(PLACE, PLACE_ALVEOLO_PALATAL)
+			.withFeature(TYPE, TYPE_AFFRICATE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_ALVEOLO_PALATAL_AFFRICATE = new PhonemeBuilder("d͡ʑ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_ALVEOLO_PALATAL)
+			.withFeature(TYPE, TYPE_AFFRICATE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
+		VOICELESS_RETROFLEX_AFFRICATE = new PhonemeBuilder("ʈ͡ʂ")
+			.withFeature(VOICING, VOICING_VOICELESS)
+			.withFeature(PLACE, PLACE_RETROFLEX)
+			.withFeature(TYPE, TYPE_AFFRICATE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+		VOICED_RETROFLEX_AFFRICATE = new PhonemeBuilder("ɖ͡ʐ")
+			.withFeature(VOICING, VOICING_VOICED)
+			.withFeature(PLACE, PLACE_RETROFLEX)
+			.withFeature(TYPE, TYPE_AFFRICATE)
+			.withFeature(CATEGORY, CATEGORY_CONSONANT)
+			.build();
+
 		// Vowels
 		STANDARD_IPA_PHONEMES.add(CLOSE_FRONT_UNROUNDED_VOWEL);
 		STANDARD_IPA_PHONEMES.add(CLOSE_FRONT_ROUNDED_VOWEL);
@@ -256,7 +939,7 @@ public class StandardPhonemes {
 		STANDARD_IPA_PHONEMES.add(OPEN_CENTRAL_UNROUNDED_VOWEL);
 		STANDARD_IPA_PHONEMES.add(OPEN_BRACK_UNROUNDED_VOWEL);
 		STANDARD_IPA_PHONEMES.add(OPEN_BRACK_ROUNDED_VOWEL);
-		
+
 		// Plosives
 		STANDARD_IPA_PHONEMES.add(VOICELESS_BILABIAL_PLOSIVE);
 		STANDARD_IPA_PHONEMES.add(VOICED_BILABIAL_PLOSIVE);
@@ -273,7 +956,7 @@ public class StandardPhonemes {
 		STANDARD_IPA_PHONEMES.add(VOICELESS_UVULAR_PLOSIVE);
 		STANDARD_IPA_PHONEMES.add(VOICED_UVULAR_PLOSIVE);
 		STANDARD_IPA_PHONEMES.add(VOICELESS_GLOTTAL_PLOSIVE);
-		
+
 		// Nasals
 		STANDARD_IPA_PHONEMES.add(VOICED_BILABIAL_NASAL);
 		STANDARD_IPA_PHONEMES.add(VOICED_LABIODENTAL_NASAL);
@@ -282,17 +965,17 @@ public class StandardPhonemes {
 		STANDARD_IPA_PHONEMES.add(VOICED_PALATAL_NASAL);
 		STANDARD_IPA_PHONEMES.add(VOICED_VELAR_NASAL);
 		STANDARD_IPA_PHONEMES.add(VOICED_UVULAR_NASAL);
-		
+
 		// Trills
 		STANDARD_IPA_PHONEMES.add(VOICED_BILABIAL_TRILL);
 		STANDARD_IPA_PHONEMES.add(VOICED_ALVEOLAR_TRILL);
 		STANDARD_IPA_PHONEMES.add(VOICED_UVULAR_TRILL);
-		
+
 		// Flaps
 		STANDARD_IPA_PHONEMES.add(VOICED_LABIODENTAL_FLAP);
 		STANDARD_IPA_PHONEMES.add(VOICED_ALVEOLAR_FLAP);
 		STANDARD_IPA_PHONEMES.add(VOICED_RETROFLEX_FLAP);
-		
+
 		// Fricatives
 		STANDARD_IPA_PHONEMES.add(VOICELESS_BILABIAL_FRICATIVE);
 		STANDARD_IPA_PHONEMES.add(VOICED_BILABIAL_FRICATIVE);
@@ -316,11 +999,11 @@ public class StandardPhonemes {
 		STANDARD_IPA_PHONEMES.add(VOICED_PHARYNGEAL_FRICATIVE);
 		STANDARD_IPA_PHONEMES.add(VOICELESS_GLOTTAL_FRICATIVE);
 		STANDARD_IPA_PHONEMES.add(VOICED_GLOTTAL_FRICATIVE);
-		
+
 		// Lateral Fricatives
 		STANDARD_IPA_PHONEMES.add(VOICELESS_ALVEOLAR_LATERAL_FRICATIVE);
 		STANDARD_IPA_PHONEMES.add(VOICED_ALVEOLAR_LATERAL_FRICATIVE);
-		
+
 		// Approximates
 		STANDARD_IPA_PHONEMES.add(VOICED_LABIODENTAL_APPROXIMATE);
 		STANDARD_IPA_PHONEMES.add(VOICED_ALVEOLAR_APPROXIMATE);
@@ -328,13 +1011,13 @@ public class StandardPhonemes {
 		STANDARD_IPA_PHONEMES.add(VOICED_PALATAL_APPROXIMATE);
 		STANDARD_IPA_PHONEMES.add(VOICED_VELAR_APPROXIMATE);
 		STANDARD_IPA_PHONEMES.add(VOICED_LABIOVELAR_APPROXIXIMATE);
-		
+
 		// Lateral Approximates
 		STANDARD_IPA_PHONEMES.add(VOICED_ALVEOLAR_LATERAL_APPROXIMATE);
 		STANDARD_IPA_PHONEMES.add(VOICED_RETROFLEX_LATERAL_APPROXIMATE);
 		STANDARD_IPA_PHONEMES.add(VOICED_PALATAL_LATERAL_APPROXIMATE);
 		STANDARD_IPA_PHONEMES.add(VOICED_VELAR_LATERAL_APPROXIMATE);
-		
+
 		// Affricates
 		STANDARD_IPA_PHONEMES.add(VOICELESS_ALVEOLAR_AFFRICATE);
 		STANDARD_IPA_PHONEMES.add(VOICED_ALVEOLAR_AFFRICATE);
@@ -345,6 +1028,6 @@ public class StandardPhonemes {
 		STANDARD_IPA_PHONEMES.add(VOICELESS_RETROFLEX_AFFRICATE);
 		STANDARD_IPA_PHONEMES.add(VOICED_RETROFLEX_AFFRICATE);
 	}
-	
-	
+
+
 }
