@@ -16,12 +16,12 @@ public class PhonologicalRuleCompiler extends Compiler<PhonologicalRule> {
 	}
 
 	@Override
-	public PhonologicalRule compile(String pattern) {
-		init(pattern);
-		return rule();
+	public PhonologicalRule compile(String source) {
+		init(source);
+		return rule(source);
 	}
 
-	private PhonologicalRule rule() {
+	private PhonologicalRule rule(String source) {
 		var match = phoneme();
 
 		skipWhitespace();
@@ -29,8 +29,14 @@ public class PhonologicalRuleCompiler extends Compiler<PhonologicalRule> {
 		expect('>', "Expected '->' after rule match.");
 		skipWhitespace();
 
-		expect('[', "Expected '[' before replacement phone.");
-		var replacement = phone();
+		expect('[', "Expected '[' before replacement.");
+		PhonemeRepresentation replacement;
+		if (test('+') || test('-') || Character.isDigit(current())) {
+			replacement = phonemeFeatureset();
+		}
+		else {
+			replacement = replacementPhone();
+		}
 
 		skipWhitespace();
 		expect('/', "Expected '/' after replacement phone.");
@@ -52,7 +58,7 @@ public class PhonologicalRuleCompiler extends Compiler<PhonologicalRule> {
 			skipWhitespace();
 		}
 
-		return new PhonologicalRule(match, replacement, preMatches, postMatches);
+		return new PhonologicalRule(source, match, replacement, preMatches, postMatches);
 	}
 
 	private PhonemeRepresentation phonemeRepresentation() {
@@ -67,10 +73,10 @@ public class PhonologicalRuleCompiler extends Compiler<PhonologicalRule> {
 		}
 	}
 
-	private Phoneme phone() {
+	private PhonemeLiteral replacementPhone() {
 		String ipa = ipa();
-		expect(']', "Expected ']' after phone.");
-		return ipaMapper.getPhoneme(ipa);
+		expect(']', "Expected ']' after replacement phone.");
+		return new PhonemeLiteral(ipaMapper.getPhoneme(ipa));
 	}
 
 	private PhonemeRepresentation phoneme() {

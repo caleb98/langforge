@@ -11,9 +11,9 @@ import net.calebscode.langtool.phonology.phoneme.Phoneme;
 
 public class SyllableTest {
 
-	private final Phoneme phonemeA = new Phoneme("a", Map.of());
-	private final Phoneme phonemeB = new Phoneme("b", Map.of());
-	private final Phoneme phonemeC = new Phoneme("c", Map.of());
+	private final Phoneme phonemeA = new Phoneme(Map.of("foo", "bar"));
+	private final Phoneme phonemeB = new Phoneme(Map.of("zig", "zag"));
+	private final Phoneme phonemeC = new Phoneme(Map.of("sun", "moon"));
 
 	private final Phoneme[] testOnset   = new Phoneme[] {phonemeA};
 	private final Phoneme[] testNucleus = new Phoneme[] {phonemeB};

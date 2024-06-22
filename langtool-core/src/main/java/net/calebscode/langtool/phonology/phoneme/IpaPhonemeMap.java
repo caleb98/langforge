@@ -2,54 +2,68 @@ package net.calebscode.langtool.phonology.phoneme;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class IpaPhonemeMap implements IpaPhonemeMapper {
 
-	private Map<String, Phoneme> ipaMap = new HashMap<>();
-	private Map<Map<String, String>, String> featureMap = new HashMap<>();
+	private Map<String, Phoneme> ipaToPhonemeMap = new HashMap<>();
+	private Map<Phoneme, String> phonemeToIpaMap = new HashMap<>();
 
-	public void add(Phoneme phoneme) throws IllegalArgumentException {
-		if (ipaMap.containsKey(phoneme.representation())) {
-			throw new IllegalArgumentException("Phoneme with ipa '" + phoneme.representation() + "' already exists in this mapper.");
+	public void addMapping(String ipa, Phoneme phoneme) {
+		// If a map contains a key, that means that key exists
+		// as a value in the other map. So, whenever we encounter
+		// an existing key, have to remove the entry with the
+		// same value from the other map. We don't need to remove
+		// from the map where the key exists, though, since the
+		// call to put(...) below will do those overwrites.
+		if (ipaToPhonemeMap.containsKey(ipa)) {
+			phonemeToIpaMap.values().remove(ipa);
 		}
 
-		ipaMap.put(phoneme.representation(), phoneme);
-		featureMap.put(phoneme.features(), phoneme.representation());
+		if (phonemeToIpaMap.containsKey(phoneme)) {
+			ipaToPhonemeMap.values().remove(phoneme);
+		}
+
+		ipaToPhonemeMap.put(ipa, phoneme);
+		phonemeToIpaMap.put(phoneme, ipa);
 	}
 
-	public void remove(String ipa) {
-		ipaMap.remove(ipa);
-		featureMap.values().remove(ipa);
+	public Phoneme removeMapping(String ipa) {
+		phonemeToIpaMap.values().remove(ipa);
+		return ipaToPhonemeMap.remove(ipa);
 	}
 
-	public void remove(Phoneme phoneme) {
-		ipaMap.remove(phoneme.representation());
-		featureMap.values().remove(phoneme.representation());
+	public String removeMapping(Phoneme phoneme) {
+		ipaToPhonemeMap.values().remove(phoneme);
+		return phonemeToIpaMap.remove(phoneme);
 	}
 
 	@Override
-	public boolean hasIpa(String ipa) {
-		return ipaMap.containsKey(ipa);
+	public boolean canMap(Phoneme phoneme) {
+		return phonemeToIpaMap.containsKey(phoneme);
 	}
 
 	@Override
-	public boolean canMapTo(Phoneme phoneme) {
-		return ipaMap.containsValue(phoneme);
+	public boolean canMap(String ipa) {
+		return ipaToPhonemeMap.containsKey(ipa);
+	}
+
+	@Override
+	public String getIpa(Phoneme phoneme) {
+		return phonemeToIpaMap.get(phoneme);
 	}
 
 	@Override
 	public Phoneme getPhoneme(String ipa) {
-		return ipaMap.get(ipa);
+		return ipaToPhonemeMap.get(ipa);
 	}
 
 	@Override
-	public String getIpa(Map<String, String> features) {
-		return featureMap.get(features);
-	}
-
-	@Override
-	public boolean hasIpaForFeatures(Map<String, String> features) {
-		return featureMap.containsKey(features);
+	public Set<Entry> entrySet() {
+		return ipaToPhonemeMap.entrySet().stream()
+				.map(entry -> new Entry(entry.getKey(), entry.getValue()))
+				.collect(Collectors.toSet());
 	}
 
 }

@@ -1,43 +1,36 @@
 package net.calebscode.langtool.phonology.phoneme;
 
-import java.util.Map;
+import java.util.Set;
 
+/**
+ * Maps between Phonemes and IPA Strings.
+ *
+ * For all <code>IpaPhonemeMapper</code>s, any Phoneme or IPA String x which has a valid mapping
+ * must satisfy the following conditions:
+ * <li><code>getIpa(getPhoneme(x)).equals(x)</code>
+ * <li><code>getPhoneme(getIpa(x)).equals(x)</code>
+ */
 public interface IpaPhonemeMapper {
 
 	/**
-	 * Returns whether or not <code>ipa</code> can map to a single phoneme.
-	 * @param ipa
-	 * @return true if this mapper contains a mapping for <code>ipa</code>; false otherwise
-	 */
-	public boolean hasIpa(String ipa);
-
-	/**
-	 * Returns whether or not this mapper is capable of producing the given phoneme.
+	 * Whether or not this mapper can convert the Phoneme into an IPA String.
 	 * @param phoneme
 	 * @return
 	 */
-	public boolean canMapTo(Phoneme phoneme);
+	public boolean canMap(Phoneme phoneme);
 
 	/**
-	 * Retrieves the phoneme for a given ipa string.
+	 * Whether or not this mapper can conver the IPA String into a Phoneme.
 	 * @param ipa
-	 * @return the <code>Phoneme</code> associated with the ipa string; null if no mapping
+	 * @return
 	 */
+	public boolean canMap(String ipa);
+
+	public String getIpa(Phoneme phoneme);
 	public Phoneme getPhoneme(String ipa);
 
-	/**
-	 * Retrieves an IPA String for a Phoneme with the specified features.
-	 * @param features
-	 * @return
-	 */
-	public String getIpa(Map<String, String> features);
+	public Set<Entry> entrySet();
 
-	/**
-	 * Returns whether or not this mapper can convert the given feature set into
-	 * an IPA String.
-	 * @param features
-	 * @return
-	 */
-	public boolean hasIpaForFeatures(Map<String, String> features);
+	public record Entry(String ipa, Phoneme phoneme) {}
 
 }

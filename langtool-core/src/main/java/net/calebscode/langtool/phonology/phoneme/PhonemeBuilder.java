@@ -5,20 +5,12 @@ import java.util.Map;
 
 public class PhonemeBuilder {
 
-	private String representation;
 	private Map<String, String> features = new HashMap<>();
 
-	public PhonemeBuilder() {
-		this("");
-	}
+	public PhonemeBuilder() {}
 
-	public PhonemeBuilder(String representation) {
-		this.representation = representation;
-	}
-
-	public PhonemeBuilder withRepresentation(String representation) {
-		this.representation = representation;
-		return this;
+	public PhonemeBuilder(Phoneme template) {
+		features.putAll(template.features());
 	}
 
 	public PhonemeBuilder withFeature(String featureName, String featureValue) {
@@ -27,7 +19,7 @@ public class PhonemeBuilder {
 	}
 
 	public Phoneme build() {
-		return new Phoneme(representation, features);
+		return new Phoneme(features);
 	}
 
 }

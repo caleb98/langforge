@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class PhonemeSequence {
+import net.calebscode.langtool.phonology.IpaRenderable;
+
+public class PhonemeSequence implements IpaRenderable {
 
 	public static final PhonemeSequence EMPTY = new PhonemeSequence();
 
@@ -99,7 +101,7 @@ public class PhonemeSequence {
 	}
 
 	@Override
-	public String toString() {
+	public String render(IpaPhonemeMapper mapper) {
 		if (phonemes.size() == 0) {
 			return "";
 		}
@@ -110,11 +112,11 @@ public class PhonemeSequence {
 				var meta = metadata.get(index);
 
 				if (meta.isWordStart) {
-					return "#" + phoneme.representation();
+					return "#" + mapper.getIpa(phoneme);
 				} else if (meta.isSyllableStart) {
-					return "." + phoneme.representation();
+					return "." + mapper.getIpa(phoneme);
 				} else {
-					return phoneme.representation();
+					return mapper.getIpa(phoneme);
 				}
 			})
 			.collect(Collectors.joining());

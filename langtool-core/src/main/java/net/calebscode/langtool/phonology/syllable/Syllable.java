@@ -6,9 +6,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import net.calebscode.langtool.phonology.IpaRenderable;
+import net.calebscode.langtool.phonology.phoneme.IpaPhonemeMapper;
 import net.calebscode.langtool.phonology.phoneme.Phoneme;
 
-public class Syllable {
+public class Syllable implements IpaRenderable {
 
 	private static final Phoneme[] EMPTY_PHONEME_ARRAY = new Phoneme[0];
 
@@ -32,10 +34,8 @@ public class Syllable {
 	}
 
 	@Override
-	public String toString() {
-		return phonemeStream()
-				.map(phoneme -> phoneme.representation())
-				.collect(Collectors.joining());
+	public String render(IpaPhonemeMapper mapper) {
+		return phonemeStream().map(mapper::getIpa).collect(Collectors.joining());
 	}
 
 }

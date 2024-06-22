@@ -29,11 +29,12 @@ public class PhonologicalRuleMatcher implements PhonemeRepresentationMatcher {
 		this.rule = rule;
 	}
 
-	public void apply(PhonemeSequence sequence) {
+	public PhonemeSequence apply(PhonemeSequence inputSequence) {
 		position = 0;
 		binds.clear();
+		sequence = inputSequence;
 
-		this.sequence = sequence;
+		System.out.println("Applying rule " + rule.getSource() + " to " + sequence);
 
 		for (int start = 0; start < sequence.length(); start++) {
 			replacePosition = -1;
@@ -41,7 +42,7 @@ public class PhonologicalRuleMatcher implements PhonemeRepresentationMatcher {
 				System.out.printf("Found match at position %d. Replace at %d: ", start, replacePosition, position);
 				var oldSeq = sequence;
 
-				sequence = switch(rule.getMatch()) {
+				sequence = switch(rule.getReplacement()) {
 					case PhonemeLiteral literal -> sequence.replaceAt(replacePosition, literal.phoneme());
 					case PhonemeFeatureset features -> replaceFeatures(sequence, features);
 
@@ -49,15 +50,61 @@ public class PhonologicalRuleMatcher implements PhonemeRepresentationMatcher {
 					default -> throw new RuntimeException("Invalid match type: " + rule.getMatch().getClass());
 				};
 
-				start = 0;
-				System.out.printf("%s -> %s", oldSeq, sequence);
+				// Only restart processing if something actually changed
+				if (!oldSeq.equals(sequence)) {
+					start = -1;
+					System.out.printf("%s -> %s\n", oldSeq, sequence);
+				}
+				else {
+					System.out.println("Match caused no change.");
+				}
 			}
 		}
+
+		return sequence;
 	}
 
-	private PhonemeSequence replaceFeatures(PhonemeSequence sequence, PhonemeFeatureset features) {
-		var phoneme = sequence.phonemeAt(replacePosition);
-		return sequence;
+	private PhonemeSequence replaceFeatures(PhonemeSequence sequence, PhonemeFeatureset featureset) {
+		Map<String, String> newFeatures = new HashMap<>(sequence.phonemeAt(replacePosition).features());
+
+		for (var feature : featureset.features()) {
+			boolean isBound = feature.bindNumber() != -1;
+
+			// Not bound, not negated - just a regular feature
+			if (!isBound && !feature.negate()) {
+				newFeatures.put(feature.featureName(), feature.featureValue());
+			}
+
+			// Regular feature, but negated
+			else if (!isBound && feature.negate()) {
+				if (feature.featureName().isBlank()) {
+					while(newFeatures.values().remove(feature.featureValue())) {}
+				} else {
+					newFeatures.remove(feature.featureName(), feature.featureValue());
+				}
+			}
+
+			// Bound and not negated, so we need to add the bound value
+			// to this feature name
+			else if (isBound && !feature.negate()) {
+				var bindValue = getBindValue(feature);
+				if (bindValue.isEmpty()) {
+					throw new RuntimeException("No bound value for replacment of feature type " + feature.featureName());
+				}
+				newFeatures.put(feature.featureName(), bindValue.get());
+			}
+
+			// Bound and negated. Remove the feature matching the bound feature name/value
+			else {
+				var bindValue = getBindValue(feature);
+				if (bindValue.isEmpty()) {
+					throw new RuntimeException("No bound value for replacment of feature type " + feature.featureName());
+				}
+				newFeatures.remove(feature.featureName(), bindValue.get());
+			}
+		}
+
+		return sequence.replaceAt(replacePosition, new Phoneme(newFeatures));
 	}
 
 	private boolean tryMatch(int start) {

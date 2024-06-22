@@ -3,13 +3,15 @@ package net.calebscode.langtool.phonology.phoneme;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class IpaPhonemeMapTest {
 
-	private final Phoneme testPhoneme = new Phoneme("a", Map.of("foo", "bar"));
+	private final Phoneme testPhoneme1 = new Phoneme(Map.of("foo", "bar"));
+	private final Phoneme testPhoneme2 = new Phoneme(Map.of("zig", "zag"));
 
 	private IpaPhonemeMap phonemeMap;
 
@@ -20,92 +22,101 @@ public class IpaPhonemeMapTest {
 
 	@Test
 	void add() {
-		phonemeMap.add(testPhoneme);
+		phonemeMap.addMapping("a", testPhoneme1);
+		phonemeMap.addMapping("b", testPhoneme2);
 
-		assertTrue(phonemeMap.hasIpa("a"));
-		assertTrue(phonemeMap.canMapTo(testPhoneme));
-		assertEquals(testPhoneme, phonemeMap.getPhoneme("a"));
-	}
+		assertEquals("a", phonemeMap.getIpa(testPhoneme1));
+		assertEquals("b", phonemeMap.getIpa(testPhoneme2));
 
-	@Test
-	void addThrowsIfPhonemePresent() {
-		var sameIpaPhoneme = new Phoneme("a", Map.of("foo", "bar"));
-		phonemeMap.add(testPhoneme);
+		assertEquals(testPhoneme1, phonemeMap.getPhoneme("a"));
+		assertEquals(testPhoneme2, phonemeMap.getPhoneme("b"));
 
-		assertThrows(IllegalArgumentException.class, () -> phonemeMap.add(sameIpaPhoneme));
-		assertThrows(IllegalArgumentException.class, () -> phonemeMap.add(testPhoneme));
-	}
+		phonemeMap.addMapping("b", testPhoneme1);
 
-	@Test
-	void removeIpa() {
-		phonemeMap.add(testPhoneme);
+		assertEquals("b", phonemeMap.getIpa(testPhoneme1));
+		assertEquals(testPhoneme1, phonemeMap.getPhoneme("b"));
 
-		assertTrue(phonemeMap.hasIpa("a"));
-		assertTrue(phonemeMap.hasIpaForFeatures(Map.of("foo", "bar")));
+		assertFalse(phonemeMap.canMap(testPhoneme2));
+		assertFalse(phonemeMap.canMap("a"));
 
-		phonemeMap.remove("a");
-
-		assertFalse(phonemeMap.hasIpa("a"));
-		assertFalse(phonemeMap.hasIpaForFeatures(Map.of("foo", "bar")));
-	}
-
-	@Test
-	void removePhoneme() {
-		phonemeMap.add(testPhoneme);
-
-		assertTrue(phonemeMap.hasIpa("a"));
-		assertTrue(phonemeMap.hasIpaForFeatures(Map.of("foo", "bar")));
-
-		phonemeMap.remove(testPhoneme);
-
-		assertFalse(phonemeMap.hasIpa("a"));
-		assertFalse(phonemeMap.hasIpaForFeatures(Map.of("foo", "bar")));
-	}
-
-	@Test
-	void hasIpa() {
-		assertFalse(phonemeMap.hasIpa("a"));
-
-		phonemeMap.add(testPhoneme);
-
-		assertTrue(phonemeMap.hasIpa("a"));
-	}
-
-	@Test
-	void canMapTo() {
-		assertFalse(phonemeMap.canMapTo(testPhoneme));
-
-		phonemeMap.add(testPhoneme);
-
-		assertTrue(phonemeMap.canMapTo(testPhoneme));
-	}
-
-	@Test
-	void getPhoneme() {
-		phonemeMap.add(testPhoneme);
-
-		assertEquals(testPhoneme, phonemeMap.getPhoneme("a"));
-	}
-
-	@Test
-	void getPhonemeMissing() {
+		assertNull(phonemeMap.getIpa(testPhoneme2));
 		assertNull(phonemeMap.getPhoneme("a"));
 	}
 
 	@Test
-	void getIpa() {
-		phonemeMap.add(testPhoneme);
+	void removeMapping() {
+		phonemeMap.addMapping("a", testPhoneme1);
+		phonemeMap.addMapping("b", testPhoneme2);
 
-		assertEquals("a", phonemeMap.getIpa(Map.of("foo", "bar")));
+		assertEquals("a", phonemeMap.getIpa(testPhoneme1));
+		assertEquals("b", phonemeMap.getIpa(testPhoneme2));
+
+		assertEquals(testPhoneme1, phonemeMap.getPhoneme("a"));
+		assertEquals(testPhoneme2, phonemeMap.getPhoneme("b"));
+
+		phonemeMap.removeMapping(testPhoneme1);
+
+		assertFalse(phonemeMap.canMap(testPhoneme1));
+		assertFalse(phonemeMap.canMap("a"));
+
+		assertNull(phonemeMap.getIpa(testPhoneme1));
+		assertNull(phonemeMap.getPhoneme("a"));
+
+		phonemeMap.removeMapping("b");
+
+		assertFalse(phonemeMap.canMap(testPhoneme2));
+		assertFalse(phonemeMap.canMap("b"));
+
+		assertNull(phonemeMap.getIpa(testPhoneme2));
+		assertNull(phonemeMap.getPhoneme("b"));
 	}
 
 	@Test
-	void hasIpaForFeatures() {
-		assertFalse(phonemeMap.hasIpaForFeatures(Map.of("foo", "bar")));
+	void canMap() {
+		phonemeMap.addMapping("a", testPhoneme1);
 
-		phonemeMap.add(testPhoneme);
+		assertTrue(phonemeMap.canMap("a"));
+		assertTrue(phonemeMap.canMap(testPhoneme1));
+		assertTrue(phonemeMap.canMap(new Phoneme(Map.of("foo", "bar"))));
 
-		assertTrue(phonemeMap.hasIpaForFeatures(Map.of("foo", "bar")));
+		assertFalse(phonemeMap.canMap("b"));
+		assertFalse(phonemeMap.canMap(testPhoneme2));
+		assertFalse(phonemeMap.canMap(new Phoneme(Map.of("zig", "zag"))));
+	}
+
+	@Test
+	void getIpa() {
+		phonemeMap.addMapping("a", testPhoneme1);
+
+		assertEquals("a", phonemeMap.getIpa(testPhoneme1));
+		assertEquals("a", phonemeMap.getIpa(new Phoneme(Map.of("foo", "bar"))));
+
+		assertNull(phonemeMap.getIpa(testPhoneme2));
+		assertNull(phonemeMap.getIpa(new Phoneme(Map.of("zig", "zag"))));
+	}
+
+	@Test
+	void getPhoneme() {
+		phonemeMap.addMapping("a", testPhoneme1);
+
+		assertEquals(testPhoneme1, phonemeMap.getPhoneme("a"));
+		assertNull(phonemeMap.getPhoneme("b"));
+	}
+
+	@Test
+	void entrySet() {
+		phonemeMap.addMapping("a", testPhoneme1);
+
+		assertEquals(Set.of(new IpaPhonemeMapper.Entry("a", testPhoneme1)), phonemeMap.entrySet());
+		assertEquals(Set.of(new IpaPhonemeMapper.Entry("a", new Phoneme(Map.of("foo", "bar")))), phonemeMap.entrySet());
+	}
+
+	@Test
+	void validateInvariant() {
+		phonemeMap.addMapping("a", testPhoneme1);
+
+		assertEquals("a", phonemeMap.getIpa(phonemeMap.getPhoneme("a")));
+		assertEquals(testPhoneme1, phonemeMap.getPhoneme(phonemeMap.getIpa(testPhoneme1)));
 	}
 
 }

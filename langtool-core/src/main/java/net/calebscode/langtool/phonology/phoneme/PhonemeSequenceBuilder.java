@@ -14,6 +14,34 @@ public class PhonemeSequenceBuilder {
 	private boolean foundWordBoundary = false;
 	private boolean foundSyllableBoundary = false;
 
+	public void append(String ipa, IpaPhonemeMapper mapper) {
+		for (int i = 0; i < ipa.length(); i++) {
+			if (ipa.charAt(i) == '#') {
+				foundWordBoundary = true;
+			}
+			else if (ipa.charAt(i) == '.') {
+				foundSyllableBoundary = true;
+			}
+			else {
+
+				String longestMatch = null;
+				for (int k = i + 1; k <= ipa.length(); k++) {
+					String sub = ipa.substring(i, k);
+					if (mapper.canMap(sub)) {
+						longestMatch = sub;
+					}
+				}
+
+				if (longestMatch == null) {
+					throw new RuntimeException("Unable to append IPA '" + ipa + "'. Unmappable IPA sequence at position " + i);
+				}
+
+				append(mapper.getPhoneme(longestMatch));
+
+			}
+		}
+	}
+
 	public void append(Phoneme phoneme) {
 		var newMeta = new PhonemeMetadata(foundSyllableBoundary, false, foundWordBoundary, false);
 

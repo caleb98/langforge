@@ -5,10 +5,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-public record Phoneme(String representation, Map<String, String> features) {
+public record Phoneme(Map<String, String> features) {
 
-	public Phoneme(String representation, Map<String, String> features) {
-		this.representation = representation;
+	public Phoneme(Map<String, String> features) {
 		this.features = Collections.unmodifiableMap(features);
 	}
 

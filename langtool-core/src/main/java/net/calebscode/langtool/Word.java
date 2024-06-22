@@ -4,9 +4,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import net.calebscode.langtool.phonology.IpaRenderable;
+import net.calebscode.langtool.phonology.phoneme.IpaPhonemeMapper;
 import net.calebscode.langtool.phonology.syllable.Syllable;
 
-public class Word {
+public class Word implements IpaRenderable {
 
 	private List<Syllable> syllables = new ArrayList<>();
 
@@ -21,10 +23,11 @@ public class Word {
 	}
 
 	@Override
-	public String toString() {
+	public String render(IpaPhonemeMapper mapper) {
 		return syllables.stream()
-			.map(syllable -> syllable.toString())
-			.collect(Collectors.joining("."));
+				.flatMap(Syllable::phonemeStream)
+				.map(mapper::getIpa)
+				.collect(Collectors.joining());
 	}
 
 }
