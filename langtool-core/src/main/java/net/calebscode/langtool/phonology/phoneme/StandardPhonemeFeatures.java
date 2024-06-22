@@ -5,8 +5,8 @@ public class StandardPhonemeFeatures {
 	// Feature Names
 	public static final String CATEGORY = "category";
 	public static final String VOICING = "voicing";
-	public static final String PLACE = "place of articulation";
-	public static final String TYPE = "type of articulation";
+	public static final String PLACE = "place";
+	public static final String TYPE = "type";
 	public static final String OPENNESS = "openness";
 	public static final String BACKNESS = "backness";
 	public static final String ROUNDEDNESS = "roundedness";

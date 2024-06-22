@@ -14,7 +14,7 @@ public class PhonemeSequenceBuilder {
 	private boolean foundWordBoundary = false;
 	private boolean foundSyllableBoundary = false;
 
-	public void append(String ipa, IpaPhonemeMapper mapper) {
+	public PhonemeSequenceBuilder append(String ipa, IpaPhonemeMapper mapper) {
 		for (int i = 0; i < ipa.length(); i++) {
 			if (ipa.charAt(i) == '#') {
 				foundWordBoundary = true;
@@ -40,35 +40,42 @@ public class PhonemeSequenceBuilder {
 
 			}
 		}
+
+		return this;
 	}
 
-	public void append(Phoneme phoneme) {
+	public PhonemeSequenceBuilder append(Phoneme phoneme) {
 		var newMeta = new PhonemeMetadata(foundSyllableBoundary, false, foundWordBoundary, false);
 
 		finalizePreviousPhonemeMetadata();
 
 		phonemes.add(phoneme);
 		metadata.add(newMeta);
+		return this;
 	}
 
-	public void append(Syllable syllable) {
+	public PhonemeSequenceBuilder append(Syllable syllable) {
 		appendSyllableBoundary();
 		syllable.phonemeStream().forEach(this::append);
 		appendSyllableBoundary();
+		return this;
 	}
 
-	public void append(Word word) {
+	public PhonemeSequenceBuilder append(Word word) {
 		appendWordBoundary();
 		word.getSyllables().forEach(this::append);
 		appendWordBoundary();
+		return this;
 	}
 
-	public void appendSyllableBoundary() {
+	public PhonemeSequenceBuilder appendSyllableBoundary() {
 		foundSyllableBoundary = true;
+		return this;
 	}
 
-	public void appendWordBoundary() {
+	public PhonemeSequenceBuilder appendWordBoundary() {
 		foundWordBoundary = true;
+		return this;
 	}
 
 	public PhonemeSequence build() {

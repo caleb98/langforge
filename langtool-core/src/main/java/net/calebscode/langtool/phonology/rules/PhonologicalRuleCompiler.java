@@ -22,21 +22,14 @@ public class PhonologicalRuleCompiler extends Compiler<PhonologicalRule> {
 	}
 
 	private PhonologicalRule rule(String source) {
-		var match = phoneme();
+		var match = ruleMatch();
 
 		skipWhitespace();
 		expect('-', "Expected '->' after rule match.");
 		expect('>', "Expected '->' after rule match.");
 		skipWhitespace();
 
-		expect('[', "Expected '[' before replacement.");
-		PhonemeRepresentation replacement;
-		if (test('+') || test('-') || Character.isDigit(current())) {
-			replacement = phonemeFeatureset();
-		}
-		else {
-			replacement = replacementPhone();
-		}
+		PhonemeRepresentation replacement = ruleReplacement();
 
 		skipWhitespace();
 		expect('/', "Expected '/' after replacement phone.");
@@ -59,6 +52,28 @@ public class PhonologicalRuleCompiler extends Compiler<PhonologicalRule> {
 		}
 
 		return new PhonologicalRule(source, match, replacement, preMatches, postMatches);
+	}
+
+	private PhonemeRepresentation ruleReplacement() {
+		if (match('~')) {
+			return new NullPhoneme();
+		}
+
+		expect('[', "Expected '[' before replacement.");
+		if (test('+') || test('-') || Character.isDigit(current())) {
+			return phonemeFeatureset();
+		}
+		else {
+			return replacementPhone();
+		}
+	}
+
+	private PhonemeRepresentation ruleMatch() {
+		if (match('~')) {
+			return new NullPhoneme();
+		}
+
+		return phoneme();
 	}
 
 	private PhonemeRepresentation phonemeRepresentation() {
@@ -193,6 +208,7 @@ public class PhonologicalRuleCompiler extends Compiler<PhonologicalRule> {
 	public interface PhonemeRepresentationMatcher {
 		public boolean matchesWordBoundary(WordBoundary wordBoundary);
 		public boolean matchesSyllableBoundary(SyllableBoundary syllableBoundary);
+		public boolean matchesNullPhoneme(NullPhoneme nullPhoneme);
 		public boolean matchesPhonemeLiteral(PhonemeLiteral phonemeLiteral);
 		public boolean matchesPhonemeFeatureset(PhonemeFeatureset phonemeFeatureset);
 	}
@@ -212,6 +228,13 @@ public class PhonologicalRuleCompiler extends Compiler<PhonologicalRule> {
 		@Override
 		public boolean match(PhonemeRepresentationMatcher matcher) {
 			return matcher.matchesSyllableBoundary(this);
+		}
+	}
+
+	public record NullPhoneme() implements PhonemeRepresentation {
+		@Override
+		public boolean match(PhonemeRepresentationMatcher matcher) {
+			return matcher.matchesNullPhoneme(this);
 		}
 	}
 

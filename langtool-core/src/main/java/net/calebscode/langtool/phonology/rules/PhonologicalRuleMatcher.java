@@ -9,7 +9,9 @@ import java.util.stream.Collectors;
 
 import net.calebscode.langtool.phonology.phoneme.Phoneme;
 import net.calebscode.langtool.phonology.phoneme.PhonemeSequence;
+import net.calebscode.langtool.phonology.phoneme.PhonemeSequenceBuilder;
 import net.calebscode.langtool.phonology.rules.PhonologicalRuleCompiler.Feature;
+import net.calebscode.langtool.phonology.rules.PhonologicalRuleCompiler.NullPhoneme;
 import net.calebscode.langtool.phonology.rules.PhonologicalRuleCompiler.PhonemeFeatureset;
 import net.calebscode.langtool.phonology.rules.PhonologicalRuleCompiler.PhonemeLiteral;
 import net.calebscode.langtool.phonology.rules.PhonologicalRuleCompiler.PhonemeRepresentationMatcher;
@@ -31,32 +33,47 @@ public class PhonologicalRuleMatcher implements PhonemeRepresentationMatcher {
 
 	public PhonemeSequence apply(PhonemeSequence inputSequence) {
 		position = 0;
-		binds.clear();
 		sequence = inputSequence;
 
-		System.out.println("Applying rule " + rule.getSource() + " to " + sequence);
+		System.out.println("Applying rule: " + rule.getSource() + "");
 
 		for (int start = 0; start < sequence.length(); start++) {
+			binds.clear();
 			replacePosition = -1;
 			if (tryMatch(start)) {
-				System.out.printf("Found match at position %d. Replace at %d: ", start, replacePosition, position);
+				System.out.printf("Found match at position %d, replace at %d: ", start, replacePosition);
 				var oldSeq = sequence;
 
-				sequence = switch(rule.getReplacement()) {
-					case PhonemeLiteral literal -> sequence.replaceAt(replacePosition, literal.phoneme());
-					case PhonemeFeatureset features -> replaceFeatures(sequence, features);
+				// Check for insertion
+				if (rule.getMatch() instanceof NullPhoneme) {
+					sequence = switch(rule.getReplacement()) {
+						case NullPhoneme nullPhoneme -> sequence; // TODO: warning here? The rule does nothing since it's replacing nothing with nothing...
+						case PhonemeLiteral literal -> insertPhoneme(literal);
 
-					case null -> throw new RuntimeException("Invalid match type: null");
-					default -> throw new RuntimeException("Invalid match type: " + rule.getMatch().getClass());
-				};
+						case PhonemeFeatureset f -> throw new RuntimeException("Can only apply insertion rule when replacement is a phoneme literal.");
+						case null -> throw new RuntimeException("Invalid replacement type: null");
+						default -> throw new RuntimeException("Invalid replacement type: " + rule.getMatch().getClass());
+					};
+				}
+				// Otherwise, we're updating the existing feature
+				else {
+					sequence = switch(rule.getReplacement()) {
+						case NullPhoneme nullPhoneme -> deletePhoneme();
+						case PhonemeLiteral literal -> sequence.replaceAt(replacePosition, literal.phoneme());
+						case PhonemeFeatureset features -> replaceFeatures(features);
+
+						case null -> throw new RuntimeException("Invalid replacement type: null");
+						default -> throw new RuntimeException("Invalid replacement type: " + rule.getMatch().getClass());
+					};
+				}
 
 				// Only restart processing if something actually changed
 				if (!oldSeq.equals(sequence)) {
 					start = -1;
-					System.out.printf("%s -> %s\n", oldSeq, sequence);
+					System.out.printf("Sequence modified, restarting application.\n", oldSeq, sequence);
 				}
 				else {
-					System.out.println("Match caused no change.");
+					System.out.println("Match caused no change, continuing.");
 				}
 			}
 		}
@@ -64,7 +81,24 @@ public class PhonologicalRuleMatcher implements PhonemeRepresentationMatcher {
 		return sequence;
 	}
 
-	private PhonemeSequence replaceFeatures(PhonemeSequence sequence, PhonemeFeatureset featureset) {
+	private PhonemeSequence deletePhoneme() {
+		var front = sequence.subsequence(0, replacePosition);
+		var back = sequence.subsequence(replacePosition + 1);
+
+		return front.append(back);
+	}
+
+	private PhonemeSequence insertPhoneme(PhonemeLiteral literal) {
+		var front = sequence.subsequence(0, replacePosition);
+		var back = sequence.subsequence(replacePosition);
+
+		Phoneme insert = literal.phoneme();
+		var insertSeq = new PhonemeSequenceBuilder().append(insert).build();
+
+		return front.append(insertSeq).append(back);
+	}
+
+	private PhonemeSequence replaceFeatures(PhonemeFeatureset featureset) {
 		Map<String, String> newFeatures = new HashMap<>(sequence.phonemeAt(replacePosition).features());
 
 		for (var feature : featureset.features()) {
@@ -137,6 +171,11 @@ public class PhonologicalRuleMatcher implements PhonemeRepresentationMatcher {
 	@Override
 	public boolean matchesSyllableBoundary(SyllableBoundary syllableBoundary) {
 		return sequence.getTransition(position - 1).crossedSyllableBoundary();
+	}
+
+	@Override
+	public boolean matchesNullPhoneme(NullPhoneme nullPhoneme) {
+		return true;
 	}
 
 	@Override

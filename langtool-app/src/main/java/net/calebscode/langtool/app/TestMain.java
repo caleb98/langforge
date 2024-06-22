@@ -10,11 +10,11 @@ public class TestMain {
 	public static void main(String[] args) throws Exception {
 
 		var ruleCompiler = new PhonologicalRuleCompiler(STANDARD_IPA_PHONEMES);
-		var rule = ruleCompiler.compile("/a/ -> [b] / /c/ _ /c/");
+		var rule = ruleCompiler.compile("[0_place, 1_voicing, 2_type, +consonant] -> ~ / [0_place, 1_voicing, 2_type, +consonant] _");
 		var matcher = new PhonologicalRuleMatcher(rule);
 
 		var seqBuilder = new PhonemeSequenceBuilder();
-		seqBuilder.append("cac", STANDARD_IPA_PHONEMES);
+		seqBuilder.append("takkalogka", STANDARD_IPA_PHONEMES);
 		var seq = seqBuilder.build();
 
 		System.out.println(seq.render(STANDARD_IPA_PHONEMES));
