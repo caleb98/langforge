@@ -56,7 +56,7 @@ public class PhonemeSequenceBuilder {
 
 	public PhonemeSequenceBuilder append(Syllable syllable) {
 		appendSyllableBoundary();
-		syllable.phonemeStream().forEach(this::append);
+		syllable.phonemes().stream().forEach(this::append);
 		appendSyllableBoundary();
 		return this;
 	}

@@ -25,7 +25,7 @@ public class Word implements IpaRenderable {
 	@Override
 	public String render(IpaPhonemeMapper mapper) {
 		return syllables.stream()
-				.flatMap(Syllable::phonemeStream)
+				.flatMap(syllable -> syllable.phonemes().stream())
 				.map(mapper::getIpa)
 				.collect(Collectors.joining());
 	}
