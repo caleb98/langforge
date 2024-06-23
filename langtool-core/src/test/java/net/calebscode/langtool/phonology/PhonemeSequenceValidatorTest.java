@@ -55,6 +55,20 @@ public class PhonemeSequenceValidatorTest {
 	}
 
 	@Test
+	void revalidateInvalid2() {
+		categories.addGeneratablePhoneme('C', ipaPhoneme("k"));
+		categories.addGeneratablePhoneme('C', ipaPhoneme("j"));
+		categories.addGeneratablePhoneme('G', ipaPhoneme("j"));
+		categories.addGeneratablePhoneme('V', ipaPhoneme("o"));
+		var pattern = new SyllablePatternCompiler(categories).compile("CGVC");
+		var input = ipaSequence("kkjok");
+
+		var validated = validator.revalidate(input, pattern);
+
+		assertTrue(validated.isEmpty());
+	}
+
+	@Test
 	void revalidateMaximalOnset() {
 		categories.addGeneratablePhoneme('C', ipaPhoneme("b"));
 		categories.addGeneratablePhoneme('V', ipaPhoneme("o"));
