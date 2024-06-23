@@ -56,6 +56,10 @@ public class SyllablePatternCategoryMap {
 		entry.ungeneratable.add(phoneme);
 	}
 
+	public void removeCategory(Character category) {
+		categories.remove(category);
+	}
+
 	public void removePhoneme(Character category, Phoneme phoneme) {
 		var entry = categories.get(category);
 		if (entry == null) {
@@ -64,6 +68,16 @@ public class SyllablePatternCategoryMap {
 
 		entry.generatable.remove(phoneme);
 		entry.ungeneratable.remove(phoneme);
+	}
+
+	public Set<Character> computePhonemeCategories(Phoneme phoneme) {
+		var phonemeCategories = new HashSet<Character>();
+		for (var entry : categories.entrySet()) {
+			if (entry.getValue().generatable.contains(phoneme) || entry.getValue().ungeneratable.contains(phoneme)) {
+				phonemeCategories.add(entry.getKey());
+			}
+		}
+		return phonemeCategories;
 	}
 
 }

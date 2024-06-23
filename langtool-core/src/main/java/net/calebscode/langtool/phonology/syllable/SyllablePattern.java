@@ -26,6 +26,10 @@ public class SyllablePattern {
 		this.parts = parts;
 	}
 
+	public SyllablePatternCategoryMap getCategoryMap() {
+		return categoryMap;
+	}
+
 	public String randomPattern() {
 		StringBuilder sb = new StringBuilder();
 		for (var part : parts) {

@@ -1,6 +1,7 @@
 package net.calebscode.langtool.phonology.phoneme;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -26,6 +27,10 @@ public class PhonemeSequence implements IpaRenderable {
 
 		this.phonemes = phonemes;
 		this.metadata = metadata;
+	}
+
+	public List<Phoneme> getPhonemes() {
+		return Collections.unmodifiableList(phonemes);
 	}
 
 	/**
