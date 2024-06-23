@@ -97,6 +97,13 @@ public class SyllablePatternTest {
 		testPattern("C(C)V(C)", Set.of("CV", "CCV", "CVC", "CCVC"));
 		testPattern("(C|K)V",   Set.of("CV", "KV"                ));
 		testPattern("((C|K))V", Set.of("CV", "KV", "V"           ));
+
+		testPattern("((X)Y)" , Set.of("", "Y", "XY"));
+		testPattern("(((X)Y)Z)", Set.of("", "Z", "YZ", "XYZ"));
+		testPattern("(((X)Y)Z)A", Set.of("A", "ZA", "YZA", "XYZA"));
+
+		testPattern("(X|Y)", Set.of("X", "Y"));
+		testPattern("((X|Y))", Set.of("X", "Y", ""));
 	}
 
 	@Test
