@@ -1,5 +1,6 @@
 plugins {
     id 'buildlogic.java-application-conventions'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
 }
 
 dependencies {
@@ -7,5 +8,10 @@ dependencies {
 }
 
 application {
-    mainClass = 'org.example.app.App'
+    mainClass = 'net.calebscode.langtool.app.LangtoolApp'
+}
+
+javafx {
+    version = '21.0.3'
+    modules = [ 'javafx.controls' ]
 }
