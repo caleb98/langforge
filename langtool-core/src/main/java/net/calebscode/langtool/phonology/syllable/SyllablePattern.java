@@ -1,10 +1,8 @@
 package net.calebscode.langtool.phonology.syllable;
 
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.CATEGORY;
-import static net.calebscode.langtool.phonology.phoneme.StandardPhonemeFeatures.CATEGORY_VOWEL;
-
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -19,13 +17,17 @@ public class SyllablePattern {
 	private List<LiteralResolver> parts;
 
 	private Set<String> allPatterns;
-	private Set<String> allSyllables;
+	private Set<Syllable> allSyllables;
 
 	private Random rand = new Random();
 
 	public SyllablePattern(SyllablePatternCategoryMap categoryMap, List<LiteralResolver> parts) {
 		this.categoryMap = categoryMap;
 		this.parts = parts;
+	}
+
+	public SyllablePatternCategoryMap getCategoryMap() {
+		return categoryMap;
 	}
 
 	public String randomPattern() {
@@ -38,15 +40,18 @@ public class SyllablePattern {
 
 	public Set<String> allPatterns() {
 		if (allPatterns == null) {
-			allPatterns = Set.of("");
-			for (var part : parts) {
-				allPatterns = allPatterns.stream().flatMap(
-					existing -> part.resolveAll().stream().map(resolved -> existing + resolved)
-				).collect(Collectors.toSet());
-			}
+			generateAllPatterns();
 		}
-
 		return Collections.unmodifiableSet(allPatterns);
+	}
+
+	private void generateAllPatterns() {
+		allPatterns = Set.of("");
+		for (var part : parts) {
+			allPatterns = allPatterns.stream().flatMap(
+				existing -> part.resolveAll().stream().map(resolved -> existing + resolved)
+			).collect(Collectors.toSet());
+		}
 	}
 
 	public Syllable randomSyllable() {
@@ -55,52 +60,43 @@ public class SyllablePattern {
 				.mapToObj(categoryChar -> getRandomPhonemeForCategory((char) categoryChar))
 				.toList();
 
-		var onset = new ArrayList<Phoneme>();
-		var nucleus = new ArrayList<Phoneme>();
-		var coda = new ArrayList<Phoneme>();
-
-		int current = 0;
-		while (current < phonemes.size() && !phonemes.get(current).featureValueMatches(CATEGORY, CATEGORY_VOWEL)) {
-			onset.add(phonemes.get(current));
-			current++;
-		}
-
-		while (current < phonemes.size() && phonemes.get(current).featureValueMatches(CATEGORY, CATEGORY_VOWEL)) {
-			nucleus.add(phonemes.get(current));
-			current++;
-		}
-
-		while (current < phonemes.size()) {
-			coda.add(phonemes.get(current));
-			current++;
-		}
-
-		return new Syllable(
-			onset.toArray(new Phoneme[onset.size()]),
-			nucleus.toArray(new Phoneme[nucleus.size()]),
-			coda.toArray(new Phoneme[coda.size()])
-		);
+		return new Syllable(phonemes);
 	}
 
-	public Set<String> allSyllables() {
+	public Set<Syllable> allSyllables() {
 		if (allSyllables == null) {
-			allSyllables = allPatterns().stream()
-				.flatMap(pattern -> {
-					var all = Set.of("");
-					for (var categoryChar : pattern.toCharArray()) {
-						all = all.stream().flatMap(
-							existing -> categoryMap.getPhonemesForCategory(categoryChar).stream().map(phonemeSeq -> existing + phonemeSeq.toString())
-						).collect(Collectors.toSet());
-					}
-					return all.stream();
-				}).collect(Collectors.toSet());
+			generateAllSyllables();
+		}
+		return Collections.unmodifiableSet(allSyllables);
+	}
+
+	private void generateAllSyllables() {
+		Set<List<Phoneme>> allSequences = new HashSet<List<Phoneme>>();
+		for (var pattern : allPatterns()) {
+			allSequences.addAll(generateAllSyllables(List.of(), pattern));
 		}
 
-		return allSyllables;
+		allSyllables = allSequences.stream().map(Syllable::new).collect(Collectors.toSet());
+	}
+
+	private Set<List<Phoneme>> generateAllSyllables(List<Phoneme> currentSyllable, String pattern) {
+		if (pattern.length() == 0) {
+			return Set.of(currentSyllable);
+		}
+
+		var outcomes = new HashSet<List<Phoneme>>();
+		var generatable = categoryMap.getGeneratablePhonemes(pattern.charAt(0));
+		for (Phoneme phonemeToAdd : generatable) {
+			var modifiedSyllable = new ArrayList<>(currentSyllable);
+			modifiedSyllable.add(phonemeToAdd);
+			outcomes.addAll(generateAllSyllables(modifiedSyllable, pattern.substring(1)));
+		}
+
+		return outcomes;
 	}
 
 	private Phoneme getRandomPhonemeForCategory(Character categoryChar) {
-		var options = categoryMap.getPhonemesForCategory(categoryChar);
+		var options = categoryMap.getGeneratablePhonemes(categoryChar);
 		if (options.isEmpty()) {
 			throw new RuntimeException("Invalid class character '" + categoryChar + "'. No phonemes available for this class.");
 		}

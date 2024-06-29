@@ -7,6 +7,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import net.calebscode.langtool.phonology.PhonemeSequenceValidationException;
+import net.calebscode.langtool.phonology.PhonemeSequenceValidator;
+import net.calebscode.langtool.phonology.PhonologicalRuleApplicationException;
 import net.calebscode.langtool.phonology.phoneme.Phoneme;
 import net.calebscode.langtool.phonology.phoneme.PhonemeSequence;
 import net.calebscode.langtool.phonology.phoneme.PhonemeSequenceBuilder;
@@ -18,7 +21,7 @@ import net.calebscode.langtool.phonology.rules.PhonologicalRuleCompiler.PhonemeR
 import net.calebscode.langtool.phonology.rules.PhonologicalRuleCompiler.SyllableBoundary;
 import net.calebscode.langtool.phonology.rules.PhonologicalRuleCompiler.WordBoundary;
 
-public class PhonologicalRuleMatcher implements PhonemeRepresentationMatcher {
+public class PhonologicalRuleApplicator implements PhonemeRepresentationMatcher {
 
 	private PhonologicalRule rule;
 
@@ -27,21 +30,25 @@ public class PhonologicalRuleMatcher implements PhonemeRepresentationMatcher {
 	private int replacePosition;
 	private Map<BindKey, String> binds = new HashMap<>();
 
-	public PhonologicalRuleMatcher(PhonologicalRule rule) {
+	public PhonologicalRuleApplicator(PhonologicalRule rule) {
 		this.rule = rule;
 	}
 
-	public PhonemeSequence apply(PhonemeSequence inputSequence) {
+	/**
+	 * @param inputSequence
+	 * @param validator
+	 * @param lenient whether or the rule application should fail if a sequence cannot be validated
+	 * @return
+	 * @throws PhonologicalRuleApplicationException
+	 */
+	public PhonemeSequence apply(PhonemeSequence inputSequence, PhonemeSequenceValidator validator, boolean lenient) throws PhonologicalRuleApplicationException {
 		position = 0;
 		sequence = inputSequence;
-
-		System.out.println("Applying rule: " + rule.getSource() + "");
 
 		for (int start = 0; start < sequence.length(); start++) {
 			binds.clear();
 			replacePosition = -1;
 			if (tryMatch(start)) {
-				System.out.printf("Found match at position %d, replace at %d: ", start, replacePosition);
 				var oldSeq = sequence;
 
 				// Check for insertion
@@ -50,9 +57,9 @@ public class PhonologicalRuleMatcher implements PhonemeRepresentationMatcher {
 						case NullPhoneme nullPhoneme -> sequence; // TODO: warning here? The rule does nothing since it's replacing nothing with nothing...
 						case PhonemeLiteral literal -> insertPhoneme(literal);
 
-						case PhonemeFeatureset f -> throw new RuntimeException("Can only apply insertion rule when replacement is a phoneme literal.");
-						case null -> throw new RuntimeException("Invalid replacement type: null");
-						default -> throw new RuntimeException("Invalid replacement type: " + rule.getMatch().getClass());
+						case PhonemeFeatureset f -> throw new PhonologicalRuleApplicationException("Can only apply insertion rule when replacement is a phoneme literal.");
+						case null -> throw new PhonologicalRuleApplicationException("Invalid replacement type: null");
+						default -> throw new PhonologicalRuleApplicationException("Invalid replacement type: " + rule.getMatch().getClass());
 					};
 				}
 				// Otherwise, we're updating the existing feature
@@ -62,22 +69,34 @@ public class PhonologicalRuleMatcher implements PhonemeRepresentationMatcher {
 						case PhonemeLiteral literal -> sequence.replaceAt(replacePosition, literal.phoneme());
 						case PhonemeFeatureset features -> replaceFeatures(features);
 
-						case null -> throw new RuntimeException("Invalid replacement type: null");
-						default -> throw new RuntimeException("Invalid replacement type: " + rule.getMatch().getClass());
+						case null -> throw new PhonologicalRuleApplicationException("Invalid replacement type: null");
+						default -> throw new PhonologicalRuleApplicationException("Invalid replacement type: " + rule.getMatch().getClass());
 					};
 				}
 
 				// Only restart processing if something actually changed
 				if (!oldSeq.equals(sequence)) {
 					start = -1;
-					System.out.printf("Sequence modified, restarting application.\n", oldSeq, sequence);
-				}
-				else {
-					System.out.println("Match caused no change, continuing.");
+					try {
+						sequence = validator.revalidate(sequence);
+					} catch (PhonemeSequenceValidationException ex) {
+						if (!lenient) {
+							 var message = String.format("Unable to apply rule: %s", ex.getMessage());
+							 throw new PhonologicalRuleApplicationException(message, ex);
+						}
+					}
 				}
 			}
 		}
 
+		try {
+			sequence = validator.revalidate(sequence);
+		} catch (PhonemeSequenceValidationException ex) {
+			if (!lenient) {
+				 var message = String.format("Unable to apply rule: %s", ex.getMessage());
+				 throw new PhonologicalRuleApplicationException(message, ex);
+			}
+		}
 		return sequence;
 	}
 
@@ -98,7 +117,7 @@ public class PhonologicalRuleMatcher implements PhonemeRepresentationMatcher {
 		return front.append(insertSeq).append(back);
 	}
 
-	private PhonemeSequence replaceFeatures(PhonemeFeatureset featureset) {
+	private PhonemeSequence replaceFeatures(PhonemeFeatureset featureset) throws PhonologicalRuleApplicationException {
 		Map<String, String> newFeatures = new HashMap<>(sequence.phonemeAt(replacePosition).features());
 
 		for (var feature : featureset.features()) {
@@ -123,7 +142,7 @@ public class PhonologicalRuleMatcher implements PhonemeRepresentationMatcher {
 			else if (isBound && !feature.negate()) {
 				var bindValue = getBindValue(feature);
 				if (bindValue.isEmpty()) {
-					throw new RuntimeException("No bound value for replacment of feature type " + feature.featureName());
+					throw new PhonologicalRuleApplicationException("No bound value for replacment of feature type " + feature.featureName());
 				}
 				newFeatures.put(feature.featureName(), bindValue.get());
 			}
@@ -132,7 +151,7 @@ public class PhonologicalRuleMatcher implements PhonemeRepresentationMatcher {
 			else {
 				var bindValue = getBindValue(feature);
 				if (bindValue.isEmpty()) {
-					throw new RuntimeException("No bound value for replacment of feature type " + feature.featureName());
+					throw new PhonologicalRuleApplicationException("No bound value for replacment of feature type " + feature.featureName());
 				}
 				newFeatures.remove(feature.featureName(), bindValue.get());
 			}
