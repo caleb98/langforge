@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import net.calebscode.langtool.phonology.phoneme.IpaMappingException;
 import net.calebscode.langtool.phonology.phoneme.Phoneme;
 import net.calebscode.langtool.phonology.phoneme.PhonemeSequence;
 import net.calebscode.langtool.phonology.phoneme.PhonemeSequenceBuilder;
@@ -23,7 +24,7 @@ public class PhonemeSequenceValidatorTest {
 	}
 
 	@Test
-	void revalidate() throws PhonemeSequenceValidationException {
+	void revalidate() throws PhonemeSequenceValidationException, IpaMappingException {
 		categories.addGeneratablePhoneme('C', ipaPhoneme("k"));
 		categories.addGeneratablePhoneme('C', ipaPhoneme("j"));
 		categories.addGeneratablePhoneme('G', ipaPhoneme("j"));
@@ -38,7 +39,7 @@ public class PhonemeSequenceValidatorTest {
 	}
 
 	@Test
-	void revalidateInvalid() {
+	void revalidateInvalid() throws IpaMappingException {
 		categories.addGeneratablePhoneme('C', ipaPhoneme("k"));
 		categories.addGeneratablePhoneme('C', ipaPhoneme("j"));
 		categories.addGeneratablePhoneme('G', ipaPhoneme("j"));
@@ -51,7 +52,7 @@ public class PhonemeSequenceValidatorTest {
 	}
 
 	@Test
-	void revalidateInvalid2() {
+	void revalidateInvalid2() throws IpaMappingException {
 		categories.addGeneratablePhoneme('C', ipaPhoneme("k"));
 		categories.addGeneratablePhoneme('C', ipaPhoneme("j"));
 		categories.addGeneratablePhoneme('G', ipaPhoneme("j"));
@@ -64,7 +65,7 @@ public class PhonemeSequenceValidatorTest {
 	}
 
 	@Test
-	void revalidateMaximalOnset() throws PhonemeSequenceValidationException {
+	void revalidateMaximalOnset() throws PhonemeSequenceValidationException, IpaMappingException {
 		categories.addGeneratablePhoneme('C', ipaPhoneme("b"));
 		categories.addGeneratablePhoneme('V', ipaPhoneme("o"));
 		var pattern = new SyllablePatternCompiler(categories).compile("(C)(C)(C)(C)VC");
@@ -77,7 +78,7 @@ public class PhonemeSequenceValidatorTest {
 	}
 
 	@Test
-	void revalidateMaximalOnset2() throws PhonemeSequenceValidationException {
+	void revalidateMaximalOnset2() throws PhonemeSequenceValidationException, IpaMappingException {
 		categories.addGeneratablePhoneme('X', ipaPhoneme("t"));
 		categories.addGeneratablePhoneme('Y', ipaPhoneme("k"));
 		categories.addGeneratablePhoneme('Z', ipaPhoneme("p"));
@@ -90,14 +91,14 @@ public class PhonemeSequenceValidatorTest {
 		assertEquals(".op.tkpokpk.o.", validated.render(STANDARD_IPA_PHONEMES));
 	}
 
-	private static Phoneme ipaPhoneme(String ipaString) {
+	private static Phoneme ipaPhoneme(String ipaString) throws IpaMappingException {
 		return new PhonemeSequenceBuilder()
 				.append(ipaString, STANDARD_IPA_PHONEMES)
 				.build()
 				.phonemeAt(0);
 	}
 
-	private static PhonemeSequence ipaSequence(String ipaString) {
+	private static PhonemeSequence ipaSequence(String ipaString) throws IpaMappingException {
 		return new PhonemeSequenceBuilder()
 				.append(ipaString, STANDARD_IPA_PHONEMES)
 				.build();

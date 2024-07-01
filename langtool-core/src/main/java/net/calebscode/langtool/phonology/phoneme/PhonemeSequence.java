@@ -16,8 +16,8 @@ public class PhonemeSequence implements IpaRenderable {
 	private List<PhonemeMetadata> metadata;
 
 	public PhonemeSequence() {
-		phonemes = new ArrayList<>();
-		metadata = new ArrayList<>();
+		phonemes = List.of();
+		metadata = List.of();
 	}
 
 	public PhonemeSequence(List<Phoneme> phonemes, List<PhonemeMetadata> metadata) {
@@ -25,12 +25,16 @@ public class PhonemeSequence implements IpaRenderable {
 			throw new IllegalArgumentException("PhonemeSequence phonemes and metadata must be same size.");
 		}
 
-		this.phonemes = phonemes;
-		this.metadata = metadata;
+		this.phonemes = Collections.unmodifiableList(phonemes);
+		this.metadata = Collections.unmodifiableList(metadata);
 	}
 
 	public List<Phoneme> getPhonemes() {
-		return Collections.unmodifiableList(phonemes);
+		return phonemes;
+	}
+
+	public List<PhonemeMetadata> getMetadata() {
+		return metadata;
 	}
 
 	/**
@@ -76,6 +80,10 @@ public class PhonemeSequence implements IpaRenderable {
 		return phonemes.get(position);
 	}
 
+	public PhonemeMetadata metadataAt(int position) {
+		return metadata.get(position);
+	}
+
 	public int length() {
 		return phonemes.size();
 	}
@@ -101,7 +109,7 @@ public class PhonemeSequence implements IpaRenderable {
 		}
 		else {
 			var fromMeta = metadata.get(from);
-			return new PhonemeTransition(fromMeta.isWordEnd, fromMeta.isSyllableEnd, from == phonemes.size());
+			return new PhonemeTransition(fromMeta.isWordEnd, fromMeta.isSyllableEnd, from == phonemes.size() - 1);
 		}
 	}
 

@@ -14,10 +14,11 @@ public class PhonemeSequenceBuilder {
 	private boolean foundWordBoundary = false;
 	private boolean foundSyllableBoundary = false;
 
-	public PhonemeSequenceBuilder append(String ipa, IpaPhonemeMapper mapper) {
+	public PhonemeSequenceBuilder append(String ipa, IpaPhonemeMapper mapper) throws IpaMappingException {
 		for (int i = 0; i < ipa.length(); i++) {
 			if (ipa.charAt(i) == '#') {
 				foundWordBoundary = true;
+				foundSyllableBoundary = true;
 			}
 			else if (ipa.charAt(i) == '.') {
 				foundSyllableBoundary = true;
@@ -33,7 +34,7 @@ public class PhonemeSequenceBuilder {
 				}
 
 				if (longestMatch == null) {
-					throw new RuntimeException("Unable to append IPA '" + ipa + "'. Unmappable IPA sequence at position " + i);
+					throw new IpaMappingException("Unable to append IPA '" + ipa + "'. Unmappable IPA sequence at position " + i);
 				}
 
 				append(mapper.getPhoneme(longestMatch));

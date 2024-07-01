@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +21,7 @@ public class SyllableTest {
 	void constructorList() {
 		testSyllable = new Syllable(List.of(phonemeA, phonemeB, phonemeC));
 
-		var expectedValues = Stream.of(phonemeA, phonemeB, phonemeC).toList();
+		var expectedValues = List.of(phonemeA, phonemeB, phonemeC);
 		var actualValues = testSyllable.phonemes();
 		assertEquals(expectedValues, actualValues);
 	}
@@ -31,7 +30,7 @@ public class SyllableTest {
 	void constructorVarargs() {
 		testSyllable = new Syllable(phonemeA, phonemeB, phonemeC);
 
-		var expectedValues = Stream.of(phonemeA, phonemeB, phonemeC).toList();
+		var expectedValues = List.of(phonemeA, phonemeB, phonemeC);
 		var actualValues = testSyllable.phonemes();
 		assertEquals(expectedValues, actualValues);
 	}
