@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import net.calebscode.langtool.phonology.PhonemeSequenceValidator;
 import net.calebscode.langtool.phonology.PhonologicalRuleApplicationException;
+import net.calebscode.langtool.phonology.phoneme.IpaMappingException;
 import net.calebscode.langtool.phonology.phoneme.Phoneme;
 import net.calebscode.langtool.phonology.phoneme.PhonemeSequence;
 import net.calebscode.langtool.phonology.phoneme.PhonemeSequenceBuilder;
@@ -23,7 +24,7 @@ public class PhonologicalRuleApplicatorTest {
 	private static SyllablePatternCategoryMap categoryMap = new SyllablePatternCategoryMap();
 
 	@BeforeAll
-	static void beforeAll() {
+	static void beforeAll() throws IpaMappingException {
 		categoryMap.addGeneratablePhoneme('C', ipaPhoneme("t"));
 		categoryMap.addGeneratablePhoneme('C', ipaPhoneme("d"));
 		categoryMap.addGeneratablePhoneme('C', ipaPhoneme("s"));
@@ -39,7 +40,7 @@ public class PhonologicalRuleApplicatorTest {
 	}
 
 	@Test
-	void applySubstitutionRule() {
+	void applySubstitutionRule() throws IpaMappingException {
 		testRuleApplications(
 			"CV",
 			"/a/ -> [i] / /j/ _",
@@ -54,7 +55,7 @@ public class PhonologicalRuleApplicatorTest {
 	}
 
 	@Test
-	void applyAssimilationRule() {
+	void applyAssimilationRule() throws IpaMappingException {
 		testRuleApplications(
 			"CV(C)",
 			"[+consonant] -> [0_place] / [+consonant, 0_place] _",
@@ -69,7 +70,7 @@ public class PhonologicalRuleApplicatorTest {
 	}
 
 	@Test
-	void testDeletionRule() {
+	void testDeletionRule() throws IpaMappingException {
 		testRuleApplications(
 			"CV(C)",
 			"[+consonant, 0_place, 1_type] -> ~ / [+consonant, 0_place, 1_type] _",
@@ -83,7 +84,7 @@ public class PhonologicalRuleApplicatorTest {
 	}
 
 	@Test
-	void testInsertionRule() {
+	void testInsertionRule() throws IpaMappingException {
 		testRuleApplications(
 			"CV",
 			"~ -> [a] / [+consonant] _ [+consonant]",
@@ -98,7 +99,7 @@ public class PhonologicalRuleApplicatorTest {
 		);
 	}
 
-	private void testRuleApplications(String patternSource, String ruleSource, boolean lenient, Map<String, String> expectations) {
+	private void testRuleApplications(String patternSource, String ruleSource, boolean lenient, Map<String, String> expectations) throws IpaMappingException {
 		try {
 			var pattern = compilePattern(patternSource);
 			var validator = new PhonemeSequenceValidator(pattern);
@@ -127,14 +128,14 @@ public class PhonologicalRuleApplicatorTest {
 		return new SyllablePatternCompiler(categoryMap).compile(pattern);
 	}
 
-	private static Phoneme ipaPhoneme(String ipaString) {
+	private static Phoneme ipaPhoneme(String ipaString) throws IpaMappingException {
 		return new PhonemeSequenceBuilder()
 				.append(ipaString, STANDARD_IPA_PHONEMES)
 				.build()
 				.phonemeAt(0);
 	}
 
-	private static PhonemeSequence ipaSequence(String ipaString) {
+	private static PhonemeSequence ipaSequence(String ipaString) throws IpaMappingException {
 		return new PhonemeSequenceBuilder()
 				.append(ipaString, STANDARD_IPA_PHONEMES)
 				.build();
