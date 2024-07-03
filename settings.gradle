@@ -3,7 +3,7 @@ plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
 }
 
-rootProject.name = 'langtool'
+rootProject.name = 'langforge'
 
-include 'langtool-core'
-include 'langtool-app'
+include 'langforge-core'
+include 'langforge-app'
