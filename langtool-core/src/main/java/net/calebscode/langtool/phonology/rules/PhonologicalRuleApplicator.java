@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import net.calebscode.langtool.phonology.PhonemeSequenceValidationException;
-import net.calebscode.langtool.phonology.PhonemeSequenceValidator;
+import net.calebscode.langtool.phonology.SyllablePatternPhonemeSequenceValidator;
 import net.calebscode.langtool.phonology.PhonologicalRuleApplicationException;
 import net.calebscode.langtool.phonology.phoneme.Phoneme;
 import net.calebscode.langtool.phonology.phoneme.PhonemeSequence;
@@ -41,7 +41,7 @@ public class PhonologicalRuleApplicator implements PhonemeRepresentationMatcher 
 	 * @return
 	 * @throws PhonologicalRuleApplicationException
 	 */
-	public PhonemeSequence apply(PhonemeSequence inputSequence, PhonemeSequenceValidator validator, boolean lenient) throws PhonologicalRuleApplicationException {
+	public PhonemeSequence apply(PhonemeSequence inputSequence, SyllablePatternPhonemeSequenceValidator validator, boolean lenient) throws PhonologicalRuleApplicationException {
 		position = 0;
 		sequence = inputSequence;
 
@@ -78,7 +78,7 @@ public class PhonologicalRuleApplicator implements PhonemeRepresentationMatcher 
 				if (!oldSeq.equals(sequence)) {
 					start = -1;
 					try {
-						sequence = validator.revalidate(sequence);
+						sequence = validator.validate(sequence);
 					} catch (PhonemeSequenceValidationException ex) {
 						if (!lenient) {
 							 var message = String.format("Unable to apply rule: %s", ex.getMessage());
@@ -90,7 +90,7 @@ public class PhonologicalRuleApplicator implements PhonemeRepresentationMatcher 
 		}
 
 		try {
-			sequence = validator.revalidate(sequence);
+			sequence = validator.validate(sequence);
 		} catch (PhonemeSequenceValidationException ex) {
 			if (!lenient) {
 				 var message = String.format("Unable to apply rule: %s", ex.getMessage());

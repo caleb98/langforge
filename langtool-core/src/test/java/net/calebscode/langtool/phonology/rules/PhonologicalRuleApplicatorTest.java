@@ -9,7 +9,7 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import net.calebscode.langtool.phonology.PhonemeSequenceValidator;
+import net.calebscode.langtool.phonology.SyllablePatternPhonemeSequenceValidator;
 import net.calebscode.langtool.phonology.PhonologicalRuleApplicationException;
 import net.calebscode.langtool.phonology.phoneme.IpaMappingException;
 import net.calebscode.langtool.phonology.phoneme.Phoneme;
@@ -102,7 +102,7 @@ public class PhonologicalRuleApplicatorTest {
 	private void testRuleApplications(String patternSource, String ruleSource, boolean lenient, Map<String, String> expectations) throws IpaMappingException {
 		try {
 			var pattern = compilePattern(patternSource);
-			var validator = new PhonemeSequenceValidator(pattern);
+			var validator = new SyllablePatternPhonemeSequenceValidator(pattern);
 			var rule = compileRule(ruleSource);
 			var applicator = new PhonologicalRuleApplicator(rule);
 

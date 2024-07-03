@@ -14,7 +14,7 @@ import net.calebscode.langtool.phonology.phoneme.PhonemeSequenceBuilder;
 import net.calebscode.langtool.phonology.syllable.SyllablePatternCategoryMap;
 import net.calebscode.langtool.phonology.syllable.SyllablePatternCompiler;
 
-public class PhonemeSequenceValidatorTest {
+public class SyllablePatternPhonemeSequenceValidatorTest {
 
 	private SyllablePatternCategoryMap categories;
 
@@ -30,10 +30,10 @@ public class PhonemeSequenceValidatorTest {
 		categories.addGeneratablePhoneme('G', ipaPhoneme("j"));
 		categories.addGeneratablePhoneme('V', ipaPhoneme("o"));
 		var pattern = new SyllablePatternCompiler(categories).compile("C(G)V(C)");
-		var validator = new PhonemeSequenceValidator(pattern);
+		var validator = new SyllablePatternPhonemeSequenceValidator(pattern);
 		var input = ipaSequence("kjojkokojjokjo");
 
-		var validated = validator.revalidate(input);
+		var validated = validator.validate(input);
 
 		assertEquals(".kjoj.ko.ko.jjo.kjo.", validated.render(STANDARD_IPA_PHONEMES));
 	}
@@ -45,10 +45,10 @@ public class PhonemeSequenceValidatorTest {
 		categories.addGeneratablePhoneme('G', ipaPhoneme("j"));
 		categories.addGeneratablePhoneme('V', ipaPhoneme("o"));
 		var pattern = new SyllablePatternCompiler(categories).compile("C(G)VC");
-		var validator = new PhonemeSequenceValidator(pattern);
+		var validator = new SyllablePatternPhonemeSequenceValidator(pattern);
 		var input = ipaSequence("kjojkokojjokjo");
 
-		assertThrows(PhonemeSequenceValidationException.class, () -> validator.revalidate(input));
+		assertThrows(PhonemeSequenceValidationException.class, () -> validator.validate(input));
 	}
 
 	@Test
@@ -58,10 +58,10 @@ public class PhonemeSequenceValidatorTest {
 		categories.addGeneratablePhoneme('G', ipaPhoneme("j"));
 		categories.addGeneratablePhoneme('V', ipaPhoneme("o"));
 		var pattern = new SyllablePatternCompiler(categories).compile("CGVC");
-		var validator = new PhonemeSequenceValidator(pattern);
+		var validator = new SyllablePatternPhonemeSequenceValidator(pattern);
 		var input = ipaSequence("kkjok");
 
-		assertThrows(PhonemeSequenceValidationException.class, () -> validator.revalidate(input));
+		assertThrows(PhonemeSequenceValidationException.class, () -> validator.validate(input));
 	}
 
 	@Test
@@ -69,10 +69,10 @@ public class PhonemeSequenceValidatorTest {
 		categories.addGeneratablePhoneme('C', ipaPhoneme("b"));
 		categories.addGeneratablePhoneme('V', ipaPhoneme("o"));
 		var pattern = new SyllablePatternCompiler(categories).compile("(C)(C)(C)(C)VC");
-		var validator = new PhonemeSequenceValidator(pattern);
+		var validator = new SyllablePatternPhonemeSequenceValidator(pattern);
 		var input = ipaSequence("obbobbbobbbbobbbbbob");
 
-		var validated = validator.revalidate(input);
+		var validated = validator.validate(input);
 
 		assertEquals(".ob.bob.bbob.bbbob.bbbbob.", validated .render(STANDARD_IPA_PHONEMES));
 	}
@@ -84,10 +84,10 @@ public class PhonemeSequenceValidatorTest {
 		categories.addGeneratablePhoneme('Z', ipaPhoneme("p"));
 		categories.addGeneratablePhoneme('V', ipaPhoneme("o"));
 		var pattern = new SyllablePatternCompiler(categories).compile("(((X)Y)Z)V((X|Y|Z))((X|Y|Z))((X|Y|Z))");
-		var validator = new PhonemeSequenceValidator(pattern);
+		var validator = new SyllablePatternPhonemeSequenceValidator(pattern);
 		var input = ipaSequence("optkpokpko");
 
-		var validated = validator.revalidate(input);
+		var validated = validator.validate(input);
 		assertEquals(".op.tkpokpk.o.", validated.render(STANDARD_IPA_PHONEMES));
 	}
 
