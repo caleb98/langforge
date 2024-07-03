@@ -78,7 +78,7 @@ public class PhonologicalRuleApplicator implements PhonemeRepresentationMatcher 
 				if (!oldSeq.equals(sequence)) {
 					start = -1;
 					try {
-						sequence = validator.revalidate(sequence);
+						sequence = validator.validate(sequence);
 					} catch (PhonemeSequenceValidationException ex) {
 						if (!lenient) {
 							 var message = String.format("Unable to apply rule: %s", ex.getMessage());
@@ -90,7 +90,7 @@ public class PhonologicalRuleApplicator implements PhonemeRepresentationMatcher 
 		}
 
 		try {
-			sequence = validator.revalidate(sequence);
+			sequence = validator.validate(sequence);
 		} catch (PhonemeSequenceValidationException ex) {
 			if (!lenient) {
 				 var message = String.format("Unable to apply rule: %s", ex.getMessage());
