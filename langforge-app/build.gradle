@@ -51,6 +51,19 @@ tasks.register('runDebug', JavaExec) {
     dependsOn copyPluginJars
 }
 
+tasks.named('run') {
+    classpath layout.buildDirectory.dir('plugins/*')
+
+    def modulePath = sourceSets.main.runtimeClasspath.join(File.pathSeparator)
+
+    jvmArgs = [
+        '--module-path', "${modulePath}",
+        '--add-modules', 'javafx.controls'
+    ]
+    
+    dependsOn copyPluginJars
+}
+
 
 tasks.named('startScripts') {
     applicationName = rootProject.name
