@@ -3,7 +3,6 @@ package net.calebscode.langforge.app.phonology;
 import java.util.Map;
 
 import javafx.beans.property.SimpleStringProperty;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import net.calebscode.langforge.app.LangforgeApplication;
 import net.calebscode.langforge.app.plugin.LangforgePlugin;
@@ -49,7 +48,6 @@ public final class LangforgePhonologyCorePlugin implements LangforgePlugin {
 	@Override
 	public void load(LangforgeApplication app) throws LangforgePluginException {
 		var ui = app.getUI();
-		var menu = new Menu();
 		var fileMenu = ui.getFileMenu();
 
 		MenuItem save = new MenuItem("Save");

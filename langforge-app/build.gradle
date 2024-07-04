@@ -8,7 +8,6 @@ dependencies {
 }
 
 application {
-    mainModule = 'net.calebscode.langforge.app'
     mainClass = 'net.calebscode.langforge.app.LangforgeApplicationLauncher'
 }
 

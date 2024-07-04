@@ -146,9 +146,7 @@ case "\$( uname )" in                #(
 esac
 
 CLASSPATH="$classpath:\$APP_HOME/plugins/*"
-<% if ( mainClassName.startsWith('--module ') ) { %>
-MODULE_PATH=$modulePath
-<% } %>
+MODULE_PATH="\$APP_HOME/lib/"
 
 # Determine the Java command to use to start the JVM.
 if [ -n "\$JAVA_HOME" ] ; then
@@ -199,14 +197,14 @@ fi
 #   * the main class name
 #   * -classpath
 #   * -D...appname settings
-#   * --module-path (only if needed)
+#   * --module-path
 #   * DEFAULT_JVM_OPTS, JAVA_OPTS, and ${optsEnvironmentVar} environment variables.
 
 # For Cygwin or MSYS, switch paths to Windows format before running java
 if "\$cygwin" || "\$msys" ; then
     APP_HOME=\$( cygpath --path --mixed "\$APP_HOME" )
     CLASSPATH=\$( cygpath --path --mixed "\$CLASSPATH" )
-<% if ( mainClassName.startsWith('--module ') ) { %>    MODULE_PATH=\$( cygpath --path --mixed "\$MODULE_PATH" )<% } %>
+    MODULE_PATH=\$( cygpath --path --mixed "\$MODULE_PATH" )
     JAVACMD=\$( cygpath --unix "\$JAVACMD" )
 
     # Now convert the arguments - kludge to limit ourselves to /bin/sh
@@ -250,9 +248,9 @@ set -- \\
 <% if ( appNameSystemProperty ) {
      %>        "-D${appNameSystemProperty}=\$APP_BASE_NAME" \\
 <% } %>        -classpath "\$CLASSPATH" \\
-<% if ( mainClassName.startsWith('--module ') ) {
-     %>        --module-path "\$MODULE_PATH" \\
-<% } %>        ${mainClassName} \\
+        --module-path "\$MODULE_PATH" \\
+        --add-modules "javafx.controls" \\
+        ${mainClassName} \\
         "\$@"
 
 # Stop when "xargs" is not available.

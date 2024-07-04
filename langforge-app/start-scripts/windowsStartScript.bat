@@ -70,10 +70,10 @@ goto fail
 @rem Setup the command line
 
 set CLASSPATH="$classpath;%APP_HOME%/plugins/*"
-<% if ( mainClassName.startsWith('--module ') ) { %>set MODULE_PATH=$modulePath<% } %>
+set MODULE_PATH="%APP_HOME%/lib"
 
 @rem Execute ${applicationName}
-"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %${optsEnvironmentVar}% <% if ( appNameSystemProperty ) { %>"-D${appNameSystemProperty}=%APP_BASE_NAME%"<% } %> -classpath "%CLASSPATH%" <% if ( mainClassName.startsWith('--module ') ) { %>--module-path "%MODULE_PATH%" <% } %>${mainClassName} %*
+"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %${optsEnvironmentVar}%^ <% if ( appNameSystemProperty ) { %>"-D${appNameSystemProperty}=%APP_BASE_NAME%"<% } %> -classpath "%CLASSPATH%" --module-path "%MODULE_PATH%" --add-modules "javafx.controls" ${mainClassName} %*
 
 :end
 @rem End local scope for the variables with windows NT shell
