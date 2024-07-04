@@ -28,6 +28,30 @@ def copyPluginJars = tasks.register('copyPluginJars', Copy) {
     into layout.buildDirectory.dir('plugins')
 }
 
+tasks.register('runDebug', JavaExec) {
+    mainClass = application.mainClass
+
+    classpath sourceSets.main.runtimeClasspath
+    classpath layout.buildDirectory.dir('plugins/*')
+
+    def modulePath = sourceSets.main.runtimeClasspath.join(File.pathSeparator)
+
+    jvmArgs = [
+        '--module-path', "${modulePath}",
+        '--add-modules', 'javafx.controls'
+    ]
+
+    debugOptions {
+        enabled = true
+        port = 7755
+        server = true
+        suspend = true
+    }
+
+    dependsOn copyPluginJars
+}
+
+
 tasks.named('startScripts') {
     applicationName = rootProject.name
     executableDir = ''
@@ -39,7 +63,7 @@ tasks.named('startScripts') {
 distributions {
     main {
         contents {
-            from startScripts
+            from(startScripts)
             from(copyPluginJars) {
                 into 'plugins'
             }
