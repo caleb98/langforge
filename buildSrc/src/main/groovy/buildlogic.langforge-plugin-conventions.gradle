@@ -1,0 +1,13 @@
+plugins {
+    id 'buildlogic.java-library-conventions'
+    id 'org.openjfx.javafxplugin'
+}
+
+dependencies {
+    compileOnly project(':langforge-app')
+}
+
+javafx {
+    version = '21.0.3'
+    modules = [ 'javafx.controls' ]
+}
