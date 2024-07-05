@@ -1,58 +1,53 @@
 package net.calebscode.langforge.app;
 
+import javafx.beans.binding.Bindings;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Menu;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 
 public class LangforgeApplicationView {
 
-	private Scene scene;
-	private BorderPane root;
+	private final LangforgeApplicationViewModel viewModel;
 
-	private MenuBar menuBar;
-	private Menu fileMenu;
-	private Menu editMenu;
-	private Menu helpMenu;
+	private Label statusText = new Label("Langforge " + LangforgeApplication.VERSION);
+	private MenuBar menuBar = new MenuBar();
+	private TabPane tabPane = new TabPane();
 
-	private TabPane tabPane;
+	private BorderPane root = new BorderPane(tabPane, menuBar, null, null, null);
+	private Scene scene = new Scene(root, 640, 480);
 
-	public LangforgeApplicationView() {
-		fileMenu = new Menu("File");
-		editMenu = new Menu("Edit");
-		helpMenu = new Menu("Help");
-		menuBar = new MenuBar(fileMenu, editMenu, helpMenu);
+	public LangforgeApplicationView(LangforgeApplicationViewModel viewModel) {
+		this.viewModel = viewModel;
 
-		var tab1 = new Tab("Hello");
-		var tab2 = new Tab("Hello");
-		var tab3 = new Tab("Hello");
-		tabPane = new TabPane(tab1, tab2, tab3);
-
-		root = new BorderPane(tabPane, menuBar, null, null, null);
-
-		scene = new Scene(root, 640, 480);
+		buildView();
+		bindViewModel();
 	}
 
-	public Menu getFileMenu() {
-		return fileMenu;
+	private void buildView() {
+		HBox box = new HBox(statusText);
+		box.setPadding(new Insets(2, 5, 2, 5));
+		box.setStyle(
+				"""
+				-fx-border-width: 1 0 0 0;
+				-fx-border-color: darkgrey;
+				-fx-background-color: lightgrey;
+				""");
+
+		root.setBottom(box);
 	}
 
-	public Menu getEditMenu() {
-		return editMenu;
-	}
+	private void bindViewModel() {
+		Bindings.bindContentBidirectional(viewModel.menus, menuBar.getMenus());
+		Bindings.bindContentBidirectional(viewModel.tabs, tabPane.getTabs());
 
-	public Menu getHelpMenu() {
-		return helpMenu;
-	}
+		viewModel.leftPanel.bindBidirectional(root.leftProperty());
+		viewModel.rightPanel.bindBidirectional(root.rightProperty());
 
-	public MenuBar getMenuBar() {
-		return menuBar;
-	}
-
-	public BorderPane getRoot() {
-		return root;
+		viewModel.statusText.bindBidirectional(statusText.textProperty());
 	}
 
 	public Scene getScene() {

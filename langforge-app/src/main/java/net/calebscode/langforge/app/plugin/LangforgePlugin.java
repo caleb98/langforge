@@ -2,7 +2,8 @@ package net.calebscode.langforge.app.plugin;
 
 import java.util.Map;
 
-import net.calebscode.langforge.app.LangforgeApplication;
+import net.calebscode.langforge.app.LangforgeApplicationHandle;
+import net.calebscode.langforge.app.util.VersionNumber;
 
 public interface LangforgePlugin {
 
@@ -13,6 +14,7 @@ public interface LangforgePlugin {
 	public VersionNumber getRequiredLangforgeVersion();
 	public Map<String, VersionNumber> getDependencies();
 
-	public void load(LangforgeApplication handle) throws LangforgePluginException;
+	public void init(LangforgeApplicationHandle handle) throws LangforgePluginException;
+	public void load(LangforgeApplicationHandle handle) throws LangforgePluginException;
 
 }

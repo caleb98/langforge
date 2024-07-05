@@ -1,4 +1,4 @@
-package net.calebscode.langforge.app.plugin;
+package net.calebscode.langforge.app.util;
 
 public record VersionNumber(int major, int minor, int patch) implements Comparable<VersionNumber> {
 
