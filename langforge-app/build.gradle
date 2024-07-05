@@ -1,6 +1,6 @@
 plugins {
     id 'buildlogic.java-application-conventions'
-    id 'org.openjfx.javafxplugin' version '0.1.0'
+    id 'org.openjfx.javafxplugin'
 }
 
 dependencies {
@@ -8,10 +8,86 @@ dependencies {
 }
 
 application {
-    mainClass = 'net.calebscode.langforge.app.LangforgeApp'
+    mainClass = 'net.calebscode.langforge.app.LangforgeApplicationLauncher'
 }
 
 javafx {
     version = '21.0.3'
     modules = [ 'javafx.controls' ]
+}
+
+def copyPluginJars = tasks.register('copyPluginJars', Copy) {
+    group 'Distribution'
+    description "Copies built jar files from each plugin project into this project's build dir."
+
+    pluginProjects.each {
+        dependsOn project(it).tasks.named('jar')
+        from project(it).tasks.named('jar')
+    }
+
+    into layout.buildDirectory.dir('plugins')
+}
+
+tasks.register('runDebug', JavaExec) {
+    mainClass = application.mainClass
+
+    classpath sourceSets.main.runtimeClasspath
+    classpath layout.buildDirectory.dir('plugins/*')
+
+    def modulePath = sourceSets.main.runtimeClasspath.join(File.pathSeparator)
+
+    jvmArgs = [
+        '--module-path', "${modulePath}",
+        '--add-modules', 'javafx.controls'
+    ]
+
+    debugOptions {
+        enabled = true
+        port = 7755
+        server = true
+        suspend = true
+    }
+
+    dependsOn copyPluginJars
+}
+
+tasks.named('run') {
+    classpath layout.buildDirectory.dir('plugins/*')
+
+    def modulePath = sourceSets.main.runtimeClasspath.join(File.pathSeparator)
+
+    jvmArgs = [
+        '--module-path', "${modulePath}",
+        '--add-modules', 'javafx.controls'
+    ]
+    
+    dependsOn copyPluginJars
+}
+
+
+tasks.named('startScripts') {
+    applicationName = rootProject.name
+    executableDir = ''
+
+    unixStartScriptGenerator.template = resources.text.fromFile('start-scripts/unixStartScript.sh')
+    windowsStartScriptGenerator.template = resources.text.fromFile('start-scripts/windowsStartScript.bat')
+}
+
+distributions {
+    main {
+        contents {
+            from(startScripts)
+            from(copyPluginJars) {
+                into 'plugins'
+            }
+
+            // Filter out the start scripts that normally are placed in the bin
+            // directory, since we want these at root level.
+            eachFile { file ->
+                if (file.path.startsWith('bin/') || file.path.startsWith('langforge-app/bin')) {
+                    file.exclude()
+                }
+            }
+        }
+    }
 }
