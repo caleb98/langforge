@@ -1,7 +1,7 @@
 package net.calebscode.langforge.app.core;
 
-import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -11,17 +11,19 @@ import net.calebscode.langforge.app.LangforgeApplication;
 public class AppInfoDisplay {
 
 	private Stage window;
-	private Label test;
 
 	public AppInfoDisplay() {
-		Label appName = new Label("Langforge");
-		appName.setStyle("-fx-font-size: 24px; -fx-font-weight: bold");
+		Label appName = new Label("Langforge " + LangforgeApplication.VERSION);
+		appName.setStyle("-fx-font-size: 20px; -fx-font-weight: bold");
 
-		Label appVersion = new Label("Version: " + LangforgeApplication.VERSION);
+		Label javaInfo = new Label(String.format(
+			"Running Java %s and JavaFX %s",
+			System.getProperty("java.version"),
+			System.getProperty("javafx.version")
+		));
 
-		test = new Label("foo");
-
-		VBox layout = new VBox(appName, appVersion, test);
+		VBox layout = new VBox(appName, javaInfo);
+		layout.setAlignment(Pos.CENTER);
 		layout.setPadding(new Insets(5));
 		layout.setMinSize(280, 100);
 
@@ -31,10 +33,6 @@ public class AppInfoDisplay {
 		window.setScene(scene);
 		window.setResizable(false);
 		window.setTitle("Application Info");
-	}
-
-	public StringProperty getTestProperty() {
-		return test.textProperty();
 	}
 
 	public void show() {
