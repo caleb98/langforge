@@ -10,7 +10,12 @@ public record MenuDefinition(String name, int index) implements Comparable<MenuD
 
 	@Override
 	public int compareTo(MenuDefinition other) {
-		return Integer.compare(index, other.index);
+		int compare = Integer.compare(index, other.index);
+		if (compare != 0) {
+			return compare;
+		}
+
+		return name.compareTo(other.name);
 	}
 
 }

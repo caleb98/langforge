@@ -44,10 +44,9 @@ public class LangforgeApplicationView {
 		Bindings.bindContentBidirectional(viewModel.menus, menuBar.getMenus());
 		Bindings.bindContentBidirectional(viewModel.tabs, tabPane.getTabs());
 
-		viewModel.leftPanel.bindBidirectional(root.leftProperty());
-		viewModel.rightPanel.bindBidirectional(root.rightProperty());
-
-		viewModel.statusText.bindBidirectional(statusText.textProperty());
+		root.leftProperty().bindBidirectional(viewModel.leftPanel);
+		root.rightProperty().bindBidirectional(viewModel.rightPanel);
+		statusText.textProperty().bindBidirectional(viewModel.statusText);
 	}
 
 	public Scene getScene() {

@@ -8,12 +8,12 @@ import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
 import net.calebscode.langforge.app.LangforgeApplication;
-import net.calebscode.langforge.app.LangforgeApplicationHandle;
+import net.calebscode.langforge.app.PluginContext;
 import net.calebscode.langforge.app.LangforgeApplicationModel;
 
 public class PluginManager {
 
-	private Map<LangforgePlugin, LangforgeApplicationHandle> pluginHandles = new HashMap<>();
+	private Map<LangforgePlugin, PluginContext> pluginHandles = new HashMap<>();
 	private LangforgeApplicationModel appModel;
 
 	public PluginManager(LangforgeApplicationModel appModel) {
@@ -29,7 +29,7 @@ public class PluginManager {
 		verifyNoDuplicatePluginIds(plugins);
 
 		plugins.forEach(plugin -> {
-			pluginHandles.put(plugin, new LangforgeApplicationHandle());
+			pluginHandles.put(plugin, new PluginContext(appModel));
 		});
 
 		var initResults = plugins.stream().collect(Collectors.partitioningBy(this::initPlugin));
@@ -141,7 +141,7 @@ public class PluginManager {
 				));
 			}
 
-			var context = new LangforgeApplicationHandle();
+			var context = pluginHandles.get(plugin);
 			plugin.load(context);
 			appModel.registerPlugin(context);
 
