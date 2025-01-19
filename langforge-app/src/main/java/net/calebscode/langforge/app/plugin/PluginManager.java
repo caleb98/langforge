@@ -5,15 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.ServiceLoader.Provider;
 import java.util.stream.Collectors;
 
 import net.calebscode.langforge.app.LangforgeApplication;
-import net.calebscode.langforge.app.PluginContext;
 import net.calebscode.langforge.app.LangforgeApplicationModel;
+import net.calebscode.langforge.app.LangforgePluginContext;
 
 public class PluginManager {
 
-	private Map<LangforgePlugin, PluginContext> pluginHandles = new HashMap<>();
+	private Map<LangforgePlugin, LangforgePluginContext> pluginContexts = new HashMap<>();
 	private LangforgeApplicationModel appModel;
 
 	public PluginManager(LangforgeApplicationModel appModel) {
@@ -22,14 +23,12 @@ public class PluginManager {
 
 	public void loadPlugins() throws DuplicatePluginIdException {
 		ServiceLoader<LangforgePlugin> pluginLoader = ServiceLoader.load(LangforgePlugin.class);
-		var plugins = pluginLoader.stream()
-			.map(provider -> provider.get())
-			.toList();
+		var plugins = pluginLoader.stream().map(Provider::get).toList();
 
 		verifyNoDuplicatePluginIds(plugins);
 
 		plugins.forEach(plugin -> {
-			pluginHandles.put(plugin, new PluginContext(appModel));
+			pluginContexts.put(plugin, new LangforgePluginContext(plugin, appModel));
 		});
 
 		var initResults = plugins.stream().collect(Collectors.partitioningBy(this::initPlugin));
@@ -52,8 +51,8 @@ public class PluginManager {
 		}
 
 		while (!check.isEmpty()) {
-			var adding = check.removeFirst();
-			loadOrder.add(adding);
+			var currentPlugin = check.removeFirst();
+			loadOrder.add(currentPlugin);
 
 			var iter = dependencies.entrySet().iterator();
 			while(iter.hasNext()) {
@@ -61,11 +60,11 @@ public class PluginManager {
 				var plugin = entry.getKey();
 				var deps = entry.getValue();
 
-				if (deps.containsKey(adding.getId())) {
-					var requiredVersion = deps.get(adding.getId());
-					var actualVersion = adding.getVersion();
+				if (deps.containsKey(currentPlugin.getId())) {
+					var requiredVersion = deps.get(currentPlugin.getId());
+					var actualVersion = currentPlugin.getVersion();
 					if (actualVersion.compareTo(requiredVersion) >= 0) {
-						deps.remove(adding.getId());
+						deps.remove(currentPlugin.getId());
 					}
 				}
 
@@ -117,7 +116,7 @@ public class PluginManager {
 
 	private boolean initPlugin(LangforgePlugin plugin) {
 		try {
-			plugin.init(pluginHandles.get(plugin));
+			plugin.init(pluginContexts.get(plugin));
 			return true;
 		}
 		catch (Exception ex) {
@@ -141,7 +140,7 @@ public class PluginManager {
 				));
 			}
 
-			var context = pluginHandles.get(plugin);
+			var context = pluginContexts.get(plugin);
 			plugin.load(context);
 			appModel.registerPlugin(context);
 

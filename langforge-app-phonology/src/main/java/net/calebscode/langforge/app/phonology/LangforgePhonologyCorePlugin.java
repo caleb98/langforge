@@ -3,7 +3,7 @@ package net.calebscode.langforge.app.phonology;
 import java.util.Map;
 
 import net.calebscode.langforge.app.LangforgeApplication;
-import net.calebscode.langforge.app.PluginContext;
+import net.calebscode.langforge.app.LangforgePluginContext;
 import net.calebscode.langforge.app.plugin.LangforgePlugin;
 import net.calebscode.langforge.app.plugin.LangforgePluginException;
 import net.calebscode.langforge.app.util.VersionNumber;
@@ -41,16 +41,16 @@ public final class LangforgePhonologyCorePlugin implements LangforgePlugin {
 
 	@Override
 	public Map<String, VersionNumber> getDependencies() {
-		return Map.of();
+		return Map.of("langforge.core", LangforgeApplication.VERSION);
 	}
 
 	@Override
-	public void init(PluginContext context) throws LangforgePluginException {
+	public void init(LangforgePluginContext context) throws LangforgePluginException {
 
 	}
 
 	@Override
-	public void load(PluginContext context) throws LangforgePluginException {
+	public void load(LangforgePluginContext context) throws LangforgePluginException {
 
 	}
 

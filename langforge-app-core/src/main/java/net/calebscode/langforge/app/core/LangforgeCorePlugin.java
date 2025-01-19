@@ -5,7 +5,7 @@ import java.util.Map;
 import javafx.application.Platform;
 import javafx.scene.control.MenuItem;
 import net.calebscode.langforge.app.LangforgeApplication;
-import net.calebscode.langforge.app.PluginContext;
+import net.calebscode.langforge.app.LangforgePluginContext;
 import net.calebscode.langforge.app.plugin.LangforgePlugin;
 import net.calebscode.langforge.app.plugin.LangforgePluginException;
 import net.calebscode.langforge.app.plugin.ui.MenuDefinition;
@@ -55,12 +55,12 @@ public class LangforgeCorePlugin implements LangforgePlugin {
 	}
 
 	@Override
-	public void init(PluginContext context) throws LangforgePluginException {
+	public void init(LangforgePluginContext context) throws LangforgePluginException {
 
 	}
 
 	@Override
-	public void load(PluginContext context) throws LangforgePluginException {
+	public void load(LangforgePluginContext context) throws LangforgePluginException {
 		infoDisplay = new AppInfoDisplay();
 
 		context.addMenus(
