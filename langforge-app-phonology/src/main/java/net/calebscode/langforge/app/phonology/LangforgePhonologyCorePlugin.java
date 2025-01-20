@@ -2,6 +2,7 @@ package net.calebscode.langforge.app.phonology;
 
 import java.util.Map;
 
+import javafx.scene.control.Tab;
 import net.calebscode.langforge.app.LangforgeApplication;
 import net.calebscode.langforge.app.LangforgePluginContext;
 import net.calebscode.langforge.app.plugin.LangforgePlugin;
@@ -51,7 +52,8 @@ public final class LangforgePhonologyCorePlugin implements LangforgePlugin {
 
 	@Override
 	public void load(LangforgePluginContext context) throws LangforgePluginException {
-
+		var tab = new Tab("Phonology", new PhonologyPane(context));
+		context.createTab(tab);
 	}
 
 }

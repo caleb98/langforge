@@ -4,7 +4,8 @@ plugins {
 }
 
 dependencies {
-    compileOnly project(':langforge-app')
+    implementation project(':langforge-app')
+    implementation project(':langforge-core')
 }
 
 javafx {
