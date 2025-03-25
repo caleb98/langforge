@@ -7,13 +7,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javafx.beans.property.ListProperty;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.collections.FXCollections;
 
 public class PhonemeFeatureDefinitions {
 
-	private ReadOnlyListWrapper<String> featureNames = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
+	private ListProperty<String> featureNames = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
 	private Map<String, ReadOnlyListWrapper<String>> featureValues = new HashMap<>();
 
 	public static PhonemeFeatureDefinitions createStandardPhonemes() {
@@ -31,7 +32,7 @@ public class PhonemeFeatureDefinitions {
 	}
 
 	public ReadOnlyListProperty<String> featureNamesProperty() {
-		return featureNames.getReadOnlyProperty();
+		return featureNames;
 	}
 
 	public ReadOnlyListProperty<String> featureValuesProperty(String featureName) {

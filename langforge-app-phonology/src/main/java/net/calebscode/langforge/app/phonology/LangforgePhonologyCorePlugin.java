@@ -52,7 +52,7 @@ public final class LangforgePhonologyCorePlugin implements LangforgePlugin {
 
 	@Override
 	public void load(LangforgePluginContext context) throws LangforgePluginException {
-		var tab = new Tab("Phonology", new PhonologyPane(context));
+		var tab = new Tab("Phonology", new PhonologyView(context));
 		context.createTab(tab);
 	}
 

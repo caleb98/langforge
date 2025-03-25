@@ -13,7 +13,7 @@ application {
 
 javafx {
     version = '21.0.3'
-    modules = [ 'javafx.controls' ]
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
 def copyPluginJars = tasks.register('copyPluginJars', Copy) {
@@ -38,7 +38,7 @@ tasks.register('runDebug', JavaExec) {
 
     jvmArgs = [
         '--module-path', "${modulePath}",
-        '--add-modules', 'javafx.controls'
+        '--add-modules', 'javafx.controls,javafx.fxml'
     ]
 
     debugOptions {
@@ -58,7 +58,7 @@ tasks.named('run') {
 
     jvmArgs = [
         '--module-path', "${modulePath}",
-        '--add-modules', 'javafx.controls'
+        '--add-modules', 'javafx.controls,javafx.fxml'
     ]
     
     dependsOn copyPluginJars
