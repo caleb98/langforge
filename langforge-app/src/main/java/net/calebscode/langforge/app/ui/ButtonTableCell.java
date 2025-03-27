@@ -1,4 +1,4 @@
-package net.calebscode.langforge.app.phonology;
+package net.calebscode.langforge.app.ui;
 
 import java.util.function.BiConsumer;
 

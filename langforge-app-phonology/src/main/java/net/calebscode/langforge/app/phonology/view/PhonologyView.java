@@ -1,19 +1,23 @@
 package net.calebscode.langforge.app.phonology.view;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ListChangeListener.Change;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import net.calebscode.langforge.app.LangforgePluginContext;
-import net.calebscode.langforge.app.phonology.ButtonTableCell;
 import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
 import net.calebscode.langforge.app.phonology.model.PhonemeFeatureModel;
+import net.calebscode.langforge.app.ui.ButtonTableCell;
 import net.calebscode.langforge.phonology.phoneme.IpaPhonemeMapper;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 import net.calebscode.langforge.phonology.phoneme.StandardPhonemes;
@@ -22,7 +26,9 @@ public class PhonologyView extends AnchorPane {
 
 	private LangforgePluginContext context;
 	private LanguagePhonologyModel phonologyModel;
-	private IpaPhonemeMapper phonemeMapper = StandardPhonemes.STANDARD_IPA_PHONEMES;
+	private IpaPhonemeMapper phonemeMapper = StandardPhonemes.IPA_MAPPER;
+
+	private Optional<Stage> consonantPicker = Optional.empty();
 
 	@FXML private TableView<Phoneme> phonemesTable;
 
@@ -30,7 +36,7 @@ public class PhonologyView extends AnchorPane {
 		this.context = context;
 		this.phonologyModel = new LanguagePhonologyModel();
 
-		var loader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/PhonologyView.fxml"));
+		var loader = new FXMLLoader(PhonologyView.class.getResource("PhonologyView.fxml"));
 		loader.setRoot(this);
 		loader.setController(this);
 
@@ -40,11 +46,6 @@ public class PhonologyView extends AnchorPane {
 			getChildren().add(new Label("Failed to load component " + getClass().getCanonicalName() + ": " + ex.getMessage()));
 			return;
 		}
-
-		phonologyModel.phonemesProperty().add(StandardPhonemes.VOICED_VELAR_PLOSIVE);
-		phonologyModel.phonemesProperty().add(StandardPhonemes.CLOSE_MID_BRACK_UNROUNDED_VOWEL);
-		phonologyModel.phonemesProperty().add(StandardPhonemes.VOICED_ALVEOLAR_FLAP);
-		phonologyModel.phonemesProperty().add(StandardPhonemes.VOICELESS_RETROFLEX_AFFRICATE);
 
 		phonologyModel.featuresProperty().addListener((Change<? extends PhonemeFeatureModel> c) -> {
 			if (c.wasAdded() || c.wasRemoved()) {
@@ -81,5 +82,22 @@ public class PhonologyView extends AnchorPane {
 			return button;
 		});
 		phonemesTable.getColumns().add(deleteColumn);
+	}
+
+	@FXML
+	private void showIpaConsonantPicker(MouseEvent event) {
+		if (consonantPicker.isPresent()) {
+			return;
+		}
+
+		var ipaSelector = new IpaConsonantPicker(phonologyModel);
+		var scene = new Scene(ipaSelector);
+		var stage = new Stage();
+		stage.setTitle("IPA Consonants");
+		stage.setScene(scene);
+		stage.show();
+		stage.setOnCloseRequest(e -> consonantPicker = Optional.empty());
+
+		consonantPicker = Optional.of(stage);
 	}
 }

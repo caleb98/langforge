@@ -26,7 +26,7 @@ public class PhonemeSequenceBuilderTest {
 
 	@Test
 	void appendIpaStringPhonemes() throws IpaMappingException {
-		builder.append("kat", STANDARD_IPA_PHONEMES);
+		builder.append("kat", IPA_MAPPER);
 		var expected = new PhonemeSequence(
 				List.of(VOICELESS_VELAR_PLOSIVE, OPEN_FRONT_UNROUNDED_VOWEL, VOICELESS_ALVEOLAR_PLOSIVE),
 				List.of(DEFAULT_METADATA, DEFAULT_METADATA, DEFAULT_METADATA));
@@ -38,7 +38,7 @@ public class PhonemeSequenceBuilderTest {
 
 	@Test
 	void appendIpaStringSyllable() throws IpaMappingException {
-		builder.append(".ka.ta.", STANDARD_IPA_PHONEMES);
+		builder.append(".ka.ta.", IPA_MAPPER);
 		var expected = new PhonemeSequence(
 				List.of(VOICELESS_VELAR_PLOSIVE, OPEN_FRONT_UNROUNDED_VOWEL, VOICELESS_ALVEOLAR_PLOSIVE, OPEN_FRONT_UNROUNDED_VOWEL),
 				List.of(
@@ -55,7 +55,7 @@ public class PhonemeSequenceBuilderTest {
 
 	@Test
 	void appendIpaStringWord() throws IpaMappingException {
-		builder.append("#kat#", STANDARD_IPA_PHONEMES);
+		builder.append("#kat#", IPA_MAPPER);
 		var expected = new PhonemeSequence(
 				List.of(VOICELESS_VELAR_PLOSIVE, OPEN_FRONT_UNROUNDED_VOWEL, VOICELESS_ALVEOLAR_PLOSIVE),
 				List.of(
@@ -71,7 +71,7 @@ public class PhonemeSequenceBuilderTest {
 
 	@Test
 	void appendIpaStringMultisyllabicWord() throws IpaMappingException {
-		builder.append("#ka.ta#", STANDARD_IPA_PHONEMES);
+		builder.append("#ka.ta#", IPA_MAPPER);
 		var expected = new PhonemeSequence(
 				List.of(VOICELESS_VELAR_PLOSIVE, OPEN_FRONT_UNROUNDED_VOWEL, VOICELESS_ALVEOLAR_PLOSIVE, OPEN_FRONT_UNROUNDED_VOWEL),
 				List.of(
