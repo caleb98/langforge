@@ -1029,5 +1029,4 @@ public class StandardPhonemes {
 		STANDARD_IPA_PHONEMES.addMapping("ɖ͡ʐ", VOICED_RETROFLEX_AFFRICATE);
 	}
 
-
 }

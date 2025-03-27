@@ -1,11 +1,14 @@
 package net.calebscode.langforge.phonology.phoneme;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-public record Phoneme(Map<String, String> features) {
+import net.calebscode.langforge.phonology.IpaRenderable;
+
+public record Phoneme(Map<String, String> features) implements IpaRenderable {
 
 	public Phoneme(Map<String, String> features) {
 		this.features = Collections.unmodifiableMap(features);
@@ -21,6 +24,22 @@ public record Phoneme(Map<String, String> features) {
 
 	public Optional<String> getFeatureValue(String featureName) {
 		return Optional.ofNullable(features.get(featureName));
+	}
+
+	public Phoneme withoutFeature(String featureName) {
+		if (!hasFeature(featureName)) {
+			return this;
+		}
+
+		var newFeatures = new HashMap<>(features);
+		newFeatures.remove(featureName);
+
+		return new Phoneme(newFeatures);
+	}
+
+	@Override
+	public String render(IpaPhonemeMapper mapper) {
+		return mapper.getIpa(this);
 	}
 
 }

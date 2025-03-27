@@ -5,7 +5,9 @@ import java.util.function.BiConsumer;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.input.MouseEvent;
@@ -18,7 +20,9 @@ public class ButtonTableCell<S, T> extends TableCell<S, T> {
 
 	public ButtonTableCell(String text) {
 		getStyleClass().add("button-table-cell");
+		setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
 		setGraphic(null);
+		setPadding(new Insets(0));
 
 		button = new Button(text);
 		button.setOnMouseClicked(event -> {
@@ -27,6 +31,20 @@ public class ButtonTableCell<S, T> extends TableCell<S, T> {
 				buttonClickedFunc.accept(getItem(), event);
 			}
 		});
+
+		button.maxWidth(Double.MAX_VALUE);
+		button.maxHeight(Double.MAX_VALUE);
+
+		// Ensure that the button fills the cell area. Subtracting 2
+		// is necessary here to ensure that the button doesn't force
+		// a resize of the cell. Otherwise, the button will grow out
+		// of control.
+		button.prefWidthProperty().bind(widthProperty().subtract(2));
+		button.prefHeightProperty().bind(heightProperty().subtract(2));
+	}
+
+	public final Button getButton() {
+		return button;
 	}
 
 	public final StringProperty buttonTextProperty() {
