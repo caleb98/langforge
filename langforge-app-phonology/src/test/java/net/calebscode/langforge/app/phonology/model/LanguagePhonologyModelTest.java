@@ -135,4 +135,12 @@ class LanguagePhonologyModelTest {
 		assertEquals(0, phonemes.size());
 	}
 
+	@Test
+	void addSamePhonemeMultipleTimeIdempotnet() {
+		model.phonemesProperty().add(new Phoneme(Map.of()));
+		model.phonemesProperty().add(new Phoneme(Map.of()));
+
+		assertEquals(1, model.phonemesProperty().size());
+	}
+
 }

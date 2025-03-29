@@ -25,27 +25,6 @@ public class LanguagePhonologyModel {
 
 		features = new SimpleListProperty<>(observableArrayList(element -> new Observable[] { element.valuesProperty() }));
 		features.addListener(this::validatePhonemeFeatures);
-
-		var categoryFeature = addFeature(CATEGORY);
-		categoryFeature.valuesProperty().addAll(STANDARD_CATEGORIES);
-
-		var voicingFeature = addFeature(VOICING);
-		voicingFeature.valuesProperty().addAll(STANDARD_VOICINGS);
-
-		var placeFeature = addFeature(PLACE);
-		placeFeature.valuesProperty().addAll(STANDARD_PLACES);
-
-		var typeFeature = addFeature(TYPE);
-		typeFeature.valuesProperty().addAll(STANDARD_TYPES);
-
-		var opennessFeature = addFeature(OPENNESS);
-		opennessFeature.valuesProperty().addAll(STANDARD_OPENNESSES);
-
-		var backnessFeature = addFeature(BACKNESS);
-		backnessFeature.valuesProperty().addAll(STANDARD_BACKNESSES);
-
-		var roundednessFeature = addFeature(ROUNDEDNESS);
-		roundednessFeature.valuesProperty().addAll(STANDARD_ROUNDEDNESSES);
 	}
 
 	public ReadOnlyListProperty<Phoneme> phonemesProperty() {
@@ -109,6 +88,11 @@ public class LanguagePhonologyModel {
 					.toList();
 
 				phonemes.removeAll(invalid);
+
+				var deduped = phonemes.stream().distinct().toList();
+				if (deduped.size() != phonemes.size()) {
+					phonemes.set(observableArrayList(deduped));
+				}
 			}
 		}
 	}
@@ -168,5 +152,32 @@ public class LanguagePhonologyModel {
 		}
 
 		return phoneme;
+	}
+
+	public static LanguagePhonologyModel createModelWithIpaDefaults() {
+		var model = new LanguagePhonologyModel();
+
+		var categoryFeature = model.addFeature(CATEGORY);
+		categoryFeature.valuesProperty().addAll(STANDARD_CATEGORIES);
+
+		var voicingFeature = model.addFeature(VOICING);
+		voicingFeature.valuesProperty().addAll(STANDARD_VOICINGS);
+
+		var placeFeature = model.addFeature(PLACE);
+		placeFeature.valuesProperty().addAll(STANDARD_PLACES);
+
+		var typeFeature = model.addFeature(TYPE);
+		typeFeature.valuesProperty().addAll(STANDARD_TYPES);
+
+		var opennessFeature = model.addFeature(OPENNESS);
+		opennessFeature.valuesProperty().addAll(STANDARD_OPENNESSES);
+
+		var backnessFeature = model.addFeature(BACKNESS);
+		backnessFeature.valuesProperty().addAll(STANDARD_BACKNESSES);
+
+		var roundednessFeature = model.addFeature(ROUNDEDNESS);
+		roundednessFeature.valuesProperty().addAll(STANDARD_ROUNDEDNESSES);
+
+		return model;
 	}
 }

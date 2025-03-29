@@ -29,14 +29,15 @@ public class PhonologyView extends AnchorPane {
 	private IpaPhonemeMapper phonemeMapper = StandardPhonemes.IPA_MAPPER;
 
 	private Optional<Stage> consonantPicker = Optional.empty();
+	private Optional<Stage> vowelPicker = Optional.empty();
 
 	@FXML private TableView<Phoneme> phonemesTable;
 
 	public PhonologyView(LangforgePluginContext context) {
 		this.context = context;
-		this.phonologyModel = new LanguagePhonologyModel();
+		this.phonologyModel = LanguagePhonologyModel.createModelWithIpaDefaults();
 
-		var loader = new FXMLLoader(PhonologyView.class.getResource("PhonologyView.fxml"));
+		var loader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/PhonologyView.fxml"));
 		loader.setRoot(this);
 		loader.setController(this);
 
@@ -99,5 +100,22 @@ public class PhonologyView extends AnchorPane {
 		stage.setOnCloseRequest(e -> consonantPicker = Optional.empty());
 
 		consonantPicker = Optional.of(stage);
+	}
+
+	@FXML
+	private void showIpaVowelPicker(MouseEvent event) {
+		if (vowelPicker.isPresent()) {
+			return;
+		}
+
+		var ipaSelector = new IpaVowelPicker(phonologyModel);
+		var scene = new Scene(ipaSelector);
+		var stage = new Stage();
+		stage.setTitle("IPA Vowels");
+		stage.setScene(scene);
+		stage.show();
+		stage.setOnCloseRequest(e -> vowelPicker = Optional.empty());
+
+		vowelPicker = Optional.of(stage);
 	}
 }

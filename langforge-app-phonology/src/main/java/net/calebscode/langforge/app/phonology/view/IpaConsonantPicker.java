@@ -3,7 +3,6 @@ package net.calebscode.langforge.app.phonology.view;
 import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -13,17 +12,12 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
@@ -34,7 +28,7 @@ public class IpaConsonantPicker extends AnchorPane {
 
 	private record TableKey(String place, String type) {}
 
-	@FXML private TableView<String> ipaTable;
+	@FXML private TableView<String> consonantTable;
 	@FXML private TableColumn<String, String> columnType;
 	@FXML private TableColumn<String, List<Phoneme>> columnBilabial;
 	@FXML private TableColumn<String, List<Phoneme>> columnLabiodental;
@@ -52,7 +46,7 @@ public class IpaConsonantPicker extends AnchorPane {
 	private Map<TableKey, List<Phoneme>> groupedPhonemes;
 
 	public IpaConsonantPicker(LanguagePhonologyModel model) {
-		var loader = new FXMLLoader(IpaConsonantPicker.class.getResource("IpaConsonantPicker.fxml"));
+		var loader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/IpaConsonantPicker.fxml"));
 		loader.setRoot(this);
 		loader.setController(this);
 
@@ -65,16 +59,17 @@ public class IpaConsonantPicker extends AnchorPane {
 
 		this.model = model;
 
-		ipaTable.getItems().add(StandardPhonemeFeatures.TYPE_PLOSIVE);
-		ipaTable.getItems().add(StandardPhonemeFeatures.TYPE_NASAL);
-		ipaTable.getItems().add(StandardPhonemeFeatures.TYPE_TRILL);
-		ipaTable.getItems().add(StandardPhonemeFeatures.TYPE_FLAP);
-		ipaTable.getItems().add(StandardPhonemeFeatures.TYPE_FRICATIVE);
-		ipaTable.getItems().add(StandardPhonemeFeatures.TYPE_LATERAL_FRICATIVE);
-		ipaTable.getItems().add(StandardPhonemeFeatures.TYPE_APPROXIMATE);
-		ipaTable.getItems().add(StandardPhonemeFeatures.TYPE_LATERAL_APPROXIMATE);
+		// Not using StandardPhonemeFeatures.STANDARD_TYPES here so that the ordering matches the IPA chart
+		consonantTable.getItems().add(StandardPhonemeFeatures.TYPE_PLOSIVE);
+		consonantTable.getItems().add(StandardPhonemeFeatures.TYPE_NASAL);
+		consonantTable.getItems().add(StandardPhonemeFeatures.TYPE_TRILL);
+		consonantTable.getItems().add(StandardPhonemeFeatures.TYPE_FLAP);
+		consonantTable.getItems().add(StandardPhonemeFeatures.TYPE_FRICATIVE);
+		consonantTable.getItems().add(StandardPhonemeFeatures.TYPE_LATERAL_FRICATIVE);
+		consonantTable.getItems().add(StandardPhonemeFeatures.TYPE_APPROXIMATE);
+		consonantTable.getItems().add(StandardPhonemeFeatures.TYPE_LATERAL_APPROXIMATE);
 
-		ipaTable.setSelectionModel(null);
+		consonantTable.setSelectionModel(null);
 
 		groupedPhonemes = StandardPhonemes.IPA_PHONEMES.stream()
 			.filter(phoneme -> phoneme.getFeatureValue(CATEGORY).orElse("").equals(CATEGORY_CONSONANT))
@@ -102,78 +97,46 @@ public class IpaConsonantPicker extends AnchorPane {
 			return cell;
 		});
 
+		var cellFactory = new PhonemeButtonsCellFactory(model);
+
 		columnBilabial.setCellValueFactory(valueFactoryFor(StandardPhonemeFeatures.PLACE_BILABIAL));
-		columnBilabial.setCellFactory(cellFactoryFor(StandardPhonemeFeatures.PLACE_BILABIAL));
+		columnBilabial.setCellFactory(cellFactory);
 
 		columnLabiodental.setCellValueFactory(valueFactoryFor(StandardPhonemeFeatures.PLACE_LABIODENTAL));
-		columnLabiodental.setCellFactory(cellFactoryFor(StandardPhonemeFeatures.PLACE_LABIODENTAL));
+		columnLabiodental.setCellFactory(cellFactory);
 
 		columnDental.setCellValueFactory(valueFactoryFor(StandardPhonemeFeatures.PLACE_DENTAL));
-		columnDental.setCellFactory(cellFactoryFor(StandardPhonemeFeatures.PLACE_DENTAL));
+		columnDental.setCellFactory(cellFactory);
 
 		columnAlveolar.setCellValueFactory(valueFactoryFor(StandardPhonemeFeatures.PLACE_ALVEOLAR));
-		columnAlveolar.setCellFactory(cellFactoryFor(StandardPhonemeFeatures.PLACE_ALVEOLAR));
+		columnAlveolar.setCellFactory(cellFactory);
 
 		columnPostalveolar.setCellValueFactory(valueFactoryFor(StandardPhonemeFeatures.PLACE_POST_ALVEOLAR));
-		columnPostalveolar.setCellFactory(cellFactoryFor(StandardPhonemeFeatures.PLACE_POST_ALVEOLAR));
+		columnPostalveolar.setCellFactory(cellFactory);
 
 		columnRetroflex.setCellValueFactory(valueFactoryFor(StandardPhonemeFeatures.PLACE_RETROFLEX));
-		columnRetroflex.setCellFactory(cellFactoryFor(StandardPhonemeFeatures.PLACE_RETROFLEX));
+		columnRetroflex.setCellFactory(cellFactory);
 
 		columnPalatal.setCellValueFactory(valueFactoryFor(StandardPhonemeFeatures.PLACE_PALATAL));
-		columnPalatal.setCellFactory(cellFactoryFor(StandardPhonemeFeatures.PLACE_PALATAL));
+		columnPalatal.setCellFactory(cellFactory);
 
 		columnVelar.setCellValueFactory(valueFactoryFor(StandardPhonemeFeatures.PLACE_VELAR));
-		columnVelar.setCellFactory(cellFactoryFor(StandardPhonemeFeatures.PLACE_VELAR));
+		columnVelar.setCellFactory(cellFactory);
 
 		columnUvular.setCellValueFactory(valueFactoryFor(StandardPhonemeFeatures.PLACE_UVULAR));
-		columnUvular.setCellFactory(cellFactoryFor(StandardPhonemeFeatures.PLACE_UVULAR));
+		columnUvular.setCellFactory(cellFactory);
 
 		columnPharyngeal.setCellValueFactory(valueFactoryFor(StandardPhonemeFeatures.PLACE_PHARYNGEAL));
-		columnPharyngeal.setCellFactory(cellFactoryFor(StandardPhonemeFeatures.PLACE_PHARYNGEAL));
+		columnPharyngeal.setCellFactory(cellFactory);
 
 		columnGlottal.setCellValueFactory(valueFactoryFor(StandardPhonemeFeatures.PLACE_GLOTTAL));
-		columnGlottal.setCellFactory(cellFactoryFor(StandardPhonemeFeatures.PLACE_GLOTTAL));
+		columnGlottal.setCellFactory(cellFactory);
 	}
 
 	private Callback<CellDataFeatures<String, List<Phoneme>>, ObservableValue<List<Phoneme>>> valueFactoryFor(String place) {
 		return cell -> {
 			var key = new TableKey(place, cell.getValue());
 			return new ReadOnlyObjectWrapper<>(groupedPhonemes.get(key));
-		};
-	}
-
-	private Callback<TableColumn<String, List<Phoneme>>, TableCell<String, List<Phoneme>>> cellFactoryFor(String place) {
-		return cell -> new TableCell<>() {
-
-			HBox container;
-
-			{
-				container = new HBox();
-				container.setAlignment(Pos.CENTER);
-
-				setGraphic(container);
-				setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-			}
-
-			@Override
-			protected void updateItem(List<Phoneme> item, boolean empty) {
-				if (item == null) {
-					container.getChildren().clear();
-					return;
-				}
-
-				var newButtons = new ArrayList<Node>();
-				for (var phoneme : item) {
-					var button = new Button(phoneme.render(StandardPhonemes.IPA_MAPPER));
-					button.setOnMouseClicked(event -> {
-						model.phonemesProperty().add(phoneme);
-					});
-					newButtons.add(button);
-				}
-				container.getChildren().setAll(newButtons);
-			};
-
 		};
 	}
 

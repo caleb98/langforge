@@ -14,13 +14,13 @@
 <?import net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures?>
 
 <fx:root type="net.calebscode.langforge.app.phonology.view.IpaConsonantPicker" xmlns:fx="http://javafx.com/fxml">
-	<TableView fx:id="ipaTable"
+	<TableView fx:id="consonantTable"
 		AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
 		<columnResizePolicy>
 			<TableView fx:constant="CONSTRAINED_RESIZE_POLICY_NEXT_COLUMN"/>
 		</columnResizePolicy>
 		<columns>
-			<TableColumn fx:id="columnType" minWidth="100" />
+			<TableColumn fx:id="columnType" minWidth="80" />
 			<TableColumn fx:id="columnBilabial" text="Bilabial" />
 			<TableColumn fx:id="columnLabiodental" text="Labiodental" />
 			<TableColumn fx:id="columnDental" text="Dental" />

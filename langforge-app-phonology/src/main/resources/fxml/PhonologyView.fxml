@@ -17,6 +17,9 @@
 			<Button text="Add IPA Consonants" onMouseClicked="#showIpaConsonantPicker" HBox.hgrow="ALWAYS">
 				<maxWidth><Double fx:constant="MAX_VALUE" /></maxWidth>
 			</Button>
+			<Button text="Add IPA Vowels" onMouseClicked="#showIpaVowelPicker" HBox.hgrow="ALWAYS">
+				<maxWidth><Double fx:constant="MAX_VALUE" /></maxWidth>
+			</Button>
 		</HBox>
 		<TableView fx:id="phonemesTable" VBox.vgrow="ALWAYS">
 			<columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY_NEXT_COLUMN"/></columnResizePolicy>
