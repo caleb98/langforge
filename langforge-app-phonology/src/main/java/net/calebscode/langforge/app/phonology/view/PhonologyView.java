@@ -33,9 +33,9 @@ public class PhonologyView extends AnchorPane {
 
 	@FXML private TableView<Phoneme> phonemesTable;
 
-	public PhonologyView(LangforgePluginContext context) {
+	public PhonologyView(LangforgePluginContext context, LanguagePhonologyModel model) {
 		this.context = context;
-		this.phonologyModel = LanguagePhonologyModel.createModelWithIpaDefaults();
+		phonologyModel = model;
 
 		var loader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/PhonologyView.fxml"));
 		loader.setRoot(this);
