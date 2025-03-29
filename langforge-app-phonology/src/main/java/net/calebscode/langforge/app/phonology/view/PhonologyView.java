@@ -1,37 +1,28 @@
 package net.calebscode.langforge.app.phonology.view;
 
 import java.io.IOException;
-import java.util.Optional;
+import java.util.Objects;
 
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.collections.ListChangeListener.Change;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
+import javafx.scene.layout.VBox;
 import net.calebscode.langforge.app.LangforgePluginContext;
 import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
-import net.calebscode.langforge.app.phonology.model.PhonemeFeatureModel;
-import net.calebscode.langforge.app.ui.ButtonTableCell;
-import net.calebscode.langforge.phonology.phoneme.IpaPhonemeMapper;
-import net.calebscode.langforge.phonology.phoneme.Phoneme;
-import net.calebscode.langforge.phonology.phoneme.StandardPhonemes;
 
 public class PhonologyView extends AnchorPane {
 
 	private LangforgePluginContext context;
 	private LanguagePhonologyModel phonologyModel;
-	private IpaPhonemeMapper phonemeMapper = StandardPhonemes.IPA_MAPPER;
 
-	private Optional<Stage> consonantPicker = Optional.empty();
-	private Optional<Stage> vowelPicker = Optional.empty();
+	@FXML private ListView<String> viewSelector;
+	@FXML private VBox contentContainer;
 
-	@FXML private TableView<Phoneme> phonemesTable;
+	private PhonologicalInventoryView inventoryView;
 
 	public PhonologyView(LangforgePluginContext context, LanguagePhonologyModel model) {
 		this.context = context;
@@ -48,74 +39,29 @@ public class PhonologyView extends AnchorPane {
 			return;
 		}
 
-		phonologyModel.featuresProperty().addListener((Change<? extends PhonemeFeatureModel> c) -> {
-			if (c.wasAdded() || c.wasRemoved()) {
-				this.updatePhonemesTable();
-			}
-		});
+		inventoryView = new PhonologicalInventoryView(phonologyModel);
 
-		phonemesTable.itemsProperty().bind(phonologyModel.phonemesProperty());
-
-		updatePhonemesTable();
+		viewSelector.getSelectionModel().selectedItemProperty().addListener(this::viewSelectionChanged);
+		viewSelector.getSelectionModel().select(0);
 	}
 
-	private void updatePhonemesTable() {
-		phonemesTable.getColumns().clear();
+	private void setActiveView(Node view) {
+		Objects.requireNonNull(view, "Active view must not be null");
+		contentContainer.getChildren().setAll(view);
+	}
 
-		var representationColumn = new TableColumn<Phoneme, String>("Representation");
-		representationColumn.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().render(phonemeMapper)));
-		representationColumn.setStyle("-fx-alignment: CENTER;");
-		phonemesTable.getColumns().add(representationColumn);
+	private void viewSelectionChanged(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+		switch (newValue) {
 
-		for (var feature : phonologyModel.featuresProperty()) {
-			var column = new TableColumn<Phoneme, String>(feature.getName());
-			column.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().features().get(feature.getName())));
-			phonemesTable.getColumns().add(column);
+		case "Phonological Inventory":
+			setActiveView(inventoryView);
+			break;
+
+		default:
+			System.err.println("Unexpected view selected: " + newValue);
+			break;
+
 		}
-
-		var deleteColumn = new TableColumn<Phoneme, Phoneme>();
-		deleteColumn.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-		deleteColumn.setCellFactory(column -> {
-			var button = new ButtonTableCell<Phoneme, Phoneme>("Delete");
-			button.setButtonClicked((phoneme, p) -> {
-				phonologyModel.phonemesProperty().remove(phoneme);
-			});
-			return button;
-		});
-		phonemesTable.getColumns().add(deleteColumn);
 	}
 
-	@FXML
-	private void showIpaConsonantPicker(MouseEvent event) {
-		if (consonantPicker.isPresent()) {
-			return;
-		}
-
-		var ipaSelector = new IpaConsonantPicker(phonologyModel);
-		var scene = new Scene(ipaSelector);
-		var stage = new Stage();
-		stage.setTitle("IPA Consonants");
-		stage.setScene(scene);
-		stage.show();
-		stage.setOnCloseRequest(e -> consonantPicker = Optional.empty());
-
-		consonantPicker = Optional.of(stage);
-	}
-
-	@FXML
-	private void showIpaVowelPicker(MouseEvent event) {
-		if (vowelPicker.isPresent()) {
-			return;
-		}
-
-		var ipaSelector = new IpaVowelPicker(phonologyModel);
-		var scene = new Scene(ipaSelector);
-		var stage = new Stage();
-		stage.setTitle("IPA Vowels");
-		stage.setScene(scene);
-		stage.show();
-		stage.setOnCloseRequest(e -> vowelPicker = Optional.empty());
-
-		vowelPicker = Optional.of(stage);
-	}
 }
