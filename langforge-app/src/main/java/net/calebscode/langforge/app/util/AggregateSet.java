@@ -19,7 +19,7 @@ public class AggregateSet<T> {
 	private List<ObservableSet<T>> includedSets = new ArrayList<>();
 
 	private final ListChangeListener<T> listListener = (change) -> {
-		while(change.next()) {
+		while (change.next()) {
 			// Add any added elements.
 			if (change.wasAdded()) {
 				aggregate.addAll(change.getAddedSubList());

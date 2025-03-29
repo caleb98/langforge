@@ -1,6 +1,6 @@
 package net.calebscode.langforge.phonology.rules;
 
-import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.STANDARD_IPA_PHONEMES;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.IPA_MAPPER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -113,7 +113,7 @@ public class PhonologicalRuleApplicatorTest {
 				var test = ipaSequence(inputIpa);
 				var result = applicator.apply(test, validator, lenient);
 
-				assertEquals(expectIpa, result.render(STANDARD_IPA_PHONEMES));
+				assertEquals(expectIpa, result.render(IPA_MAPPER));
 			}
 		} catch (PhonologicalRuleApplicationException ex) {
 			fail(ex);
@@ -121,7 +121,7 @@ public class PhonologicalRuleApplicatorTest {
 	}
 
 	private PhonologicalRule compileRule(String rule) {
-		return new PhonologicalRuleCompiler(STANDARD_IPA_PHONEMES).compile(rule);
+		return new PhonologicalRuleCompiler(IPA_MAPPER).compile(rule);
 	}
 
 	private static SyllablePattern compilePattern(String pattern) {
@@ -130,14 +130,14 @@ public class PhonologicalRuleApplicatorTest {
 
 	private static Phoneme ipaPhoneme(String ipaString) throws IpaMappingException {
 		return new PhonemeSequenceBuilder()
-				.append(ipaString, STANDARD_IPA_PHONEMES)
+				.append(ipaString, IPA_MAPPER)
 				.build()
 				.phonemeAt(0);
 	}
 
 	private static PhonemeSequence ipaSequence(String ipaString) throws IpaMappingException {
 		return new PhonemeSequenceBuilder()
-				.append(ipaString, STANDARD_IPA_PHONEMES)
+				.append(ipaString, IPA_MAPPER)
 				.build();
 	}
 

@@ -4,10 +4,11 @@ plugins {
 }
 
 dependencies {
-    compileOnly project(':langforge-app')
+    implementation project(':langforge-app')
+    implementation project(':langforge-core')
 }
 
 javafx {
     version = '21.0.3'
-    modules = [ 'javafx.controls' ]
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
 }

@@ -208,7 +208,7 @@ public class PhonemeSequenceTest {
 				));
 		var expected = "#ta.ta#";
 
-		var rendered = sequence.render(STANDARD_IPA_PHONEMES);
+		var rendered = sequence.render(IPA_MAPPER);
 
 		assertEquals(expected, rendered);
 	}
@@ -225,7 +225,7 @@ public class PhonemeSequenceTest {
 				));
 		var expected = ".ta.ta.";
 
-		var rendered = sequence.render(STANDARD_IPA_PHONEMES);
+		var rendered = sequence.render(IPA_MAPPER);
 
 		assertEquals(expected, rendered);
 	}
@@ -237,7 +237,7 @@ public class PhonemeSequenceTest {
 				List.of(DEFAULT_METADATA, DEFAULT_METADATA, DEFAULT_METADATA, DEFAULT_METADATA));
 		var expected = "tata";
 
-		var rendered = sequence.render(STANDARD_IPA_PHONEMES);
+		var rendered = sequence.render(IPA_MAPPER);
 
 		assertEquals(expected, rendered);
 	}
@@ -247,7 +247,7 @@ public class PhonemeSequenceTest {
 		var sequence = new PhonemeSequence();
 		var expected = "";
 
-		var rendered = sequence.render(STANDARD_IPA_PHONEMES);
+		var rendered = sequence.render(IPA_MAPPER);
 
 		assertEquals(expected, rendered);
 	}

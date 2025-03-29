@@ -2,8 +2,10 @@ package net.calebscode.langforge.app.phonology;
 
 import java.util.Map;
 
+import javafx.scene.control.Tab;
 import net.calebscode.langforge.app.LangforgeApplication;
-import net.calebscode.langforge.app.LangforgeApplicationHandle;
+import net.calebscode.langforge.app.LangforgePluginContext;
+import net.calebscode.langforge.app.phonology.view.PhonologyView;
 import net.calebscode.langforge.app.plugin.LangforgePlugin;
 import net.calebscode.langforge.app.plugin.LangforgePluginException;
 import net.calebscode.langforge.app.util.VersionNumber;
@@ -41,17 +43,18 @@ public final class LangforgePhonologyCorePlugin implements LangforgePlugin {
 
 	@Override
 	public Map<String, VersionNumber> getDependencies() {
-		return Map.of();
+		return Map.of("langforge.core", LangforgeApplication.VERSION);
 	}
 
 	@Override
-	public void init(LangforgeApplicationHandle handle) throws LangforgePluginException {
+	public void init(LangforgePluginContext context) throws LangforgePluginException {
 
 	}
 
 	@Override
-	public void load(LangforgeApplicationHandle handle) throws LangforgePluginException {
-
+	public void load(LangforgePluginContext context) throws LangforgePluginException {
+		var tab = new Tab("Phonology", new PhonologyView(context));
+		context.createTab(tab);
 	}
 
 }

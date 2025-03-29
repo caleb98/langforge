@@ -40,62 +40,68 @@ class LangforgeApplicationViewModel {
 	}
 
 	private void bindModel() {
-		menus.bind(new ListBinding<Menu>() {
-			{
-				bind(model.menus);
-				bind(model.menuItems);
+		menus.bind(new MenuListBinding());
+		tabs.bindBidirectional(model.tabs);
+	}
+
+	private final class MenuListBinding extends ListBinding<Menu> {
+
+		MenuListBinding() {
+			bind(model.menus);
+			bind(model.menuItems);
+		}
+
+		@Override
+		protected ObservableList<Menu> computeValue() {
+			// Identify any duplicate menu definitions (cases of the same menu name
+			// with different indexes). We want to "squash" these into the lowest
+			// index.
+			var groupedDefinitions = model.menus.stream().collect(Collectors.groupingBy(def -> def.name()));
+			var resolvedDefinitions = new HashMap<String, MenuDefinition>();
+
+			for (var menuName : groupedDefinitions.keySet()) {
+				var definitions = groupedDefinitions.get(menuName);
+				if (definitions.size() > 1) {
+					definitions.sort((defA, defB) -> Integer.compare(defA.index(), defB.index()));
+				}
+				resolvedDefinitions.put(menuName, definitions.get(0));
 			}
-			@Override
-			protected ObservableList<Menu> computeValue() {
-				// Identify any duplicate menu definitions (cases of the same menu name
-				// with different indexes). We want to "squash" these into the lowest
-				// index.
-				var groupedDefinitions = model.menus.stream().collect(Collectors.groupingBy(def -> def.name()));
-				var resolvedDefinitions = new HashMap<String, MenuDefinition>();
 
-				for (var menuName : groupedDefinitions.keySet()) {
-					var definitions = groupedDefinitions.get(menuName);
-					if (definitions.size() > 1) {
-						definitions.sort((defA, defB) -> Integer.compare(defA.index(), defB.index()));
-					}
-					resolvedDefinitions.put(menuName, definitions.get(0));
-				}
+			// Create menus from menu definitions.
+			for (var menuEntry : resolvedDefinitions.entrySet()) {
+				var menuName = menuEntry.getKey();
+				var menuDef = menuEntry.getValue();
 
-				// Create menus from menu definitions.
-				for (var menuEntry : resolvedDefinitions.entrySet()) {
-					var menuName = menuEntry.getKey();
-					var menuDef = menuEntry.getValue();
+				var menu = existingMenus.computeIfAbsent(menuName, (name) -> new Menu(name));
+				existingMenuIndexes.put(menuName, menuDef.index());
 
-					var menu = existingMenus.computeIfAbsent(menuName, (name) -> new Menu(name));
-					existingMenuIndexes.put(menuName, menuDef.index());
+				var menuItems = menu.getItems();
+				menuItems.clear();
 
-					var menuItems = menu.getItems();
-					menuItems.clear();
-
-					var menuItemDefs = model.menuItems.stream()
-							.filter(defn -> Objects.equals(menuDef.name(), defn.menuName()))
-							.sorted((defA, defB) -> defA.group().compareTo(defB.group()))
-							.toList();
-
-					for (int i = 0; i < menuItemDefs.size(); i++) {
-						var itemDef = menuItemDefs.get(i);
-						var item = itemDef.supplier().get();
-						menuItems.add(item);
-
-						if (i < menuItemDefs.size() - 1 && !menuItemDefs.get(i + 1).group().equals(itemDef.group())) {
-							menuItems.add(new SeparatorMenuItem());
-						}
-					}
-				}
-
-				// Sort the menus based on their indexes
-				var orderedMenus = existingMenus.keySet().stream()
-						.sorted((menuNameA, menuNameB) -> Integer.compare(existingMenuIndexes.get(menuNameA), existingMenuIndexes.get(menuNameB)))
-						.map(menuName -> existingMenus.get(menuName))
+				var menuItemDefs = model.menuItems.stream()
+						.filter(defn -> Objects.equals(menuDef.name(), defn.menuName()))
+						.sorted((defA, defB) -> defA.group().compareTo(defB.group()))
 						.toList();
 
-				return FXCollections.observableArrayList(orderedMenus);
-			}});
+				for (int i = 0; i < menuItemDefs.size(); i++) {
+					var itemDef = menuItemDefs.get(i);
+					var item = itemDef.supplier().get();
+					menuItems.add(item);
+
+					if (i < menuItemDefs.size() - 1 && !menuItemDefs.get(i + 1).group().equals(itemDef.group())) {
+						menuItems.add(new SeparatorMenuItem());
+					}
+				}
+			}
+
+			// Sort the menus based on their indexes
+			var orderedMenus = existingMenus.keySet().stream()
+					.sorted((menuNameA, menuNameB) -> Integer.compare(existingMenuIndexes.get(menuNameA), existingMenuIndexes.get(menuNameB)))
+					.map(menuName -> existingMenus.get(menuName))
+					.toList();
+
+			return FXCollections.observableArrayList(orderedMenus);
+		}
 	}
 
 }

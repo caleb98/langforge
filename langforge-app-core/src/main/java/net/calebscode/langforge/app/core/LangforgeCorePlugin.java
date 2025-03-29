@@ -5,7 +5,7 @@ import java.util.Map;
 import javafx.application.Platform;
 import javafx.scene.control.MenuItem;
 import net.calebscode.langforge.app.LangforgeApplication;
-import net.calebscode.langforge.app.LangforgeApplicationHandle;
+import net.calebscode.langforge.app.LangforgePluginContext;
 import net.calebscode.langforge.app.plugin.LangforgePlugin;
 import net.calebscode.langforge.app.plugin.LangforgePluginException;
 import net.calebscode.langforge.app.plugin.ui.MenuDefinition;
@@ -55,15 +55,15 @@ public class LangforgeCorePlugin implements LangforgePlugin {
 	}
 
 	@Override
-	public void init(LangforgeApplicationHandle handle) throws LangforgePluginException {
+	public void init(LangforgePluginContext context) throws LangforgePluginException {
 
 	}
 
 	@Override
-	public void load(LangforgeApplicationHandle handle) throws LangforgePluginException {
+	public void load(LangforgePluginContext context) throws LangforgePluginException {
 		infoDisplay = new AppInfoDisplay();
 
-		handle.addMenus(
+		context.addMenus(
 			new MenuDefinition("File", FILE_MENU_INDEX),
 			new MenuDefinition("Edit", EDIT_MENU_INDEX),
 			new MenuDefinition("Help", HELP_MENU_INDEX));
@@ -78,7 +78,7 @@ public class LangforgeCorePlugin implements LangforgePlugin {
 			infoDisplay.show();
 		});
 
-		handle.addMenuItems(
+		context.addMenuItems(
 			new MenuItemDefinition("File", () -> exitMenuItem),
 			new MenuItemDefinition("Help", () -> appInfoMenuItem));
 	}

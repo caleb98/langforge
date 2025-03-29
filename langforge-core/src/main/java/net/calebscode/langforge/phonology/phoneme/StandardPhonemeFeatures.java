@@ -1,5 +1,7 @@
 package net.calebscode.langforge.phonology.phoneme;
 
+import java.util.Set;
+
 public class StandardPhonemeFeatures {
 
 	// Feature Names
@@ -11,13 +13,22 @@ public class StandardPhonemeFeatures {
 	public static final String BACKNESS = "backness";
 	public static final String ROUNDEDNESS = "roundedness";
 
+	public static final Set<String> STANDARD_FEATURE_NAMES =
+			Set.of(CATEGORY, VOICING, PLACE, TYPE, OPENNESS, BACKNESS, ROUNDEDNESS);
+
 	// Phoneme Category Features
 	public static final String CATEGORY_CONSONANT = "consonant";
 	public static final String CATEGORY_VOWEL = "vowel";
 
+	public static final Set<String> STANDARD_CATEGORIES =
+			Set.of(CATEGORY_CONSONANT, CATEGORY_VOWEL);
+
 	// Voicing Features
 	public static final String VOICING_VOICED = "voiced";
 	public static final String VOICING_VOICELESS = "voiceless";
+
+	public static final Set<String> STANDARD_VOICINGS =
+			Set.of(VOICING_VOICED, VOICING_VOICELESS);
 
 	// Place of Articulation Features
 	public static final String PLACE_BILABIAL = "bilabial";
@@ -35,6 +46,12 @@ public class StandardPhonemeFeatures {
 	public static final String PLACE_PHARYNGEAL = "pharyngeal";
 	public static final String PLACE_GLOTTAL = "glottal";
 
+	public static final Set<String> STANDARD_PLACES =
+			Set.of(PLACE_BILABIAL, PLACE_LABIODENTAL, PLACE_LABIOVELAR, PLACE_DENTAL,
+					PLACE_ALVEOLAR, PLACE_POST_ALVEOLAR, PLACE_PALATO_ALVEOLAR,
+					PLACE_ALVEOLO_PALATAL, PLACE_RETROFLEX, PLACE_PALATAL, PLACE_VELAR,
+					PLACE_UVULAR, PLACE_PHARYNGEAL, PLACE_GLOTTAL);
+
 	// Type of Articulation Features
 	public static final String TYPE_PLOSIVE = "plosive";
 	public static final String TYPE_NASAL = "nasal";
@@ -46,6 +63,11 @@ public class StandardPhonemeFeatures {
 	public static final String TYPE_APPROXIMATE = "approximate";
 	public static final String TYPE_LATERAL_APPROXIMATE = "lateral approximate";
 
+	public static final Set<String> STANDARD_TYPES =
+			Set.of(TYPE_PLOSIVE, TYPE_NASAL, TYPE_TRILL, TYPE_FLAP, TYPE_FRICATIVE,
+					TYPE_AFFRICATE, TYPE_LATERAL_FRICATIVE, TYPE_APPROXIMATE,
+					TYPE_LATERAL_APPROXIMATE);
+
 	// Openness Features
 	public static final String OPENNESS_CLOSE = "close";
 	public static final String OPENNESS_NEAR_CLOSE = "near-close";
@@ -55,13 +77,23 @@ public class StandardPhonemeFeatures {
 	public static final String OPENNESS_NEAR_OPEN = "near-open";
 	public static final String OPENNESS_OPEN = "open";
 
+	public static final Set<String> STANDARD_OPENNESSES =
+			Set.of(OPENNESS_CLOSE, OPENNESS_NEAR_CLOSE, OPENNESS_CLOSE_MID, OPENNESS_MID,
+					OPENNESS_OPEN_MID, OPENNESS_NEAR_OPEN, OPENNESS_OPEN);
+
 	// Backness Features
 	public static final String BACKNESS_FRONT = "front";
 	public static final String BACKNESS_CENTRAL = "central";
 	public static final String BACKNESS_BACK = "back";
 
+	public static final Set<String> STANDARD_BACKNESSES =
+			Set.of(BACKNESS_FRONT, BACKNESS_CENTRAL, BACKNESS_BACK);
+
 	// Roundedness Features
 	public static final String ROUNDEDNESS_UNROUNDED = "unrounded";
 	public static final String ROUNDEDNESS_ROUNDED = "rounded";
+
+	public static final Set<String> STANDARD_ROUNDEDNESSES =
+			Set.of(ROUNDEDNESS_UNROUNDED, ROUNDEDNESS_ROUNDED);
 
 }

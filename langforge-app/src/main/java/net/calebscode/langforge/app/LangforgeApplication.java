@@ -42,6 +42,10 @@ public final class LangforgeApplication extends Application {
 		primaryStage.setTitle("Langforge");
 		primaryStage.show();
 		primaryStage.requestFocus();
+
+		// Force the window to open in front of other windows at launch.
+		primaryStage.setAlwaysOnTop(true);
+		primaryStage.setAlwaysOnTop(false);
 	}
 
 	private void displayDuplicatePluginIdAlert(DuplicatePluginIdException duplicate) {

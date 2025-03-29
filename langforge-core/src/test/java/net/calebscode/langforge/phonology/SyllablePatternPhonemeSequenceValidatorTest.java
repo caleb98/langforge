@@ -1,6 +1,6 @@
 package net.calebscode.langforge.phonology;
 
-import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.STANDARD_IPA_PHONEMES;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.IPA_MAPPER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -35,7 +35,7 @@ public class SyllablePatternPhonemeSequenceValidatorTest {
 
 		var validated = validator.validate(input);
 
-		assertEquals(".kjoj.ko.ko.jjo.kjo.", validated.render(STANDARD_IPA_PHONEMES));
+		assertEquals(".kjoj.ko.ko.jjo.kjo.", validated.render(IPA_MAPPER));
 	}
 
 	@Test
@@ -74,7 +74,7 @@ public class SyllablePatternPhonemeSequenceValidatorTest {
 
 		var validated = validator.validate(input);
 
-		assertEquals(".ob.bob.bbob.bbbob.bbbbob.", validated .render(STANDARD_IPA_PHONEMES));
+		assertEquals(".ob.bob.bbob.bbbob.bbbbob.", validated .render(IPA_MAPPER));
 	}
 
 	@Test
@@ -88,19 +88,19 @@ public class SyllablePatternPhonemeSequenceValidatorTest {
 		var input = ipaSequence("optkpokpko");
 
 		var validated = validator.validate(input);
-		assertEquals(".op.tkpokpk.o.", validated.render(STANDARD_IPA_PHONEMES));
+		assertEquals(".op.tkpokpk.o.", validated.render(IPA_MAPPER));
 	}
 
 	private static Phoneme ipaPhoneme(String ipaString) throws IpaMappingException {
 		return new PhonemeSequenceBuilder()
-				.append(ipaString, STANDARD_IPA_PHONEMES)
+				.append(ipaString, IPA_MAPPER)
 				.build()
 				.phonemeAt(0);
 	}
 
 	private static PhonemeSequence ipaSequence(String ipaString) throws IpaMappingException {
 		return new PhonemeSequenceBuilder()
-				.append(ipaString, STANDARD_IPA_PHONEMES)
+				.append(ipaString, IPA_MAPPER)
 				.build();
 	}
 
