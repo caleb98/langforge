@@ -14,12 +14,12 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.collections.ListChangeListener.Change;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 
-public class LanguagePhonologyModel {
+public class PhonologicalInventoryModel {
 
 	private ListProperty<Phoneme> phonemes;
 	private ListProperty<PhonemeFeatureModel> features;
 
-	public LanguagePhonologyModel() {
+	public PhonologicalInventoryModel() {
 		phonemes = new SimpleListProperty<>(observableArrayList());
 		phonemes.addListener(this::validatePhonemes);
 
@@ -154,8 +154,8 @@ public class LanguagePhonologyModel {
 		return phoneme;
 	}
 
-	public static LanguagePhonologyModel createModelWithIpaDefaults() {
-		var model = new LanguagePhonologyModel();
+	public static PhonologicalInventoryModel createModelWithIpaDefaults() {
+		var model = new PhonologicalInventoryModel();
 
 		var categoryFeature = model.addFeature(CATEGORY);
 		categoryFeature.valuesProperty().addAll(STANDARD_CATEGORIES);
