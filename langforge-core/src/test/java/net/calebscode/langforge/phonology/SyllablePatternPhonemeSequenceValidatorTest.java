@@ -25,10 +25,10 @@ public class SyllablePatternPhonemeSequenceValidatorTest {
 
 	@Test
 	void revalidate() throws PhonemeSequenceValidationException, IpaMappingException {
-		categories.addGeneratablePhoneme('C', ipaPhoneme("k"));
-		categories.addGeneratablePhoneme('C', ipaPhoneme("j"));
-		categories.addGeneratablePhoneme('G', ipaPhoneme("j"));
-		categories.addGeneratablePhoneme('V', ipaPhoneme("o"));
+		categories.addPhoneme('C', ipaPhoneme("k"));
+		categories.addPhoneme('C', ipaPhoneme("j"));
+		categories.addPhoneme('G', ipaPhoneme("j"));
+		categories.addPhoneme('V', ipaPhoneme("o"));
 		var pattern = new SyllablePatternCompiler(categories).compile("C(G)V(C)");
 		var validator = new SyllablePatternPhonemeSequenceValidator(pattern);
 		var input = ipaSequence("kjojkokojjokjo");
@@ -40,10 +40,10 @@ public class SyllablePatternPhonemeSequenceValidatorTest {
 
 	@Test
 	void revalidateInvalid() throws IpaMappingException {
-		categories.addGeneratablePhoneme('C', ipaPhoneme("k"));
-		categories.addGeneratablePhoneme('C', ipaPhoneme("j"));
-		categories.addGeneratablePhoneme('G', ipaPhoneme("j"));
-		categories.addGeneratablePhoneme('V', ipaPhoneme("o"));
+		categories.addPhoneme('C', ipaPhoneme("k"));
+		categories.addPhoneme('C', ipaPhoneme("j"));
+		categories.addPhoneme('G', ipaPhoneme("j"));
+		categories.addPhoneme('V', ipaPhoneme("o"));
 		var pattern = new SyllablePatternCompiler(categories).compile("C(G)VC");
 		var validator = new SyllablePatternPhonemeSequenceValidator(pattern);
 		var input = ipaSequence("kjojkokojjokjo");
@@ -53,10 +53,10 @@ public class SyllablePatternPhonemeSequenceValidatorTest {
 
 	@Test
 	void revalidateInvalid2() throws IpaMappingException {
-		categories.addGeneratablePhoneme('C', ipaPhoneme("k"));
-		categories.addGeneratablePhoneme('C', ipaPhoneme("j"));
-		categories.addGeneratablePhoneme('G', ipaPhoneme("j"));
-		categories.addGeneratablePhoneme('V', ipaPhoneme("o"));
+		categories.addPhoneme('C', ipaPhoneme("k"));
+		categories.addPhoneme('C', ipaPhoneme("j"));
+		categories.addPhoneme('G', ipaPhoneme("j"));
+		categories.addPhoneme('V', ipaPhoneme("o"));
 		var pattern = new SyllablePatternCompiler(categories).compile("CGVC");
 		var validator = new SyllablePatternPhonemeSequenceValidator(pattern);
 		var input = ipaSequence("kkjok");
@@ -66,8 +66,8 @@ public class SyllablePatternPhonemeSequenceValidatorTest {
 
 	@Test
 	void revalidateMaximalOnset() throws PhonemeSequenceValidationException, IpaMappingException {
-		categories.addGeneratablePhoneme('C', ipaPhoneme("b"));
-		categories.addGeneratablePhoneme('V', ipaPhoneme("o"));
+		categories.addPhoneme('C', ipaPhoneme("b"));
+		categories.addPhoneme('V', ipaPhoneme("o"));
 		var pattern = new SyllablePatternCompiler(categories).compile("(C)(C)(C)(C)VC");
 		var validator = new SyllablePatternPhonemeSequenceValidator(pattern);
 		var input = ipaSequence("obbobbbobbbbobbbbbob");
@@ -79,10 +79,10 @@ public class SyllablePatternPhonemeSequenceValidatorTest {
 
 	@Test
 	void revalidateMaximalOnset2() throws PhonemeSequenceValidationException, IpaMappingException {
-		categories.addGeneratablePhoneme('X', ipaPhoneme("t"));
-		categories.addGeneratablePhoneme('Y', ipaPhoneme("k"));
-		categories.addGeneratablePhoneme('Z', ipaPhoneme("p"));
-		categories.addGeneratablePhoneme('V', ipaPhoneme("o"));
+		categories.addPhoneme('X', ipaPhoneme("t"));
+		categories.addPhoneme('Y', ipaPhoneme("k"));
+		categories.addPhoneme('Z', ipaPhoneme("p"));
+		categories.addPhoneme('V', ipaPhoneme("o"));
 		var pattern = new SyllablePatternCompiler(categories).compile("(((X)Y)Z)V((X|Y|Z))((X|Y|Z))((X|Y|Z))");
 		var validator = new SyllablePatternPhonemeSequenceValidator(pattern);
 		var input = ipaSequence("optkpokpko");

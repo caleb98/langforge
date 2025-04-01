@@ -54,13 +54,13 @@ public class SyllablePatternTest {
 
 		var l = VOICED_ALVEOLAR_LATERAL_APPROXIMATE;
 
-		categories.addGeneratablePhoneme('C', k);
-		categories.addGeneratablePhoneme('C', t);
+		categories.addPhoneme('C', k);
+		categories.addPhoneme('C', t);
 
-		categories.addGeneratablePhoneme('V', a);
-		categories.addGeneratablePhoneme('V', o);
+		categories.addPhoneme('V', a);
+		categories.addPhoneme('V', o);
 
-		categories.addGeneratablePhoneme('K', l);
+		categories.addPhoneme('K', l);
 
 		syl_a = new Syllable(a);
 		syl_o = new Syllable(o);

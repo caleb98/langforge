@@ -28,7 +28,7 @@ public class SyllablePatternPhonemeSequenceValidator implements PhonemeSequenceV
 	public PhonemeSequence validate(PhonemeSequence sequence) throws PhonemeSequenceValidationException {
 		var syllablePatterns = getSyllablePatterns(sequence, sequence.length() - 1);
 		if (syllablePatterns == null) {
-			throw new PhonemeSequenceValidationException("Could parse sequence into series of valid syllables.");
+			throw new PhonemeSequenceValidationException("Could not parse sequence into series of valid syllables.");
 		}
 
 		var syllables = new ArrayList<Syllable>(syllablePatterns.size());
@@ -79,7 +79,6 @@ public class SyllablePatternPhonemeSequenceValidator implements PhonemeSequenceV
 	}
 
 	private Set<String> getPossibleSyllablePatterns(PhonemeSequence sequence, int position, String currentPattern) throws PhonemeSequenceValidationException {
-		System.out.print("");
 		// Stop when we're out of phonemes or our pattern is invalid.
 		if (!pattern.allPatterns().stream().anyMatch(p -> p.endsWith(currentPattern))) {
 			return Set.of();

@@ -85,7 +85,7 @@ public class SyllablePattern {
 		}
 
 		var outcomes = new HashSet<List<Phoneme>>();
-		var generatable = categoryMap.getGeneratablePhonemes(pattern.charAt(0));
+		var generatable = categoryMap.getPhonemes(pattern.charAt(0));
 		for (Phoneme phonemeToAdd : generatable) {
 			var modifiedSyllable = new ArrayList<>(currentSyllable);
 			modifiedSyllable.add(phonemeToAdd);
@@ -96,7 +96,7 @@ public class SyllablePattern {
 	}
 
 	private Phoneme getRandomPhonemeForCategory(Character categoryChar) {
-		var options = categoryMap.getGeneratablePhonemes(categoryChar);
+		var options = categoryMap.getPhonemes(categoryChar);
 		if (options.isEmpty()) {
 			throw new RuntimeException("Invalid class character '" + categoryChar + "'. No phonemes available for this class.");
 		}

@@ -9,8 +9,8 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import net.calebscode.langforge.phonology.SyllablePatternPhonemeSequenceValidator;
 import net.calebscode.langforge.phonology.PhonologicalRuleApplicationException;
+import net.calebscode.langforge.phonology.SyllablePatternPhonemeSequenceValidator;
 import net.calebscode.langforge.phonology.phoneme.IpaMappingException;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 import net.calebscode.langforge.phonology.phoneme.PhonemeSequence;
@@ -25,18 +25,18 @@ public class PhonologicalRuleApplicatorTest {
 
 	@BeforeAll
 	static void beforeAll() throws IpaMappingException {
-		categoryMap.addGeneratablePhoneme('C', ipaPhoneme("t"));
-		categoryMap.addGeneratablePhoneme('C', ipaPhoneme("d"));
-		categoryMap.addGeneratablePhoneme('C', ipaPhoneme("s"));
-		categoryMap.addGeneratablePhoneme('C', ipaPhoneme("k"));
-		categoryMap.addGeneratablePhoneme('C', ipaPhoneme("g"));
-		categoryMap.addGeneratablePhoneme('C', ipaPhoneme("j"));
+		categoryMap.addPhoneme('C', ipaPhoneme("t"));
+		categoryMap.addPhoneme('C', ipaPhoneme("d"));
+		categoryMap.addPhoneme('C', ipaPhoneme("s"));
+		categoryMap.addPhoneme('C', ipaPhoneme("k"));
+		categoryMap.addPhoneme('C', ipaPhoneme("g"));
+		categoryMap.addPhoneme('C', ipaPhoneme("j"));
 
-		categoryMap.addGeneratablePhoneme('G', ipaPhoneme("j"));
+		categoryMap.addPhoneme('G', ipaPhoneme("j"));
 
-		categoryMap.addGeneratablePhoneme('V', ipaPhoneme("a"));
-		categoryMap.addGeneratablePhoneme('V', ipaPhoneme("o"));
-		categoryMap.addGeneratablePhoneme('V', ipaPhoneme("i"));
+		categoryMap.addPhoneme('V', ipaPhoneme("a"));
+		categoryMap.addPhoneme('V', ipaPhoneme("o"));
+		categoryMap.addPhoneme('V', ipaPhoneme("i"));
 	}
 
 	@Test
