@@ -19,7 +19,7 @@ import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
-import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
+import net.calebscode.langforge.app.phonology.model.PhonologicalInventoryModel;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 import net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures;
 import net.calebscode.langforge.phonology.phoneme.StandardPhonemes;
@@ -34,10 +34,9 @@ public class IpaVowelPicker extends AnchorPane {
 	@FXML private TableColumn<String, List<Phoneme>> columnCentral;
 	@FXML private TableColumn<String, List<Phoneme>> columnBack;
 
-	private LanguagePhonologyModel model;
 	private Map<TableKey, List<Phoneme>> groupedPhonemes;
 
-	public IpaVowelPicker(LanguagePhonologyModel model) {
+	public IpaVowelPicker(PhonologicalInventoryModel model) {
 		var loader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/IpaVowelPicker.fxml"));
 		loader.setRoot(this);
 		loader.setController(this);
@@ -48,8 +47,6 @@ public class IpaVowelPicker extends AnchorPane {
 			getChildren().add(new Label("Failed to load component " + getClass().getCanonicalName() + ": " + ex.getMessage()));
 			return;
 		}
-
-		this.model = model;
 
 		// Not using StandardPhonemeFeatures.STANDARD_OPENNESSES here so that the ordering matches the IPA chart
 		vowelTable.getItems().add(StandardPhonemeFeatures.OPENNESS_CLOSE);

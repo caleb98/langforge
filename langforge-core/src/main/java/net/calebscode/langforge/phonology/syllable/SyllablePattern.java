@@ -100,7 +100,11 @@ public class SyllablePattern {
 		if (options.isEmpty()) {
 			throw new RuntimeException("Invalid class character '" + categoryChar + "'. No phonemes available for this class.");
 		}
-		return options.stream().skip(rand.nextInt(options.size())).findFirst().get();
+
+		return options.stream()
+			.skip(rand.nextInt(options.size()))
+			.findFirst()
+			.get();
 	}
 
 }

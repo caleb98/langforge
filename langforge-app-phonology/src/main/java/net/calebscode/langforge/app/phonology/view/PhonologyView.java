@@ -10,23 +10,30 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import net.calebscode.langforge.app.LangforgePluginContext;
-import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
+import net.calebscode.langforge.app.phonology.model.PhonologicalInventoryModel;
+import net.calebscode.langforge.app.phonology.model.SyllablePatternCategoryModel;
 
 public class PhonologyView extends AnchorPane {
 
 	private LangforgePluginContext context;
-	private LanguagePhonologyModel phonologyModel;
+	private PhonologicalInventoryModel phonologyModel;
+	private SyllablePatternCategoryModel syllableModel;
 
 	@FXML private ListView<String> viewSelector;
-	@FXML private VBox contentContainer;
+	@FXML private AnchorPane contentContainer;
 
 	private PhonologicalInventoryView inventoryView;
+	private SyllablePatternView syllableView;
 
-	public PhonologyView(LangforgePluginContext context, LanguagePhonologyModel model) {
+	public PhonologyView(
+			LangforgePluginContext context,
+			PhonologicalInventoryModel phonologyModel,
+			SyllablePatternCategoryModel syllableModel
+	) {
 		this.context = context;
-		phonologyModel = model;
+		this.phonologyModel = phonologyModel;
+		this.syllableModel = syllableModel;
 
 		var loader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/PhonologyView.fxml"));
 		loader.setRoot(this);
@@ -40,6 +47,16 @@ public class PhonologyView extends AnchorPane {
 		}
 
 		inventoryView = new PhonologicalInventoryView(phonologyModel);
+		AnchorPane.setTopAnchor(inventoryView, 0.0);
+		AnchorPane.setBottomAnchor(inventoryView, 0.0);
+		AnchorPane.setLeftAnchor(inventoryView, 0.0);
+		AnchorPane.setRightAnchor(inventoryView, 0.0);
+
+		syllableView = new SyllablePatternView(phonologyModel, syllableModel);
+		AnchorPane.setTopAnchor(syllableView, 0.0);
+		AnchorPane.setBottomAnchor(syllableView, 0.0);
+		AnchorPane.setLeftAnchor(syllableView, 0.0);
+		AnchorPane.setRightAnchor(syllableView, 0.0);
 
 		viewSelector.getSelectionModel().selectedItemProperty().addListener(this::viewSelectionChanged);
 		viewSelector.getSelectionModel().select(0);
@@ -55,6 +72,10 @@ public class PhonologyView extends AnchorPane {
 
 		case "Phonological Inventory":
 			setActiveView(inventoryView);
+			break;
+
+		case "Syllable Patterns":
+			setActiveView(syllableView);
 			break;
 
 		default:

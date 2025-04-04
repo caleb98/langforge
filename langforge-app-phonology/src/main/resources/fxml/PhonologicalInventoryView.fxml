@@ -28,6 +28,7 @@
 		</HBox>
 		<Label text="Phonological Inventory" />
 		<TableView fx:id="phonemesTable" VBox.vgrow="ALWAYS">
+			<maxHeight><Double fx:constant="MAX_VALUE" /></maxHeight>
 			<columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY_NEXT_COLUMN"/></columnResizePolicy>
 		</TableView>
 	</VBox>

@@ -6,7 +6,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import net.calebscode.langforge.app.LangforgeApplication;
 import net.calebscode.langforge.app.LangforgePluginContext;
-import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
+import net.calebscode.langforge.app.phonology.model.PhonologicalInventoryModel;
+import net.calebscode.langforge.app.phonology.model.SyllablePatternCategoryModel;
 import net.calebscode.langforge.app.phonology.view.PhonologyView;
 import net.calebscode.langforge.app.plugin.LangforgePlugin;
 import net.calebscode.langforge.app.plugin.LangforgePluginException;
@@ -20,7 +21,8 @@ public final class LangforgePhonologyCorePlugin implements LangforgePlugin {
 	private static final String DESCRIPTION = "The core Langforge phonology features.";
 
 	private LangforgePluginContext context;
-	private LanguagePhonologyModel phonologyModel;
+	private PhonologicalInventoryModel phonologyModel;
+	private SyllablePatternCategoryModel syllableModel;
 
 	private boolean phonologyTabVisible = false;
 
@@ -58,7 +60,8 @@ public final class LangforgePhonologyCorePlugin implements LangforgePlugin {
 	public void init(LangforgePluginContext context) throws LangforgePluginException {
 		this.context = context;
 
-		phonologyModel = LanguagePhonologyModel.createModelWithIpaDefaults();
+		phonologyModel = PhonologicalInventoryModel.createModelWithIpaDefaults();
+		syllableModel = new SyllablePatternCategoryModel();
 	}
 
 	@Override
@@ -78,7 +81,7 @@ public final class LangforgePhonologyCorePlugin implements LangforgePlugin {
 		}
 
 		phonologyTabVisible = true;
-		var tab = new Tab("Phonology", new PhonologyView(context, phonologyModel));
+		var tab = new Tab("Phonology", new PhonologyView(context, phonologyModel, syllableModel));
 		tab.setOnClosed(event -> phonologyTabVisible = false);
 
 		context.createTab(tab);

@@ -21,6 +21,10 @@ public class SyllablePatternCategoryMap {
 		return categories.getOrDefault(category, emptySet());
 	}
 
+	public void addCategory(Character category) {
+		categories.putIfAbsent(category, new HashSet<>());
+	}
+
 	public void addPhoneme(Character category, Phoneme phoneme) {
 		var entry = categories.computeIfAbsent(category, c -> new HashSet<>());
 		entry.add(phoneme);
@@ -37,6 +41,12 @@ public class SyllablePatternCategoryMap {
 		}
 
 		entry.remove(phoneme);
+	}
+
+	public void removePhonemeForAllCategories(Phoneme phoneme) {
+		for (var entry : categories.entrySet()) {
+			entry.getValue().remove(phoneme);
+		}
 	}
 
 	public Set<Character> computePhonemeCategories(Phoneme phoneme) {

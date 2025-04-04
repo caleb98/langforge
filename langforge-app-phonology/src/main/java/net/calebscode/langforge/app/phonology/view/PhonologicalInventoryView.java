@@ -16,21 +16,21 @@ import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
+import net.calebscode.langforge.app.phonology.model.PhonologicalInventoryModel;
 import net.calebscode.langforge.app.phonology.model.PhonemeFeatureModel;
 import net.calebscode.langforge.app.ui.ButtonTableCell;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 
 public class PhonologicalInventoryView extends AnchorPane {
 
-	private LanguagePhonologyModel phonologyModel;
+	private PhonologicalInventoryModel phonologyModel;
 
 	private Optional<Stage> consonantPicker = Optional.empty();
 	private Optional<Stage> vowelPicker = Optional.empty();
 
 	@FXML private TableView<Phoneme> phonemesTable;
 
-	public PhonologicalInventoryView(LanguagePhonologyModel phonologyModel) {
+	public PhonologicalInventoryView(PhonologicalInventoryModel phonologyModel) {
 		this.phonologyModel = phonologyModel;
 
 		var loader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/PhonologicalInventoryView.fxml"));

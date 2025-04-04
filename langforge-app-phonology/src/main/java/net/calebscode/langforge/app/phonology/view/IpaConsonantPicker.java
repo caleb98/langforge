@@ -19,7 +19,7 @@ import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
-import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
+import net.calebscode.langforge.app.phonology.model.PhonologicalInventoryModel;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 import net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures;
 import net.calebscode.langforge.phonology.phoneme.StandardPhonemes;
@@ -42,10 +42,9 @@ public class IpaConsonantPicker extends AnchorPane {
 	@FXML private TableColumn<String, List<Phoneme>> columnPharyngeal;
 	@FXML private TableColumn<String, List<Phoneme>> columnGlottal;
 
-	private LanguagePhonologyModel model;
 	private Map<TableKey, List<Phoneme>> groupedPhonemes;
 
-	public IpaConsonantPicker(LanguagePhonologyModel model) {
+	public IpaConsonantPicker(PhonologicalInventoryModel model) {
 		var loader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/IpaConsonantPicker.fxml"));
 		loader.setRoot(this);
 		loader.setController(this);
@@ -56,8 +55,6 @@ public class IpaConsonantPicker extends AnchorPane {
 			getChildren().add(new Label("Failed to load component " + getClass().getCanonicalName() + ": " + ex.getMessage()));
 			return;
 		}
-
-		this.model = model;
 
 		// Not using StandardPhonemeFeatures.STANDARD_TYPES here so that the ordering matches the IPA chart
 		consonantTable.getItems().add(StandardPhonemeFeatures.TYPE_PLOSIVE);
