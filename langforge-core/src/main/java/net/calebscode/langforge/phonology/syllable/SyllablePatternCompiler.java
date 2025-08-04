@@ -31,11 +31,10 @@ public class SyllablePatternCompiler extends Compiler<SyllablePattern> {
 	}
 
 	private LiteralResolver part() {
-		char current = pattern.charAt(start);
 		if (match('(')) {
 			return group();
 		}
-		else if (Character.isAlphabetic(current)) {
+		else if (Character.isAlphabetic(current())) {
 			return literal();
 		}
 		else {

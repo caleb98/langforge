@@ -15,7 +15,7 @@
 
 <?import javafx.collections.FXCollections?>
 
-<fx:root type="net.calebscode.langforge.app.phonology.view.PhonologicalInventoryView" xmlns:fx="http://javafx.com/fxml">
+<fx:root type="net.calebscode.langforge.app.phonology.controller.PhonologicalInventoryController" xmlns:fx="http://javafx.com/fxml">
 	<VBox style="-fx-padding: 5px" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
 		<Label text="Add Phonemes" />
 		<HBox VBox.vgrow="NEVER" spacing="5">

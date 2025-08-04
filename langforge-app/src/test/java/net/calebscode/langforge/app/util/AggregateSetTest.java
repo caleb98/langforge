@@ -1,4 +1,4 @@
-package net.calebscode.langforce.app.util;
+package net.calebscode.langforge.app.util;
 
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;

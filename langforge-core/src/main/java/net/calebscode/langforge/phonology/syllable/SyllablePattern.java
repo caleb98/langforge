@@ -21,7 +21,7 @@ public class SyllablePattern {
 
 	private Random rand = new Random();
 
-	public SyllablePattern(SyllablePatternCategoryMap categoryMap, List<LiteralResolver> parts) {
+	SyllablePattern(SyllablePatternCategoryMap categoryMap, List<LiteralResolver> parts) {
 		this.categoryMap = categoryMap;
 		this.parts = parts;
 	}

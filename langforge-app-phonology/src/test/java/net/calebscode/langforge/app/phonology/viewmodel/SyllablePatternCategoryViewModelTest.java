@@ -8,15 +8,15 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import net.calebscode.langforge.app.phonology.model.SyllablePatternCategoryModel;
+import net.calebscode.langforge.app.phonology.model.SyllablePatternCategoryMapModel;
 
 class SyllablePatternCategoryViewModelTest {
 
-	SyllablePatternCategoryModel viewModel;
+	SyllablePatternCategoryMapModel viewModel;
 
 	@BeforeEach
 	void initialize() {
-		viewModel = new SyllablePatternCategoryModel();
+		viewModel = new SyllablePatternCategoryMapModel();
 	}
 
 	@Test

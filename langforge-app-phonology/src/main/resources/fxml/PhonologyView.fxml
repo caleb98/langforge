@@ -9,7 +9,7 @@
 
 <?import javafx.collections.FXCollections?>
 
-<fx:root type="net.calebscode.langforge.app.phonology.view.PhonologyView" xmlns:fx="http://javafx.com/fxml">
+<fx:root type="net.calebscode.langforge.app.phonology.controller.PhonologyController" xmlns:fx="http://javafx.com/fxml">
 	<SplitPane AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
 		<ListView fx:id="viewSelector" minWidth="150" maxWidth="150">
 			<items>

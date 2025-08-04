@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+
+<?import javafx.scene.layout.StackPane?>
+
+<fx:root type="net.calebscode.langforge.app.phonology.controller.SyllablePatternEditorController" xmlns:fx="http://javafx.com/fxml">
+	<StackPane alignment="CENTER_LEFT">
+		<Label fx:id="patternDisplay" />
+		<TextField fx:id="patternEdit" />
+	</StackPane>
+	<Label fx:id="patternError" style="-fx-text-fill: red" wrapText="true" />
+</fx:root>

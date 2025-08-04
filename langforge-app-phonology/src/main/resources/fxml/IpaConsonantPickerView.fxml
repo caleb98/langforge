@@ -13,7 +13,7 @@
 
 <?import net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures?>
 
-<fx:root type="net.calebscode.langforge.app.phonology.view.IpaConsonantPicker" xmlns:fx="http://javafx.com/fxml">
+<fx:root type="net.calebscode.langforge.app.phonology.controller.IpaConsonantPickerController" xmlns:fx="http://javafx.com/fxml">
 	<TableView fx:id="consonantTable"
 		AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
 		<columnResizePolicy>

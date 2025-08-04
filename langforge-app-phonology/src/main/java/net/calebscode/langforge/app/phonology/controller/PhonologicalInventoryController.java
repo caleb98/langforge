@@ -1,27 +1,25 @@
-package net.calebscode.langforge.app.phonology.view;
+package net.calebscode.langforge.app.phonology.controller;
 
 import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.IPA_MAPPER;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ListChangeListener.Change;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import net.calebscode.langforge.app.phonology.model.PhonologicalInventoryModel;
 import net.calebscode.langforge.app.phonology.model.PhonemeFeatureModel;
+import net.calebscode.langforge.app.phonology.model.PhonologicalInventoryModel;
 import net.calebscode.langforge.app.ui.ButtonTableCell;
+import net.calebscode.langforge.app.util.FXMLController;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 
-public class PhonologicalInventoryView extends AnchorPane {
+public class PhonologicalInventoryController extends AnchorPane implements FXMLController {
 
 	private PhonologicalInventoryModel phonologyModel;
 
@@ -30,29 +28,20 @@ public class PhonologicalInventoryView extends AnchorPane {
 
 	@FXML private TableView<Phoneme> phonemesTable;
 
-	public PhonologicalInventoryView(PhonologicalInventoryModel phonologyModel) {
+	public PhonologicalInventoryController(PhonologicalInventoryModel phonologyModel) {
 		this.phonologyModel = phonologyModel;
 
-		var loader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/PhonologicalInventoryView.fxml"));
-		loader.setRoot(this);
-		loader.setController(this);
+		load(() -> {
+			phonologyModel.featuresProperty().addListener((Change<? extends PhonemeFeatureModel> c) -> {
+				if (c.wasAdded() || c.wasRemoved()) {
+					this.updatePhonemesTable();
+				}
+			});
 
-		try {
-			loader.load();
-		} catch (IOException ex) {
-			getChildren().add(new Label("Failed to load component " + getClass().getCanonicalName() + ": " + ex.getMessage()));
-			return;
-		}
+			phonemesTable.itemsProperty().bind(phonologyModel.phonemesProperty());
 
-		phonologyModel.featuresProperty().addListener((Change<? extends PhonemeFeatureModel> c) -> {
-			if (c.wasAdded() || c.wasRemoved()) {
-				this.updatePhonemesTable();
-			}
+			updatePhonemesTable();
 		});
-
-		phonemesTable.itemsProperty().bind(phonologyModel.phonemesProperty());
-
-		updatePhonemesTable();
 	}
 
 	private void updatePhonemesTable() {
@@ -87,7 +76,7 @@ public class PhonologicalInventoryView extends AnchorPane {
 			return;
 		}
 
-		var ipaSelector = new IpaConsonantPicker(phonologyModel);
+		var ipaSelector = new IpaConsonantPickerController(phonologyModel);
 		var scene = new Scene(ipaSelector);
 		var stage = new Stage();
 		stage.setTitle("IPA Consonants");
@@ -104,7 +93,7 @@ public class PhonologicalInventoryView extends AnchorPane {
 			return;
 		}
 
-		var ipaSelector = new IpaVowelPicker(phonologyModel);
+		var ipaSelector = new IpaVowelPickerController(phonologyModel);
 		var scene = new Scene(ipaSelector);
 		var stage = new Stage();
 		stage.setTitle("IPA Vowels");

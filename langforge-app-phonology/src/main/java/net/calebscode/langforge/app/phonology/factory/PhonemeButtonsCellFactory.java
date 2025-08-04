@@ -1,4 +1,4 @@
-package net.calebscode.langforge.app.phonology.view;
+package net.calebscode.langforge.app.phonology.factory;
 
 import java.util.ArrayList;
 import java.util.List;

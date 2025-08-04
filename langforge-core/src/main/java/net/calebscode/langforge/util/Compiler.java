@@ -60,9 +60,12 @@ public abstract class Compiler<T> {
 	}
 
 	protected void error(String message) {
+		var errorLocation = isAtEnd() ?
+				"end of input" :
+				String.format("character '%c'", current());
 		throw new RuntimeException(String.format(
-			"Compilation error at character '%c' (position %d): %s",
-			current(), start, message
+			"Compilation error at %s (index %d): %s",
+			errorLocation, start, message
 		));
 	}
 
