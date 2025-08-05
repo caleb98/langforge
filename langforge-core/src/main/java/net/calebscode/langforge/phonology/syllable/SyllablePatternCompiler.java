@@ -59,8 +59,12 @@ public class SyllablePatternCompiler extends Compiler<SyllablePattern> {
 	private GroupOption groupOption() {
 		var parts = new ArrayList<LiteralResolver>();
 		parts.add(part());
-		while (current() != ':' && current() != ')' && current() != '|') {
+		while (!isAtEnd() && current() != ':' && current() != ')' && current() != '|') {
 			parts.add(part());
+		}
+
+		if (isAtEnd()) {
+			error("Unterminated pattern group.");
 		}
 
 		int weight = 1;
