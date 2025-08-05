@@ -31,11 +31,10 @@ public class SyllablePatternCompiler extends Compiler<SyllablePattern> {
 	}
 
 	private LiteralResolver part() {
-		char current = pattern.charAt(start);
 		if (match('(')) {
 			return group();
 		}
-		else if (Character.isAlphabetic(current)) {
+		else if (Character.isAlphabetic(current())) {
 			return literal();
 		}
 		else {
@@ -60,8 +59,12 @@ public class SyllablePatternCompiler extends Compiler<SyllablePattern> {
 	private GroupOption groupOption() {
 		var parts = new ArrayList<LiteralResolver>();
 		parts.add(part());
-		while (current() != ':' && current() != ')' && current() != '|') {
+		while (!isAtEnd() && current() != ':' && current() != ')' && current() != '|') {
 			parts.add(part());
+		}
+
+		if (isAtEnd()) {
+			error("Unterminated pattern group.");
 		}
 
 		int weight = 1;

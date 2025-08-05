@@ -14,13 +14,13 @@ import org.junit.jupiter.api.Test;
 
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 
-class LanguagePhonologyModelTest {
+class PhonologicalInventoryModelTest {
 
-	LanguagePhonologyModel model;
+	PhonologicalInventoryModel model;
 
 	@BeforeEach
 	void initialize() {
-		model = new LanguagePhonologyModel();
+		model = new PhonologicalInventoryModel();
 	}
 
 	@Test

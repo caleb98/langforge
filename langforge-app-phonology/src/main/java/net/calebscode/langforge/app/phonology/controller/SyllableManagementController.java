@@ -1,0 +1,212 @@
+package net.calebscode.langforge.app.phonology.controller;
+
+import static javafx.beans.binding.Bindings.createObjectBinding;
+import static javafx.collections.FXCollections.observableArrayList;
+
+import java.util.ArrayList;
+
+import javafx.collections.ListChangeListener.Change;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.layout.AnchorPane;
+import net.calebscode.langforge.app.phonology.model.PhonologicalInventoryModel;
+import net.calebscode.langforge.app.phonology.model.SyllablePatternCategoryMapModel;
+import net.calebscode.langforge.app.phonology.model.SyllablePatternCollectionModel;
+import net.calebscode.langforge.app.phonology.model.SyllablePatternEditorModel;
+import net.calebscode.langforge.app.phonology.model.SyllablePatternModel;
+import net.calebscode.langforge.app.util.FXMLController;
+import net.calebscode.langforge.phonology.phoneme.IpaPhonemeMapper;
+import net.calebscode.langforge.phonology.phoneme.Phoneme;
+import net.calebscode.langforge.phonology.phoneme.StandardPhonemes;
+
+public class SyllableManagementController extends AnchorPane implements FXMLController {
+
+	private IpaPhonemeMapper phonemeMapper = StandardPhonemes.IPA_MAPPER;
+
+	private PhonologicalInventoryModel phonologicalInventoryModel;
+	private SyllablePatternCategoryMapModel syllablePatternCategoryModel;
+	private SyllablePatternCollectionModel syllablePatternCollectionModel;
+
+	@FXML private ListView<Character> categoriesList;
+	@FXML private ListView<Phoneme> phonemesList;
+	@FXML private ListView<Phoneme> inventoryList;
+
+	@FXML private ListView<SyllablePatternModel> patternsList;
+
+	public SyllableManagementController(
+			PhonologicalInventoryModel phonologicalInventoryModel,
+			SyllablePatternCategoryMapModel syllablePatternCategoryModel,
+			SyllablePatternCollectionModel syllablePatternCollectionModel
+	) {
+		this.phonologicalInventoryModel = phonologicalInventoryModel;
+		this.syllablePatternCategoryModel = syllablePatternCategoryModel;
+		this.syllablePatternCollectionModel = syllablePatternCollectionModel;
+
+		load(() -> {
+			categoriesList.itemsProperty().bind(createObjectBinding(() -> {
+				return observableArrayList(syllablePatternCategoryModel.categoryMapProperty().keySet());
+			}, syllablePatternCategoryModel.categoryMapProperty()));
+
+			categoriesList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+			phonemesList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+			inventoryList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+			phonemesList.setCellFactory(this::mappedPhonemeCellFactory);
+			inventoryList.setCellFactory(this::mappedPhonemeCellFactory);
+
+			// The phonemes list should be loaded based on the currently selected category.
+			phonemesList.itemsProperty().bind(createObjectBinding(
+				() -> {
+					var category = categoriesList.getSelectionModel().getSelectedItem();
+					if (category == null) {
+						return observableArrayList();
+					}
+					return observableArrayList(syllablePatternCategoryModel.categoryMapProperty().get(category));
+				},
+				categoriesList.getSelectionModel().selectedItemProperty(),
+				syllablePatternCategoryModel.categoryMapProperty()));
+
+			// The inventory list should display all phonemes that are not currently present
+			// in the selected category's phonemes list.
+			inventoryList.itemsProperty().bind(createObjectBinding(
+				() -> {
+					var phonemes = observableArrayList(phonologicalInventoryModel.phonemesProperty());
+					phonemes.removeAll(phonemesList.itemsProperty().get());
+					return phonemes;
+				},
+				phonologicalInventoryModel.phonemesProperty(),
+				phonemesList.itemsProperty()));
+
+			// If elements are removed from the language's phonology, they should also be removed from
+			// any syllable categories.
+			phonologicalInventoryModel.phonemesProperty().addListener(this::phonemesUpdated);
+
+			patternsList.setCellFactory(this::syllablePatternEditorModelCellFactory);
+			patternsList.itemsProperty().bind(syllablePatternCollectionModel.patternsProperty());
+		});
+	}
+
+	@FXML
+	private void createCategory(ActionEvent event) {
+		var categoryDialog = new TextInputDialog();
+		categoryDialog.setTitle("New Category");
+		categoryDialog.setContentText("Category Character:");
+		categoryDialog.setGraphic(null);
+		categoryDialog.setHeaderText(null);
+
+		categoryDialog.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+			String corrected = newValue.toUpperCase().replaceAll("[^A-Za-z]*", "");
+
+			if (!newValue.equals(corrected)) {
+				categoryDialog.getEditor().setText(corrected);
+			}
+
+			if (corrected.length() > 1) {
+				categoryDialog.getEditor().setText("" + corrected.charAt(0));
+			}
+		});
+
+		var maybeResult = categoryDialog.showAndWait();
+
+		if (maybeResult.isPresent()) {
+			var category = maybeResult.get();
+			syllablePatternCategoryModel.addCategory(category.charAt(0));
+		}
+	}
+
+	@FXML
+	private void removeCategory(ActionEvent event) {
+		var category = categoriesList.getSelectionModel().getSelectedItem();
+		if (category != null) {
+			syllablePatternCategoryModel.removeCategory(category);
+		}
+	}
+
+	@FXML
+	private void addToCategory(ActionEvent event) {
+		var toAdd = new ArrayList<>(inventoryList.getSelectionModel().getSelectedItems());
+		var category = categoriesList.getSelectionModel().getSelectedItem();
+
+		for (var phoneme : toAdd) {
+			syllablePatternCategoryModel.addPhoneme(category, phoneme);
+		}
+	}
+
+	@FXML
+	private void removeFromCategory(ActionEvent event) {
+		var toRemove = new ArrayList<>(phonemesList.getSelectionModel().getSelectedItems());
+		var category = categoriesList.getSelectionModel().getSelectedItem();
+
+		for (var phoneme : toRemove) {
+			syllablePatternCategoryModel.removePhoneme(category, phoneme);
+		}
+	}
+
+	@FXML
+	private void createPattern(ActionEvent event) {
+		syllablePatternCollectionModel
+			.patternsProperty()
+			.add(new SyllablePatternModel(syllablePatternCategoryModel));
+	}
+
+	@FXML
+	private void deletePattern(ActionEvent event) {
+		var toRemove = new ArrayList<>(patternsList.getSelectionModel().getSelectedItems());
+
+		for (var pattern : toRemove) {
+			syllablePatternCollectionModel.patternsProperty().remove(pattern);
+		}
+
+	}
+
+	private void phonemesUpdated(Change<? extends Phoneme> change) {
+		while (change.next()) {
+			for (var removed : change.getRemoved()) {
+				syllablePatternCategoryModel.removePhonemeForAllCategories(removed);
+			}
+		}
+	}
+
+	private ListCell<SyllablePatternModel> syllablePatternEditorModelCellFactory(ListView<SyllablePatternModel> list) {
+		return new ListCell<>() {
+			{
+				setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+				prefWidthProperty().bind(list.widthProperty().subtract(2));
+			}
+			@Override
+			protected void updateItem(SyllablePatternModel item, boolean empty) {
+				super.updateItem(item, empty);
+
+				if (empty || item == null) {
+					setText(null);
+					setGraphic(null);
+				} else {
+					var editorModel = new SyllablePatternEditorModel(item);
+					setGraphic(new SyllablePatternEditorController(editorModel));
+				}
+			}
+		};
+	}
+
+	private ListCell<Phoneme> mappedPhonemeCellFactory(ListView<Phoneme> list) {
+		return new ListCell<>() {
+			@Override
+			protected void updateItem(Phoneme item, boolean empty) {
+				super.updateItem(item, empty);
+
+				if (empty || item == null) {
+					setText(null);
+					setGraphic(null);
+				} else {
+					setText(item.render(phonemeMapper));
+				}
+			}
+		};
+	}
+
+}

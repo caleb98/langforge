@@ -21,7 +21,7 @@ public class SyllablePattern {
 
 	private Random rand = new Random();
 
-	public SyllablePattern(SyllablePatternCategoryMap categoryMap, List<LiteralResolver> parts) {
+	SyllablePattern(SyllablePatternCategoryMap categoryMap, List<LiteralResolver> parts) {
 		this.categoryMap = categoryMap;
 		this.parts = parts;
 	}
@@ -85,7 +85,7 @@ public class SyllablePattern {
 		}
 
 		var outcomes = new HashSet<List<Phoneme>>();
-		var generatable = categoryMap.getGeneratablePhonemes(pattern.charAt(0));
+		var generatable = categoryMap.getPhonemes(pattern.charAt(0));
 		for (Phoneme phonemeToAdd : generatable) {
 			var modifiedSyllable = new ArrayList<>(currentSyllable);
 			modifiedSyllable.add(phonemeToAdd);
@@ -96,11 +96,15 @@ public class SyllablePattern {
 	}
 
 	private Phoneme getRandomPhonemeForCategory(Character categoryChar) {
-		var options = categoryMap.getGeneratablePhonemes(categoryChar);
+		var options = categoryMap.getPhonemes(categoryChar);
 		if (options.isEmpty()) {
 			throw new RuntimeException("Invalid class character '" + categoryChar + "'. No phonemes available for this class.");
 		}
-		return options.stream().skip(rand.nextInt(options.size())).findFirst().get();
+
+		return options.stream()
+			.skip(rand.nextInt(options.size()))
+			.findFirst()
+			.get();
 	}
 
 }

@@ -1,69 +1,54 @@
-package net.calebscode.langforge.app.phonology.view;
+package net.calebscode.langforge.app.phonology.controller;
 
-import java.io.IOException;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.IPA_MAPPER;
+
 import java.util.Optional;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ListChangeListener.Change;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import net.calebscode.langforge.app.LangforgePluginContext;
-import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
 import net.calebscode.langforge.app.phonology.model.PhonemeFeatureModel;
+import net.calebscode.langforge.app.phonology.model.PhonologicalInventoryModel;
 import net.calebscode.langforge.app.ui.ButtonTableCell;
-import net.calebscode.langforge.phonology.phoneme.IpaPhonemeMapper;
+import net.calebscode.langforge.app.util.FXMLController;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
-import net.calebscode.langforge.phonology.phoneme.StandardPhonemes;
 
-public class PhonologyView extends AnchorPane {
+public class PhonologicalInventoryController extends AnchorPane implements FXMLController {
 
-	private LangforgePluginContext context;
-	private LanguagePhonologyModel phonologyModel;
-	private IpaPhonemeMapper phonemeMapper = StandardPhonemes.IPA_MAPPER;
+	private PhonologicalInventoryModel phonologyModel;
 
 	private Optional<Stage> consonantPicker = Optional.empty();
 	private Optional<Stage> vowelPicker = Optional.empty();
 
 	@FXML private TableView<Phoneme> phonemesTable;
 
-	public PhonologyView(LangforgePluginContext context) {
-		this.context = context;
-		this.phonologyModel = LanguagePhonologyModel.createModelWithIpaDefaults();
+	public PhonologicalInventoryController(PhonologicalInventoryModel phonologyModel) {
+		this.phonologyModel = phonologyModel;
 
-		var loader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/PhonologyView.fxml"));
-		loader.setRoot(this);
-		loader.setController(this);
+		load(() -> {
+			phonologyModel.featuresProperty().addListener((Change<? extends PhonemeFeatureModel> c) -> {
+				if (c.wasAdded() || c.wasRemoved()) {
+					this.updatePhonemesTable();
+				}
+			});
 
-		try {
-			loader.load();
-		} catch (IOException ex) {
-			getChildren().add(new Label("Failed to load component " + getClass().getCanonicalName() + ": " + ex.getMessage()));
-			return;
-		}
+			phonemesTable.itemsProperty().bind(phonologyModel.phonemesProperty());
 
-		phonologyModel.featuresProperty().addListener((Change<? extends PhonemeFeatureModel> c) -> {
-			if (c.wasAdded() || c.wasRemoved()) {
-				this.updatePhonemesTable();
-			}
+			updatePhonemesTable();
 		});
-
-		phonemesTable.itemsProperty().bind(phonologyModel.phonemesProperty());
-
-		updatePhonemesTable();
 	}
 
 	private void updatePhonemesTable() {
 		phonemesTable.getColumns().clear();
 
 		var representationColumn = new TableColumn<Phoneme, String>("Representation");
-		representationColumn.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().render(phonemeMapper)));
+		representationColumn.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().render(IPA_MAPPER)));
 		representationColumn.setStyle("-fx-alignment: CENTER;");
 		phonemesTable.getColumns().add(representationColumn);
 
@@ -91,7 +76,7 @@ public class PhonologyView extends AnchorPane {
 			return;
 		}
 
-		var ipaSelector = new IpaConsonantPicker(phonologyModel);
+		var ipaSelector = new IpaConsonantPickerController(phonologyModel);
 		var scene = new Scene(ipaSelector);
 		var stage = new Stage();
 		stage.setTitle("IPA Consonants");
@@ -108,7 +93,7 @@ public class PhonologyView extends AnchorPane {
 			return;
 		}
 
-		var ipaSelector = new IpaVowelPicker(phonologyModel);
+		var ipaSelector = new IpaVowelPickerController(phonologyModel);
 		var scene = new Scene(ipaSelector);
 		var stage = new Stage();
 		stage.setTitle("IPA Vowels");
@@ -118,4 +103,5 @@ public class PhonologyView extends AnchorPane {
 
 		vowelPicker = Optional.of(stage);
 	}
+
 }

@@ -40,6 +40,8 @@ public final class LangforgeApplication extends Application {
 
 		primaryStage.setScene(ui.getScene());
 		primaryStage.setTitle("Langforge");
+		primaryStage.setWidth(1280);
+		primaryStage.setHeight(720);
 		primaryStage.show();
 		primaryStage.requestFocus();
 

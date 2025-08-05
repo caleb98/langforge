@@ -1,4 +1,4 @@
-package net.calebscode.langforge.app.phonology.view;
+package net.calebscode.langforge.app.phonology.factory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,15 +11,15 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
-import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
+import net.calebscode.langforge.app.phonology.model.PhonologicalInventoryModel;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 import net.calebscode.langforge.phonology.phoneme.StandardPhonemes;
 
 public class PhonemeButtonsCellFactory implements Callback<TableColumn<String, List<Phoneme>>, TableCell<String, List<Phoneme>>> {
 
-	private LanguagePhonologyModel model;
+	private PhonologicalInventoryModel model;
 
-	public PhonemeButtonsCellFactory(LanguagePhonologyModel model) {
+	public PhonemeButtonsCellFactory(PhonologicalInventoryModel model) {
 		this.model = model;
 	}
 

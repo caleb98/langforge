@@ -9,11 +9,8 @@
 <?import javafx.scene.control.Button?>
 
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.GridPane?>
 
-<?import net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures?>
-
-<fx:root type="net.calebscode.langforge.app.phonology.view.IpaVowelPicker" xmlns:fx="http://javafx.com/fxml">
+<fx:root type="net.calebscode.langforge.app.phonology.controller.IpaVowelPickerController" xmlns:fx="http://javafx.com/fxml">
 	<TableView fx:id="vowelTable"
 		AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
 		<columnResizePolicy>
