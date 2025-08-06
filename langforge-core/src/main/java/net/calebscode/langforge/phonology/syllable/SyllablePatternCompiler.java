@@ -2,35 +2,38 @@ package net.calebscode.langforge.phonology.syllable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import net.calebscode.langforge.util.Compiler;
 
-public class SyllablePatternCompiler extends Compiler<SyllablePattern> {
-
-	private final SyllablePatternCategoryMap categoryMap;
-
-	public SyllablePatternCompiler(SyllablePatternCategoryMap categoryMap) {
-		this.categoryMap = categoryMap;
-	}
+class SyllablePatternCompiler extends Compiler<Set<String>> {
 
 	@Override
-	public SyllablePattern compile(String pattern) {
+	public Set<String> compile(String pattern) {
 		init(pattern);
-		return new SyllablePattern(categoryMap, rule());
+
+		var resolvers = rule();
+		var allPatterns = Set.of("");
+		for (var part : resolvers) {
+			allPatterns = allPatterns
+					.stream()
+					.flatMap(existing -> part.resolve().stream().map(resolved -> existing + resolved))
+					.collect(Collectors.toSet());
+		}
+
+		return allPatterns;
 	}
 
-	private List<LiteralResolver> rule() {
-		var parts = new ArrayList<LiteralResolver>();
+	private List<SyllablePatternResolver> rule() {
+		var parts = new ArrayList<SyllablePatternResolver>();
 		while(!isAtEnd()) {
 			parts.add(part());
 		}
 		return parts;
 	}
 
-	private LiteralResolver part() {
+	private SyllablePatternResolver part() {
 		if (match('(')) {
 			return group();
 		}
@@ -52,14 +55,13 @@ public class SyllablePatternCompiler extends Compiler<SyllablePattern> {
 		}
 
 		expect(')', "Expected ')' at end of group.");
-		int totalWeight = options.stream().mapToInt(opt -> opt.weight).sum();
-		return new Group(options, totalWeight);
+		return new Group(options);
 	}
 
 	private GroupOption groupOption() {
-		var parts = new ArrayList<LiteralResolver>();
+		var parts = new ArrayList<SyllablePatternResolver>();
 		parts.add(part());
-		while (!isAtEnd() && current() != ':' && current() != ')' && current() != '|') {
+		while (!isAtEnd() && current() != ')' && current() != '|') {
 			parts.add(part());
 		}
 
@@ -67,12 +69,7 @@ public class SyllablePatternCompiler extends Compiler<SyllablePattern> {
 			error("Unterminated pattern group.");
 		}
 
-		int weight = 1;
-		if (match(':')) {
-			weight = number();
-		}
-
-		return new GroupOption(parts, weight);
+		return new GroupOption(parts);
 	}
 
 	private Literal literal() {
@@ -81,51 +78,15 @@ public class SyllablePatternCompiler extends Compiler<SyllablePattern> {
 		return lit;
 	}
 
-	private int number() {
-		if (!Character.isDigit(current())) {
-			error("Expected integer.");
-		}
-
-		int end = start;
-		while (end < pattern.length() && Character.isDigit(pattern.charAt(end))) {
-			end++;
-		}
-
-		int number = Integer.parseInt(pattern.substring(start, end));
-		start = end;
-		return number;
+	private interface SyllablePatternResolver {
+		public Set<String> resolve();
 	}
 
-	interface LiteralResolver {
-		public String resolve();
-		public Set<String> resolveAll();
-	}
-
-	private static Random resolverRandom = new Random();
-
-	private record Group(List<GroupOption> options, int totalWeight) implements LiteralResolver {
+	private record Group(List<GroupOption> options) implements SyllablePatternResolver {
 		@Override
-		public String resolve() {
-			if (options.size() == 1) {
-				return resolverRandom.nextBoolean() ? options.get(0).resolve() : "";
-			}
-
-			int select = resolverRandom.nextInt(totalWeight);
-			int current = 0;
-			for (var opt : options) {
-				if (select < current + opt.weight) {
-					return opt.resolve();
-				}
-				current += opt.weight;
-			}
-
-			throw new RuntimeException("Invalid group option weights.");
-		}
-
-		@Override
-		public Set<String> resolveAll() {
+		public Set<String> resolve() {
 			var all = options.stream()
-					.flatMap(opt -> opt.resolveAll().stream())
+					.flatMap(opt -> opt.resolve().stream())
 					.collect(Collectors.toSet());
 
 			if (options.size() == 1) {
@@ -136,37 +97,23 @@ public class SyllablePatternCompiler extends Compiler<SyllablePattern> {
 		}
 	}
 
-	private record GroupOption(List<LiteralResolver> parts, int weight) implements LiteralResolver {
+	private record GroupOption(List<SyllablePatternResolver> parts) implements SyllablePatternResolver {
 		@Override
-		public String resolve() {
-			StringBuilder sb = new StringBuilder();
-			for (var part : parts) {
-				sb.append(part.resolve());
-			}
-			return sb.toString();
-		}
-
-		@Override
-		public Set<String> resolveAll() {
+		public Set<String> resolve() {
 			var all = Set.of("");
 			for (var part : parts) {
 				all = all.stream().flatMap(
-					existing -> part.resolveAll().stream().map(resolved -> existing + resolved)
+					existing -> part.resolve().stream().map(resolved -> existing + resolved)
 				).collect(Collectors.toSet());
 			}
 			return all;
 		}
 	}
 
-	private record Literal(char value) implements LiteralResolver {
+	private record Literal(char value) implements SyllablePatternResolver {
 		@Override
-		public String resolve() {
-			return String.valueOf(value);
-		}
-
-		@Override
-		public Set<String> resolveAll() {
-			return Set.of(resolve());
+		public Set<String> resolve() {
+			return Set.of(String.valueOf(value));
 		}
 	}
 

@@ -15,9 +15,8 @@ import net.calebscode.langforge.phonology.phoneme.IpaMappingException;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 import net.calebscode.langforge.phonology.phoneme.PhonemeSequence;
 import net.calebscode.langforge.phonology.phoneme.PhonemeSequenceBuilder;
-import net.calebscode.langforge.phonology.syllable.SyllablePattern;
 import net.calebscode.langforge.phonology.syllable.SyllablePatternCategoryMap;
-import net.calebscode.langforge.phonology.syllable.SyllablePatternCompiler;
+import net.calebscode.langforge.phonology.syllable.SyllableUtils;
 
 public class PhonologicalRuleApplicatorTest {
 
@@ -101,8 +100,8 @@ public class PhonologicalRuleApplicatorTest {
 
 	private void testRuleApplications(String patternSource, String ruleSource, boolean lenient, Map<String, String> expectations) throws IpaMappingException {
 		try {
-			var pattern = compilePattern(patternSource);
-			var validator = new SyllablePatternPhonemeSequenceValidator(pattern);
+			var patterns = SyllableUtils.expandSyllablePatterns(patternSource);
+			var validator = new SyllablePatternPhonemeSequenceValidator(categoryMap, patterns);
 			var rule = compileRule(ruleSource);
 			var applicator = new PhonologicalRuleApplicator(rule);
 
@@ -122,10 +121,6 @@ public class PhonologicalRuleApplicatorTest {
 
 	private PhonologicalRule compileRule(String rule) {
 		return new PhonologicalRuleCompiler(IPA_MAPPER).compile(rule);
-	}
-
-	private static SyllablePattern compilePattern(String pattern) {
-		return new SyllablePatternCompiler(categoryMap).compile(pattern);
 	}
 
 	private static Phoneme ipaPhoneme(String ipaString) throws IpaMappingException {
