@@ -1,6 +1,7 @@
 package net.calebscode.langforge.phonology;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -9,19 +10,16 @@ import java.util.TreeSet;
 import net.calebscode.langforge.phonology.phoneme.PhonemeSequence;
 import net.calebscode.langforge.phonology.phoneme.PhonemeSequenceBuilder;
 import net.calebscode.langforge.phonology.syllable.Syllable;
-import net.calebscode.langforge.phonology.syllable.SyllablePattern;
+import net.calebscode.langforge.phonology.syllable.SyllablePatternCategoryMap;
 
-/**
- * A PhonemeSequenceValidator which uses an acceptable {@link SyllablePattern}
- * as means for validating {@link PhonemeSequence}s and determining syllable
- * boundary metadata.
- */
 public class SyllablePatternPhonemeSequenceValidator implements PhonemeSequenceValidator {
 
-	private SyllablePattern pattern;
+	private SyllablePatternCategoryMap categories;
+	private Set<String> validPatterns;
 
-	public SyllablePatternPhonemeSequenceValidator(SyllablePattern pattern) {
-		this.pattern = pattern;
+	public SyllablePatternPhonemeSequenceValidator(SyllablePatternCategoryMap categories, Collection<String> validPatterns) {
+		this.categories = categories;
+		this.validPatterns = new HashSet<>(validPatterns);
 	}
 
 	@Override
@@ -80,23 +78,23 @@ public class SyllablePatternPhonemeSequenceValidator implements PhonemeSequenceV
 
 	private Set<String> getPossibleSyllablePatterns(PhonemeSequence sequence, int position, String currentPattern) throws PhonemeSequenceValidationException {
 		// Stop when we're out of phonemes or our pattern is invalid.
-		if (!pattern.allPatterns().stream().anyMatch(p -> p.endsWith(currentPattern))) {
+		if (!validPatterns.stream().anyMatch(p -> p.endsWith(currentPattern))) {
 			return Set.of();
 		}
 		else if (position < 0) {
-			return pattern.allPatterns().contains(currentPattern) ? Set.of(currentPattern) : Set.of();
+			return validPatterns.contains(currentPattern) ? Set.of(currentPattern) : Set.of();
 		}
 
 		var patterns = new HashSet<String>();
 
 		// If the current pattern exactly matches a valid pattern, go ahead and add it to the result.
-		if (pattern.allPatterns().contains(currentPattern)) {
+		if (validPatterns.contains(currentPattern)) {
 			patterns.add(currentPattern);
 		}
 
 		// Recurse through patterns that would be created by the next phoneme
 		var currentPhoneme = sequence.phonemeAt(position);
-		var possibleCategories = pattern.getCategoryMap().computePhonemeCategories(currentPhoneme);
+		var possibleCategories = categories.computePhonemeCategories(currentPhoneme);
 
 		if (possibleCategories.size() == 0) {
 			throw new PhonemeSequenceValidationException("Encountered phoneme that does not fit into any syllable rule categories: " + currentPhoneme);

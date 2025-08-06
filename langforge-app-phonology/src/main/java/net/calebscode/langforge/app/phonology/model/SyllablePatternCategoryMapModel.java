@@ -17,14 +17,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 import net.calebscode.langforge.phonology.syllable.SyllablePatternCategoryMap;
-import net.calebscode.langforge.phonology.syllable.SyllablePatternCompiler;
 
 public class SyllablePatternCategoryMapModel extends SyllablePatternCategoryMap {
 
 	private final MapProperty<Character, Set<Phoneme>> categoryMap;
 	private final ReadOnlyMapWrapper<Character, Set<Phoneme>> categoryWrapper;
-
-	private final SyllablePatternCompiler compiler;
 
 	public SyllablePatternCategoryMapModel() {
 		categoryMap = new SimpleMapProperty<>(observableHashMap());
@@ -38,15 +35,10 @@ public class SyllablePatternCategoryMapModel extends SyllablePatternCategoryMap 
 			return unmodifiableObservableMap(mapCopy);
 		}, categoryMap));
 
-		compiler = new SyllablePatternCompiler(this);
 	}
 
 	public ReadOnlyMapProperty<Character, Set<Phoneme>> categoryMapProperty() {
 		return categoryWrapper;
-	}
-
-	public SyllablePatternCompiler getCompiler() {
-		return compiler;
 	}
 
 	@Override
