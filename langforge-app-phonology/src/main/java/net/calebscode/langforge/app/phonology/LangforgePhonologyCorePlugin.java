@@ -8,6 +8,7 @@ import net.calebscode.langforge.app.LangforgeApplication;
 import net.calebscode.langforge.app.LangforgePluginContext;
 import net.calebscode.langforge.app.phonology.controller.PhonologyController;
 import net.calebscode.langforge.app.phonology.model.PhonologicalInventoryModel;
+import net.calebscode.langforge.app.phonology.model.PhonologicalRuleCollectionModel;
 import net.calebscode.langforge.app.phonology.model.SyllablePatternCategoryMapModel;
 import net.calebscode.langforge.app.phonology.model.SyllablePatternCollectionModel;
 import net.calebscode.langforge.app.plugin.LangforgePlugin;
@@ -25,6 +26,7 @@ public final class LangforgePhonologyCorePlugin implements LangforgePlugin {
 	private PhonologicalInventoryModel phonologicalInventoryModel;
 	private SyllablePatternCategoryMapModel syllablePatternCategoryModel;
 	private SyllablePatternCollectionModel syllablePatternCollectionModel;
+	private PhonologicalRuleCollectionModel phonologicalRuleCollectionModel;
 
 	private boolean phonologyTabVisible = false;
 
@@ -65,6 +67,7 @@ public final class LangforgePhonologyCorePlugin implements LangforgePlugin {
 		phonologicalInventoryModel = PhonologicalInventoryModel.createModelWithIpaDefaults();
 		syllablePatternCategoryModel = new SyllablePatternCategoryMapModel();
 		syllablePatternCollectionModel = new SyllablePatternCollectionModel();
+		phonologicalRuleCollectionModel = new PhonologicalRuleCollectionModel();
 	}
 
 	@Override
@@ -87,7 +90,8 @@ public final class LangforgePhonologyCorePlugin implements LangforgePlugin {
 				context,
 				phonologicalInventoryModel,
 				syllablePatternCategoryModel,
-				syllablePatternCollectionModel);
+				syllablePatternCollectionModel,
+				phonologicalRuleCollectionModel);
 
 		phonologyTabVisible = true;
 		var tab = new Tab("Phonology", phonologyController);

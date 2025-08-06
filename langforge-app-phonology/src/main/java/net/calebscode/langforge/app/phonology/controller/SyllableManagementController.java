@@ -89,6 +89,8 @@ public class SyllableManagementController extends AnchorPane implements FXMLCont
 
 			patternsList.setCellFactory(this::syllablePatternEditorModelCellFactory);
 			patternsList.itemsProperty().bind(syllablePatternCollectionModel.patternsProperty());
+
+			//
 		});
 	}
 

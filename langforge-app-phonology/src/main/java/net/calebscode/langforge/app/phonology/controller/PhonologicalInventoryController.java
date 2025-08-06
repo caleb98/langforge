@@ -11,7 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import net.calebscode.langforge.app.phonology.model.PhonemeFeatureModel;
 import net.calebscode.langforge.app.phonology.model.PhonologicalInventoryModel;
@@ -19,7 +19,7 @@ import net.calebscode.langforge.app.ui.ButtonTableCell;
 import net.calebscode.langforge.app.util.FXMLController;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 
-public class PhonologicalInventoryController extends AnchorPane implements FXMLController {
+public class PhonologicalInventoryController extends VBox implements FXMLController {
 
 	private PhonologicalInventoryModel phonologyModel;
 
