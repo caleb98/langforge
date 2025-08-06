@@ -4,16 +4,17 @@ import static javafx.collections.FXCollections.observableArrayList;
 
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.StringProperty;
 
 public class SyllablePatternCollectionModel {
 
-	private final ListProperty<SyllablePatternModel> patterns;
+	private final ListProperty<StringProperty> patterns;
 
 	public SyllablePatternCollectionModel() {
 		patterns = new SimpleListProperty<>(observableArrayList());
 	}
 
-	public ListProperty<SyllablePatternModel> patternsProperty() {
+	public ListProperty<StringProperty> patternsProperty() {
 		return patterns;
 	}
 

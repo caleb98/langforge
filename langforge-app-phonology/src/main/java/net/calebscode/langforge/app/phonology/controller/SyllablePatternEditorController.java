@@ -5,29 +5,25 @@ import static javafx.beans.binding.Bindings.not;
 
 import java.util.Objects;
 
-import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.StackPane;
 import net.calebscode.langforge.app.phonology.model.SyllablePatternEditorModel;
 import net.calebscode.langforge.app.util.FXMLController;
 
-public class SyllablePatternEditorController extends VBox implements FXMLController {
+public class SyllablePatternEditorController extends StackPane implements FXMLController {
 
 	@FXML private Label patternDisplay;
 	@FXML private TextField patternEdit;
-	@FXML private Label patternError;
 
-	public SyllablePatternEditorController(SyllablePatternEditorModel model) {
+	public SyllablePatternEditorController(SyllablePatternEditorModel editorModel) {
 		load(() -> {
-			var patternModel = model.getPatternModel();
+			patternEdit.textProperty().set(editorModel.patternProperty().get());
+			patternDisplay.textProperty().set(editorModel.patternProperty().get());
 
-			patternEdit.textProperty().set(patternModel.patternStringProperty().get());
-			patternDisplay.textProperty().set(patternModel.patternStringProperty().get());
-
-			bindBidirectional(patternEdit.textProperty(), patternModel.patternStringProperty());
+			bindBidirectional(patternEdit.textProperty(), editorModel.patternProperty());
 
 			patternEdit.textProperty().addListener((observable, oldValue, newValue) -> {
 				if (!Objects.equals(oldValue, newValue)) {
@@ -35,39 +31,32 @@ public class SyllablePatternEditorController extends VBox implements FXMLControl
 				}
 			});
 
-			patternDisplay.textProperty().bind(Bindings.createStringBinding(
-					() -> patternModel.patternStringProperty().get().isEmpty() ?
-						"<empty pattern>" :
-						patternModel.patternStringProperty().get(),
-					patternModel.patternStringProperty()));
+			;
+			patternDisplay.textProperty().bind(editorModel.patternProperty().isEmpty().map(empty -> empty ? "<empty pattern>" : editorModel.patternProperty().get()));
 
-			patternDisplay.visibleProperty().bind(not(model.isEditingProperty()));
+			patternDisplay.visibleProperty().bind(not(editorModel.isEditingProperty()));
 			patternDisplay.managedProperty().bind(patternDisplay.visibleProperty());
 			patternDisplay.prefWidthProperty().bind(widthProperty().subtract(2));
 
-			patternEdit.visibleProperty().bind(model.isEditingProperty());
+			patternEdit.visibleProperty().bind(editorModel.isEditingProperty());
 			patternEdit.managedProperty().bind(patternEdit.visibleProperty());
 			patternEdit.setOnKeyPressed(event -> {
 				if (event.getCode() == KeyCode.ESCAPE || event.getCode() == KeyCode.ENTER) {
-					model.isEditingProperty().set(false);
+					editorModel.isEditingProperty().set(false);
 					event.consume();
 				}
 			});
 
 			patternDisplay.setOnMouseClicked(event -> {
-				model.isEditingProperty().set(true);
+				editorModel.isEditingProperty().set(true);
 				patternEdit.requestFocus();
 			});
 
 			patternEdit.focusedProperty().addListener((observable, wasFocused, isFocused) -> {
 				if (!isFocused) {
-					model.isEditingProperty().set(false);
+					editorModel.isEditingProperty().set(false);
 				}
 			});
-
-			patternError.textProperty().bind(patternModel.compileErrorProperty());
-			patternError.visibleProperty().bind(patternModel.hasCompileErrorProperty());
-			patternError.managedProperty().bind(patternError.visibleProperty());
 		});
 	}
 

@@ -5,6 +5,8 @@ import static javafx.collections.FXCollections.observableArrayList;
 
 import java.util.ArrayList;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.ListChangeListener.Change;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,7 +20,6 @@ import net.calebscode.langforge.app.phonology.model.PhonologicalInventoryModel;
 import net.calebscode.langforge.app.phonology.model.SyllablePatternCategoryMapModel;
 import net.calebscode.langforge.app.phonology.model.SyllablePatternCollectionModel;
 import net.calebscode.langforge.app.phonology.model.SyllablePatternEditorModel;
-import net.calebscode.langforge.app.phonology.model.SyllablePatternModel;
 import net.calebscode.langforge.app.util.FXMLController;
 import net.calebscode.langforge.phonology.phoneme.IpaPhonemeMapper;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
@@ -36,7 +37,7 @@ public class SyllableManagementController extends AnchorPane implements FXMLCont
 	@FXML private ListView<Phoneme> phonemesList;
 	@FXML private ListView<Phoneme> inventoryList;
 
-	@FXML private ListView<SyllablePatternModel> patternsList;
+	@FXML private ListView<StringProperty> patternsList;
 
 	public SyllableManagementController(
 			PhonologicalInventoryModel phonologicalInventoryModel,
@@ -151,7 +152,7 @@ public class SyllableManagementController extends AnchorPane implements FXMLCont
 	private void createPattern(ActionEvent event) {
 		syllablePatternCollectionModel
 			.patternsProperty()
-			.add(new SyllablePatternModel(syllablePatternCategoryModel));
+			.add(new SimpleStringProperty(""));
 	}
 
 	@FXML
@@ -172,21 +173,22 @@ public class SyllableManagementController extends AnchorPane implements FXMLCont
 		}
 	}
 
-	private ListCell<SyllablePatternModel> syllablePatternEditorModelCellFactory(ListView<SyllablePatternModel> list) {
+	private ListCell<StringProperty> syllablePatternEditorModelCellFactory(ListView<StringProperty> list) {
 		return new ListCell<>() {
 			{
 				setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
 				prefWidthProperty().bind(list.widthProperty().subtract(2));
 			}
 			@Override
-			protected void updateItem(SyllablePatternModel item, boolean empty) {
+			protected void updateItem(StringProperty item, boolean empty) {
 				super.updateItem(item, empty);
 
 				if (empty || item == null) {
 					setText(null);
 					setGraphic(null);
 				} else {
-					var editorModel = new SyllablePatternEditorModel(item);
+					var editorModel = new SyllablePatternEditorModel();
+					editorModel.patternProperty().bindBidirectional(item);
 					setGraphic(new SyllablePatternEditorController(editorModel));
 				}
 			}

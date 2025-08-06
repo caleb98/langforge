@@ -1,35 +1,21 @@
 package net.calebscode.langforge.app.phonology.model;
 
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 public class SyllablePatternEditorModel {
 
-	private final BooleanProperty isEditing;
-	private final ObjectProperty<SyllablePatternModel> patternModel;
-
-	public SyllablePatternEditorModel(SyllablePatternCategoryMapModel categoryModel) {
-		isEditing = new SimpleBooleanProperty(false);
-		this.patternModel = new SimpleObjectProperty<>(new SyllablePatternModel(categoryModel));
-	}
-
-	public SyllablePatternEditorModel(SyllablePatternModel patternModel) {
-		isEditing = new SimpleBooleanProperty(false);
-		this.patternModel = new SimpleObjectProperty<>(patternModel);
-	}
+	private final BooleanProperty isEditing = new SimpleBooleanProperty(false);
+	private final StringProperty pattern = new SimpleStringProperty("");
 
 	public BooleanProperty isEditingProperty() {
 		return isEditing;
 	}
 
-	public ObjectProperty<SyllablePatternModel> patternModelProperty() {
-		return patternModel;
-	}
-
-	public SyllablePatternModel getPatternModel() {
-		return patternModel.get();
+	public StringProperty patternProperty() {
+		return pattern;
 	}
 
 }
