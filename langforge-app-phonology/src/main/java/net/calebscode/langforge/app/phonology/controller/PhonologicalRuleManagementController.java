@@ -39,7 +39,9 @@ public class PhonologicalRuleManagementController extends VBox implements FXMLCo
 
 	@FXML
 	private void addNewRule() {
-		rules.rulesProperty().add(new PhonologicalRuleModel(StandardPhonemes.IPA_MAPPER));
+		var model = new PhonologicalRuleModel(StandardPhonemes.IPA_MAPPER);
+		model.setName("New Rule");
+		rules.rulesProperty().add(model);
 	}
 
 }
