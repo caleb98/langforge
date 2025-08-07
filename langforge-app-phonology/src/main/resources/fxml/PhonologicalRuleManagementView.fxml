@@ -24,13 +24,13 @@
 	</HBox>
 
 	<!-- Rules Table -->
-	<TableView fx:id="rulesTable" VBox.vgrow="ALWAYS">
+	<TableView fx:id="rulesTable" VBox.vgrow="ALWAYS" editable="true">
 		<maxHeight><Double fx:constant="MAX_VALUE" /></maxHeight>
 		<columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY_NEXT_COLUMN"/></columnResizePolicy>
 		<columns>
-			<TableColumn fx:id="ruleNameColumn" text="Name" editable="true" />
-			<TableColumn fx:id="ruleSourceColumn" text="Rule" editable="true" />
-			<TableColumn fx:id="ruleErrorColumn" text="Status" editable="false" />
+			<TableColumn fx:id="ruleNameColumn" text="Name" editable="true" minWidth="100" />
+			<TableColumn fx:id="ruleSourceColumn" text="Rule" editable="true" minWidth="100" />
+			<TableColumn fx:id="ruleStatusColumn" text="Status" editable="false" minWidth="100" />
 		</columns>
 	</TableView>
 </fx:root>
