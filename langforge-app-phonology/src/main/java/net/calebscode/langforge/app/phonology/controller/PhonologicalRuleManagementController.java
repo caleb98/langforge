@@ -1,6 +1,7 @@
 package net.calebscode.langforge.app.phonology.controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -18,13 +19,14 @@ public class PhonologicalRuleManagementController extends VBox implements FXMLCo
 	@FXML private TableColumn<PhonologicalRuleModel, String> ruleSourceColumn;
 	@FXML private TableColumn<PhonologicalRuleModel, String> ruleStatusColumn;
 
-	PhonologicalRuleCollectionModel rules;
+	private PhonologicalRuleCollectionModel rules;
 
 	public PhonologicalRuleManagementController(PhonologicalRuleCollectionModel rules) {
 		this.rules = rules;
 
 		load(() -> {
 			rulesTable.itemsProperty().bindBidirectional(rules.rulesProperty());
+			rulesTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
 			ruleNameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
 			ruleNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
@@ -40,8 +42,17 @@ public class PhonologicalRuleManagementController extends VBox implements FXMLCo
 	@FXML
 	private void addNewRule() {
 		var model = new PhonologicalRuleModel(StandardPhonemes.IPA_MAPPER);
-		model.setName("New Rule");
+		var ruleNumber = rules.rulesProperty().size() + 1;
+		model.setName("Rule " + ruleNumber);
 		rules.rulesProperty().add(model);
+	}
+
+	@FXML
+	private void deleteSelectedRules() {
+		var rulesToRemove = rulesTable.getSelectionModel().getSelectedItems().stream().toList();
+		for (var rule : rulesToRemove) {
+			rules.rulesProperty().remove(rule);
+		}
 	}
 
 }
