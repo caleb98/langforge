@@ -6,6 +6,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.VBox;
+import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
 import net.calebscode.langforge.app.phonology.model.PhonologicalRuleCollectionModel;
 import net.calebscode.langforge.app.phonology.model.PhonologicalRuleModel;
 import net.calebscode.langforge.app.ui.WrappingTableCell;
@@ -21,8 +22,8 @@ public class PhonologicalRuleManagementController extends VBox implements FXMLCo
 
 	private PhonologicalRuleCollectionModel rules;
 
-	public PhonologicalRuleManagementController(PhonologicalRuleCollectionModel rules) {
-		this.rules = rules;
+	public PhonologicalRuleManagementController(LanguagePhonologyModel phonologyModel) {
+		rules = phonologyModel.getPhonologicalRules();
 
 		load(() -> {
 			rulesTable.itemsProperty().bindBidirectional(rules.rulesProperty());

@@ -7,20 +7,10 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
-import net.calebscode.langforge.app.LangforgePluginContext;
-import net.calebscode.langforge.app.phonology.model.PhonologicalInventoryModel;
-import net.calebscode.langforge.app.phonology.model.PhonologicalRuleCollectionModel;
-import net.calebscode.langforge.app.phonology.model.SyllablePatternCategoryMapModel;
-import net.calebscode.langforge.app.phonology.model.SyllablePatternCollectionModel;
+import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
 import net.calebscode.langforge.app.util.FXMLController;
 
 public class PhonologyController extends AnchorPane implements FXMLController {
-
-	private LangforgePluginContext context;
-	private PhonologicalInventoryModel phonologicalInventoryModel;
-	private SyllablePatternCategoryMapModel syllablePatternCategoryModel;
-	private SyllablePatternCollectionModel syllablePatternCollectionModel;
-	private PhonologicalRuleCollectionModel phonologicalRuleCollectionModel;
 
 	@FXML private ListView<String> viewSelector;
 	@FXML private AnchorPane contentContainer;
@@ -29,27 +19,11 @@ public class PhonologyController extends AnchorPane implements FXMLController {
 	private SyllableManagementController syllableView;
 	private PhonologicalRuleManagementController ruleView;
 
-	public PhonologyController(
-			LangforgePluginContext context,
-			PhonologicalInventoryModel phonologicalInventoryModel,
-			SyllablePatternCategoryMapModel syllablePatternCategoryModel,
-			SyllablePatternCollectionModel syllablePatternCollectionModel,
-			PhonologicalRuleCollectionModel phonologicalRuleCollectionModel
-	) {
-		this.context = context;
-		this.phonologicalInventoryModel = phonologicalInventoryModel;
-		this.syllablePatternCategoryModel = syllablePatternCategoryModel;
-		this.phonologicalRuleCollectionModel = phonologicalRuleCollectionModel;
-
+	public PhonologyController(LanguagePhonologyModel phonologyModel) {
 		load(() -> {
-			inventoryView = new PhonologicalInventoryController(phonologicalInventoryModel);
-
-			syllableView = new SyllableManagementController(
-					phonologicalInventoryModel,
-					syllablePatternCategoryModel,
-					syllablePatternCollectionModel);
-
-			ruleView = new PhonologicalRuleManagementController(phonologicalRuleCollectionModel);
+			inventoryView = new PhonologicalInventoryController(phonologyModel);
+			syllableView = new SyllableManagementController(phonologyModel);
+			ruleView = new PhonologicalRuleManagementController(phonologyModel);
 
 			viewSelector.getSelectionModel().selectedItemProperty().addListener(this::viewSelectionChanged);
 			viewSelector.getSelectionModel().select(0);

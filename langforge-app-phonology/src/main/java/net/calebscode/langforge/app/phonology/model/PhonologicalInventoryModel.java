@@ -154,7 +154,7 @@ public class PhonologicalInventoryModel {
 		return phoneme;
 	}
 
-	public static PhonologicalInventoryModel createModelWithIpaDefaults() {
+	public static PhonologicalInventoryModel createModelWithDefaultFeatures() {
 		var model = new PhonologicalInventoryModel();
 
 		var categoryFeature = model.addFeature(CATEGORY);
