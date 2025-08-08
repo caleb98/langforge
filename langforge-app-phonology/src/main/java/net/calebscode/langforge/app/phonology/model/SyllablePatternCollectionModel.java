@@ -8,11 +8,7 @@ import javafx.beans.property.StringProperty;
 
 public class SyllablePatternCollectionModel {
 
-	private final ListProperty<StringProperty> patterns;
-
-	public SyllablePatternCollectionModel() {
-		patterns = new SimpleListProperty<>(observableArrayList());
-	}
+	private final ListProperty<StringProperty> patterns = new SimpleListProperty<>(observableArrayList());
 
 	public ListProperty<StringProperty> patternsProperty() {
 		return patterns;

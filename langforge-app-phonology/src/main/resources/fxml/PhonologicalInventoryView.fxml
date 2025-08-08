@@ -15,22 +15,26 @@
 
 <?import javafx.collections.FXCollections?>
 
-<fx:root type="net.calebscode.langforge.app.phonology.controller.PhonologicalInventoryController" xmlns:fx="http://javafx.com/fxml">
-	<VBox style="-fx-padding: 5px" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
-		<Label text="Add Phonemes" />
-		<HBox VBox.vgrow="NEVER" spacing="5">
-			<Button text="Add IPA Consonants" onMouseClicked="#showIpaConsonantPicker" HBox.hgrow="ALWAYS">
-				<maxWidth><Double fx:constant="MAX_VALUE" /></maxWidth>
-			</Button>
-			<Button text="Add IPA Vowels" onMouseClicked="#showIpaVowelPicker" HBox.hgrow="ALWAYS">
-				<maxWidth><Double fx:constant="MAX_VALUE" /></maxWidth>
-			</Button>
-		</HBox>
-		<Label text="Phonological Inventory" />
-		<TableView fx:id="phonemesTable" VBox.vgrow="ALWAYS">
-			<maxHeight><Double fx:constant="MAX_VALUE" /></maxHeight>
-			<columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY_NEXT_COLUMN"/></columnResizePolicy>
-		</TableView>
-	</VBox>
+<fx:root type="net.calebscode.langforge.app.phonology.controller.PhonologicalInventoryController"
+	xmlns:fx="http://javafx.com/fxml"
+	AnchorPane.topAnchor="0"
+	AnchorPane.bottomAnchor="0"
+	AnchorPane.leftAnchor="0"
+	AnchorPane.rightAnchor="0">
+	
+	<Label text="Add Phonemes" />
+	<HBox VBox.vgrow="NEVER" spacing="5">
+		<Button text="Add IPA Consonants" onMouseClicked="#showIpaConsonantPicker" HBox.hgrow="ALWAYS">
+			<maxWidth><Double fx:constant="MAX_VALUE" /></maxWidth>
+		</Button>
+		<Button text="Add IPA Vowels" onMouseClicked="#showIpaVowelPicker" HBox.hgrow="ALWAYS">
+			<maxWidth><Double fx:constant="MAX_VALUE" /></maxWidth>
+		</Button>
+	</HBox>
+	<Label text="Phonological Inventory" />
+	<TableView fx:id="phonemesTable" VBox.vgrow="ALWAYS">
+		<maxHeight><Double fx:constant="MAX_VALUE" /></maxHeight>
+		<columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY_NEXT_COLUMN"/></columnResizePolicy>
+	</TableView>
 </fx:root>
 

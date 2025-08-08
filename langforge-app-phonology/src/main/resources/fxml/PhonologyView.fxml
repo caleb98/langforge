@@ -16,10 +16,11 @@
 				<FXCollections fx:factory="observableArrayList">
 					<String fx:value="Phonological Inventory" />
 					<String fx:value="Syllable Patterns" />
+					<String fx:value="Phonological Rules" />
 				</FXCollections>
 			</items>
 		</ListView>
-		<AnchorPane fx:id="contentContainer">
+		<AnchorPane fx:id="contentContainer" style="-fx-padding: 5px">
 		</AnchorPane>
 	</SplitPane>
 </fx:root>
