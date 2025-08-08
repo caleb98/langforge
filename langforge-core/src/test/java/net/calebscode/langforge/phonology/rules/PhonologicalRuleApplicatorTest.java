@@ -42,7 +42,7 @@ public class PhonologicalRuleApplicatorTest {
 	void applySubstitutionRule() throws IpaMappingException {
 		testRuleApplications(
 			"CV",
-			"/a/ -> [i] / /j/ _",
+			"/a/ -> [i] / [j] _",
 			false,
 			Map.of(
 				"ja", ".ji.",
@@ -94,6 +94,61 @@ public class PhonologicalRuleApplicatorTest {
 				"kakta", ".ka.ka.ta.",
 				"kastja", ".ka.sa.ta.ja.",
 				"goggokka", ".go.ga.go.ka.ka."
+			)
+		);
+	}
+
+	@Test
+	void testWordBoundaryBeginningOfWord() throws IpaMappingException {
+		testRuleApplications(
+			"(C)V",
+			"~ -> [a] / # _ [+consonant]",
+			true,
+			Map.of(
+				"#ka", ".a.ka.",
+				"#go", ".a.go.",
+				"#igo", ".i.go."
+			)
+		);
+	}
+
+	@Test
+	void testWordBoundaryEndOfWord() throws IpaMappingException {
+		testRuleApplications(
+			"CV(C)",
+			"~ -> [s] / [+vowel] _ #",
+			true,
+			Map.of(
+				"ka#", ".kas.",
+				"go#", ".gos.",
+				"gok#", ".gok."
+			)
+		);
+	}
+
+	@Test
+	void testSyllableBoundaryBeginningOfSyllable() throws IpaMappingException {
+		testRuleApplications(
+			"(C)V(C)",
+			"[+consonant, -voiced] -> [+voicing:voiced] / . _",
+			true,
+			Map.of(
+				".kag.", ".gag.",
+				".gok.", ".gok.",
+				".i.ka.", ".i.ga."
+			)
+		);
+	}
+
+	@Test
+	void testSyllableBoundaryEndOfSyllable() throws IpaMappingException {
+		testRuleApplications(
+			"CV(G)",
+			"~ -> [j] / [+front, +vowel] _ .",
+			true,
+			Map.of(
+				".ka.ki.ko.", ".kaj.kij.ko.",
+				".kak.kik.kok.", ".kak.kik.kok."
 			)
 		);
 	}

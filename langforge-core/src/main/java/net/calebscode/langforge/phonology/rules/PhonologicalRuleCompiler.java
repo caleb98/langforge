@@ -39,7 +39,7 @@ public class PhonologicalRuleCompiler extends Compiler<PhonologicalRule> {
 		var postMatches = new ArrayList<PhonemeRepresentation>();
 
 		while (!isAtEnd() && !test('_')) {
-			preMatches.add(phonemeRepresentation());
+			preMatches.add(ruleContext());
 			skipWhitespace();
 		}
 
@@ -47,11 +47,26 @@ public class PhonologicalRuleCompiler extends Compiler<PhonologicalRule> {
 		skipWhitespace();
 
 		while (!isAtEnd()) {
-			postMatches.add(phonemeRepresentation());
+			postMatches.add(ruleContext());
 			skipWhitespace();
 		}
 
 		return new PhonologicalRule(source, match, replacement, preMatches, postMatches);
+	}
+
+	private PhonemeRepresentation ruleMatch() {
+		if (match('~')) {
+			return new NullPhoneme();
+		}
+		else if (match('/')) {
+			return phonemeLiteral('/');
+		}
+		else if (match('[')) {
+			return phonemeFeatureset();
+		}
+
+		error("Expected a rule matching pattern.");
+		return null;
 	}
 
 	private PhonemeRepresentation ruleReplacement() {
@@ -59,56 +74,38 @@ public class PhonologicalRuleCompiler extends Compiler<PhonologicalRule> {
 			return new NullPhoneme();
 		}
 
-		expect('[', "Expected '[' before replacement.");
+		expect('[', "Expected '[' before rule replacement.");
 		if (test('+') || test('-') || Character.isDigit(current())) {
 			return phonemeFeatureset();
 		}
 		else {
-			return replacementPhone();
+			return phonemeLiteral(']');
 		}
 	}
 
-	private PhonemeRepresentation ruleMatch() {
-		if (match('~')) {
-			return new NullPhoneme();
-		}
-
-		return phoneme();
-	}
-
-	private PhonemeRepresentation phonemeRepresentation() {
+	private PhonemeRepresentation ruleContext() {
 		if (match('#')) {
 			return new WordBoundary();
 		}
 		else if (match('.')) {
 			return new SyllableBoundary();
 		}
-		else {
-			return phoneme();
-		}
-	}
-
-	private PhonemeLiteral replacementPhone() {
-		String ipa = ipa();
-		expect(']', "Expected ']' after replacement phone.");
-		return new PhonemeLiteral(ipaMapper.getPhoneme(ipa));
-	}
-
-	private PhonemeRepresentation phoneme() {
-		if (match('/')) {
-			return phonemeLiteral();
-		}
 		else if (match('[')) {
-			return phonemeFeatureset();
+			if (test('-') || test('+') || Character.isDigit(current())) {
+				return phonemeFeatureset();
+			}
+			else {
+				return phonemeLiteral(']');
+			}
 		}
 
-		error("Expected phoneme literal or matcher group.");
+		error("Expected word boundary (#), syllable boundary (.), phoneme literal, or feature set in rule context.");
 		return null;
 	}
 
-	private PhonemeLiteral phonemeLiteral() {
-		String ipaString = ipa();
-		expect('/', "Expected closing '/' after phoneme literal.");
+	private PhonemeLiteral phonemeLiteral(char terminalChar) {
+		String ipaString = ipa(terminalChar);
+		expect(terminalChar, "Expected closing '" + terminalChar + "' after phoneme literal.");
 		return new PhonemeLiteral(ipaMapper.getPhoneme(ipaString));
 	}
 
@@ -181,16 +178,16 @@ public class PhonologicalRuleCompiler extends Compiler<PhonologicalRule> {
 		return new Feature(featureType, "", negate, bindNumber);
 	}
 
-	private String ipa() {
+	private String ipa(char terminalChar) {
 		var sb = new StringBuilder();
 
-		while (!isAtEnd() && !test('/') && !test(']')) {
+		while (!isAtEnd() && !test(terminalChar)) {
 			sb.append(current());
 			next();
 		}
 
 		if (sb.isEmpty()) {
-			error("Expected ipa phoneme inside slashes.");
+			error("Expected non-empty ipa sequence terminated by '" + terminalChar + "'");
 		}
 
 		return sb.toString();

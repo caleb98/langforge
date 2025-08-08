@@ -125,6 +125,12 @@ public class PhonologicalRuleApplicator implements PhonemeRepresentationMatcher 
 
 			// Not bound, not negated - just a regular feature
 			if (!isBound && !feature.negate()) {
+				if (feature.featureName().isBlank()) {
+					throw new PhonologicalRuleApplicationException(String.format(
+						"Adding a feature in a rule replacement requires specifying the feature name. "
+						+ "Please specify the feature name for value '%s'",
+						feature.featureValue()));
+				}
 				newFeatures.put(feature.featureName(), feature.featureValue());
 			}
 
@@ -223,8 +229,7 @@ public class PhonologicalRuleApplicator implements PhonemeRepresentationMatcher 
 
 		// Match against unbound features
 		for (var feature : unboundFeatures) {
-			if (!matchesAnyFeatureValue(phonemeFeatureValues, feature)
-				&& !matchesExactFeatureValue(phoneme, feature)) {
+			if (!phonemeMatchesFeature(phoneme, phonemeFeatureValues, feature)) {
 				return false;
 			}
 		}
@@ -253,16 +258,6 @@ public class PhonologicalRuleApplicator implements PhonemeRepresentationMatcher 
 		return true;
 	}
 
-	private static boolean matchesExactFeatureValue(Phoneme phoneme, Feature feature) {
-		return !feature.featureName().isEmpty()
-				&& phoneme.featureValueMatches(feature.featureName(), feature.featureValue());
-	}
-
-	private static boolean matchesAnyFeatureValue(Set<String> phonemeFeatureValues, Feature feature) {
-		return feature.featureName().isEmpty()
-				&& phonemeFeatureValues.contains(feature.featureValue());
-	}
-
 	private void bindFeature(Feature feature, String featureValue) {
 		binds.put(new BindKey(feature.bindNumber(), feature.featureName()), featureValue);
 	}
@@ -271,6 +266,18 @@ public class PhonologicalRuleApplicator implements PhonemeRepresentationMatcher 
 		return Optional.ofNullable(binds.get(new BindKey(feature.bindNumber(), feature.featureName())));
 	}
 
-	private record BindKey(int bindNumber, String featureType) {}
+	private static record BindKey(int bindNumber, String featureType) {}
+
+	private static boolean phonemeMatchesFeature(Phoneme phoneme, Set<String> phonemeFeatureValues, Feature feature) {
+		boolean result = feature.featureName().isEmpty() ?
+			phonemeFeatureValues.contains(feature.featureValue()) :
+			phoneme.featureValueMatches(feature.featureName(), feature.featureValue());
+
+		if (feature.negate()) {
+			result = !result;
+		}
+
+		return result;
+	}
 
 }
