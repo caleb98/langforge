@@ -14,9 +14,9 @@ import net.calebscode.langforge.app.util.VersionNumber;
 
 public class LangforgeCorePlugin implements LangforgePlugin {
 
-	private static final String ID = "langforge.core";
-	private static final String NAME = "Langforge Core";
-	private static final String DESCRIPTION = "The core Langforge UI application features.";
+	public static final String ID = "langforge.core";
+	public static final String NAME = "Langforge Core";
+	public static final String DESCRIPTION = "The core Langforge UI application features.";
 
 	private static final int FILE_MENU_INDEX = 0;
 	private static final int EDIT_MENU_INDEX = 100;

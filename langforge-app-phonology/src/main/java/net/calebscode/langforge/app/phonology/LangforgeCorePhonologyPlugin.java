@@ -18,11 +18,11 @@ import net.calebscode.langforge.app.plugin.LangforgePluginException;
 import net.calebscode.langforge.app.plugin.ui.MenuItemDefinition;
 import net.calebscode.langforge.app.util.VersionNumber;
 
-public final class LangforgePhonologyCorePlugin implements LangforgePlugin {
+public final class LangforgeCorePhonologyPlugin implements LangforgePlugin {
 
-	private static final String ID = "langforge.phonology";
-	private static final String NAME = "Langforge Core - Phonology";
-	private static final String DESCRIPTION = "The core Langforge phonology features.";
+	public static final String ID = "langforge.phonology";
+	public static final String NAME = "Langforge Core - Phonology";
+	public static final String DESCRIPTION = "The core Langforge phonology features.";
 
 	private LangforgePluginContext context;
 	private LanguagePhonologyModel phonologyModel;

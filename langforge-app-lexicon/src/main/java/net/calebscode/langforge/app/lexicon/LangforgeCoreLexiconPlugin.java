@@ -1,0 +1,66 @@
+package net.calebscode.langforge.app.lexicon;
+import java.util.Map;
+
+import javafx.scene.control.MenuItem;
+import net.calebscode.langforge.app.LangforgeApplication;
+import net.calebscode.langforge.app.LangforgePluginContext;
+import net.calebscode.langforge.app.core.LangforgeCorePlugin;
+import net.calebscode.langforge.app.phonology.LangforgeCorePhonologyPlugin;
+import net.calebscode.langforge.app.plugin.LangforgePlugin;
+import net.calebscode.langforge.app.plugin.LangforgePluginException;
+import net.calebscode.langforge.app.plugin.ui.MenuItemDefinition;
+import net.calebscode.langforge.app.util.VersionNumber;
+
+public final class LangforgeCoreLexiconPlugin implements LangforgePlugin {
+
+	private static final String ID = "langforge.lexicon";
+	private static final String NAME = "Langforge Core - Lexicon";
+	private static final String DESCRIPTION = "The core Langforge lexicon features.";
+
+	private LangforgePluginContext context;
+
+	@Override
+	public String getId() {
+		return ID;
+	}
+
+	@Override
+	public String getName() {
+		return NAME;
+	}
+
+	@Override
+	public String getDescription() {
+		return DESCRIPTION;
+	}
+
+	@Override
+	public VersionNumber getVersion() {
+		return LangforgeApplication.VERSION;
+	}
+
+	@Override
+	public VersionNumber getRequiredLangforgeVersion() {
+		return LangforgeApplication.VERSION;
+	}
+
+	@Override
+	public Map<String, VersionNumber> getDependencies() {
+		return Map.of(
+			LangforgeCorePlugin.ID, LangforgeApplication.VERSION,
+			LangforgeCorePhonologyPlugin.ID, LangforgeApplication.VERSION
+		);
+	}
+
+	@Override
+	public void init(LangforgePluginContext context) throws LangforgePluginException {
+		this.context = context;
+	}
+
+	@Override
+	public void load(LangforgePluginContext context) throws LangforgePluginException {
+		var lexiconMenuItem = new MenuItem("Lexicon");
+		context.addMenuItem(new MenuItemDefinition("Edit", () -> lexiconMenuItem));
+	}
+
+}

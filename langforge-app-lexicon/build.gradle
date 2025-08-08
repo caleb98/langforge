@@ -4,4 +4,5 @@ plugins {
 
 dependencies {
     implementation project(":langforge-app-core")
+    implementation project(":langforge-app-phonology")
 }
