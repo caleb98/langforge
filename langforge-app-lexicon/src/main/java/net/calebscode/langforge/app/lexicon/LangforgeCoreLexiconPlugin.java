@@ -2,9 +2,11 @@ package net.calebscode.langforge.app.lexicon;
 import java.util.Map;
 
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tab;
 import net.calebscode.langforge.app.LangforgeApplication;
 import net.calebscode.langforge.app.LangforgePluginContext;
 import net.calebscode.langforge.app.core.LangforgeCorePlugin;
+import net.calebscode.langforge.app.lexicon.controller.LexiconController;
 import net.calebscode.langforge.app.phonology.LangforgeCorePhonologyPlugin;
 import net.calebscode.langforge.app.plugin.LangforgePlugin;
 import net.calebscode.langforge.app.plugin.LangforgePluginException;
@@ -18,6 +20,8 @@ public final class LangforgeCoreLexiconPlugin implements LangforgePlugin {
 	private static final String DESCRIPTION = "The core Langforge lexicon features.";
 
 	private LangforgePluginContext context;
+
+	private boolean lexiconTabVisible = false;
 
 	@Override
 	public String getId() {
@@ -60,7 +64,24 @@ public final class LangforgeCoreLexiconPlugin implements LangforgePlugin {
 	@Override
 	public void load(LangforgePluginContext context) throws LangforgePluginException {
 		var lexiconMenuItem = new MenuItem("Lexicon");
+		lexiconMenuItem.setOnAction(event -> {
+			showLexiconTab();
+		});
 		context.addMenuItem(new MenuItemDefinition("Edit", () -> lexiconMenuItem));
+		showLexiconTab();
+	}
+
+	private void showLexiconTab() {
+		if (lexiconTabVisible) {
+			return;
+		}
+
+		var lexiconController = new LexiconController();
+		lexiconTabVisible = true;
+		var tab = new Tab("Lexicon", lexiconController);
+		tab.setOnClosed(event -> lexiconTabVisible = false);
+
+		context.createTab(tab);
 	}
 
 }
