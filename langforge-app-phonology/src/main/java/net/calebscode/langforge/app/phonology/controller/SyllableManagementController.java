@@ -85,8 +85,6 @@ public class SyllableManagementController extends AnchorPane implements FXMLCont
 
 			patternsList.setCellFactory(this::syllablePatternEditorModelCellFactory);
 			patternsList.itemsProperty().bind(syllablePatterns.patternsProperty());
-
-			//
 		});
 	}
 
@@ -173,21 +171,29 @@ public class SyllableManagementController extends AnchorPane implements FXMLCont
 
 	private ListCell<StringProperty> syllablePatternEditorModelCellFactory(ListView<StringProperty> list) {
 		return new ListCell<>() {
+			SyllablePatternEditorModel model;
+			SyllablePatternEditorController editor;
+
 			{
+				model = new SyllablePatternEditorModel();
+				editor = new SyllablePatternEditorController(model);
+
 				setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+				setText(null);
 				prefWidthProperty().bind(list.widthProperty().subtract(2));
 			}
+
 			@Override
 			protected void updateItem(StringProperty item, boolean empty) {
 				super.updateItem(item, empty);
+				model.patternProperty().unbind();
+				System.out.println("updated!");
 
 				if (empty || item == null) {
-					setText(null);
 					setGraphic(null);
 				} else {
-					var editorModel = new SyllablePatternEditorModel();
-					editorModel.patternProperty().bindBidirectional(item);
-					setGraphic(new SyllablePatternEditorController(editorModel));
+					model.patternProperty().bindBidirectional(item);
+					setGraphic(editor);
 				}
 			}
 		};

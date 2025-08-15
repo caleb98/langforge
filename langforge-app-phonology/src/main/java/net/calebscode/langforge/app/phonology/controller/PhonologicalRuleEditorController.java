@@ -12,11 +12,7 @@ public class PhonologicalRuleEditorController extends VBox implements FXMLContro
 	@FXML private TextField ruleSourceInput;
 	@FXML private Label compileErrorLabel;
 
-	private PhonologicalRuleModel model;
-
 	public PhonologicalRuleEditorController(PhonologicalRuleModel model) {
-		this.model = model;
-
 		load(() -> {
 			ruleSourceInput.textProperty().set(model.getSource());
 			ruleSourceInput.textProperty().bindBidirectional(model.sourceProperty());

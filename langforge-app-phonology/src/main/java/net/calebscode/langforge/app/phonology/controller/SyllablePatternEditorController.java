@@ -31,7 +31,6 @@ public class SyllablePatternEditorController extends StackPane implements FXMLCo
 				}
 			});
 
-			;
 			patternDisplay.textProperty().bind(editorModel.patternProperty().isEmpty().map(empty -> empty ? "<empty pattern>" : editorModel.patternProperty().get()));
 
 			patternDisplay.visibleProperty().bind(not(editorModel.isEditingProperty()));

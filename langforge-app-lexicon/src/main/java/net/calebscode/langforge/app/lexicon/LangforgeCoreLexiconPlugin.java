@@ -7,6 +7,7 @@ import net.calebscode.langforge.app.LangforgeApplication;
 import net.calebscode.langforge.app.LangforgePluginContext;
 import net.calebscode.langforge.app.core.LangforgeCorePlugin;
 import net.calebscode.langforge.app.lexicon.controller.LexiconController;
+import net.calebscode.langforge.app.lexicon.model.LexiconModel;
 import net.calebscode.langforge.app.phonology.LangforgeCorePhonologyPlugin;
 import net.calebscode.langforge.app.plugin.LangforgePlugin;
 import net.calebscode.langforge.app.plugin.LangforgePluginException;
@@ -20,6 +21,7 @@ public final class LangforgeCoreLexiconPlugin implements LangforgePlugin {
 	private static final String DESCRIPTION = "The core Langforge lexicon features.";
 
 	private LangforgePluginContext context;
+	private LexiconModel lexiconModel;
 
 	private boolean lexiconTabVisible = false;
 
@@ -59,6 +61,8 @@ public final class LangforgeCoreLexiconPlugin implements LangforgePlugin {
 	@Override
 	public void init(LangforgePluginContext context) throws LangforgePluginException {
 		this.context = context;
+
+		lexiconModel = new LexiconModel();
 	}
 
 	@Override
@@ -76,7 +80,7 @@ public final class LangforgeCoreLexiconPlugin implements LangforgePlugin {
 			return;
 		}
 
-		var lexiconController = new LexiconController();
+		var lexiconController = new LexiconController(lexiconModel);
 		lexiconTabVisible = true;
 		var tab = new Tab("Lexicon", lexiconController);
 		tab.setOnClosed(event -> lexiconTabVisible = false);
