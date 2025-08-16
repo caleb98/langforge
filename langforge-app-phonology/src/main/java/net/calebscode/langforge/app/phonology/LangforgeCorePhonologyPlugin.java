@@ -1,5 +1,6 @@
 package net.calebscode.langforge.app.phonology;
 
+import static javafx.collections.FXCollections.observableArrayList;
 import static net.calebscode.langforge.app.phonology.model.PhonologicalInventoryModel.createModelWithDefaultFeatures;
 
 import java.util.Map;
@@ -13,7 +14,6 @@ import net.calebscode.langforge.app.phonology.controller.PhonologyController;
 import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
 import net.calebscode.langforge.app.phonology.model.PhonologicalRuleCollectionModel;
 import net.calebscode.langforge.app.phonology.model.SyllablePatternCategoryMapModel;
-import net.calebscode.langforge.app.phonology.model.SyllablePatternCollectionModel;
 import net.calebscode.langforge.app.plugin.LangforgePlugin;
 import net.calebscode.langforge.app.plugin.LangforgePluginException;
 import net.calebscode.langforge.app.plugin.ui.MenuItemDefinition;
@@ -67,8 +67,8 @@ public final class LangforgeCorePhonologyPlugin implements LangforgePlugin {
 		phonologyModel = new LanguagePhonologyModel(
 			createModelWithDefaultFeatures(),
 			new SyllablePatternCategoryMapModel(),
-			new SyllablePatternCollectionModel(),
-			new PhonologicalRuleCollectionModel()
+			new PhonologicalRuleCollectionModel(),
+			observableArrayList()
 		);
 
 		context.registerApi(new LangforgeCorePhonologyApi(phonologyModel));

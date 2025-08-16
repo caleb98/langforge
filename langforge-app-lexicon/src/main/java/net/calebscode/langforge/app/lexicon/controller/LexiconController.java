@@ -18,6 +18,7 @@ import net.calebscode.langforge.app.lexicon.model.LexiconModel;
 import net.calebscode.langforge.app.lexicon.ui.LexiconWordTableCell;
 import net.calebscode.langforge.app.lexicon.ui.RemoveLexicalCategoryDialog;
 import net.calebscode.langforge.app.lexicon.util.LexicalCategoryStringConverter;
+import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
 import net.calebscode.langforge.app.util.FXMLController;
 import net.calebscode.langforge.phonology.phoneme.PhonemeSequence;
 import net.calebscode.langforge.phonology.phoneme.StandardPhonemes;
@@ -32,13 +33,20 @@ public class LexiconController extends HBox implements FXMLController {
 
 	private final LexiconModel lexiconModel;
 
-	public LexiconController(LexiconModel lexiconModel) {
+	public LexiconController(LexiconModel lexiconModel, LanguagePhonologyModel phonologyModel) {
 		this.lexiconModel = lexiconModel;
 
 		load(() -> {
 			wordsTable.itemsProperty().bind(lexiconModel.entriesProperty());
 
-			wordColumn.setCellFactory(column -> new LexiconWordTableCell<>(StandardPhonemes.IPA_MAPPER));
+			wordColumn.setCellFactory(column -> {
+				var cell = new LexiconWordTableCell<LexiconEntryModel>(
+					StandardPhonemes.IPA_MAPPER,
+					phonologyModel
+				);
+				cell.setEditable(true);
+				return cell;
+			});
 			wordColumn.setCellValueFactory(cellData -> cellData.getValue().wordProperty());
 
 			categoryColumn.setCellFactory(ChoiceBoxTableCell.forTableColumn(

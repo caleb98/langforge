@@ -27,7 +27,7 @@
 		<ListView fx:id="patternsList"
 			GridPane.columnIndex="0"
 			GridPane.rowIndex="1"
-			editable="false"
+			editable="true"
 			fixedCellSize="-1"
 			prefWidth="200"/>
 		

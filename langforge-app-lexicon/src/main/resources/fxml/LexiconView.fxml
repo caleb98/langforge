@@ -27,7 +27,7 @@
 	<TableView fx:id="wordsTable" HBox.hgrow="ALWAYS" editable="true">
 		<columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY_NEXT_COLUMN"/></columnResizePolicy>
 		<columns>
-			<TableColumn fx:id="wordColumn" text="Word" minWidth="100" />
+			<TableColumn fx:id="wordColumn" text="Word" minWidth="100" editable="true" />
 			<TableColumn fx:id="categoryColumn" text="Category" minWidth="100" editable="true" />
 			<TableColumn fx:id="definitionColumn" text="Definition" minWidth="100" />
 		</columns>

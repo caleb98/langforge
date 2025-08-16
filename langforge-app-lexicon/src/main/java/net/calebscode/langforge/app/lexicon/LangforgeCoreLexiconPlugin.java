@@ -23,6 +23,7 @@ public final class LangforgeCoreLexiconPlugin implements LangforgePlugin {
 
 	private LangforgePluginContext context;
 	private LexiconModel lexiconModel;
+	private LangforgeCorePhonologyApi phonologyApi;
 
 	private boolean lexiconTabVisible = false;
 
@@ -69,9 +70,7 @@ public final class LangforgeCoreLexiconPlugin implements LangforgePlugin {
 	@Override
 	public void load(LangforgePluginContext context) throws LangforgePluginException {
 		var maybePhonologyApi =  context.getApi(LangforgeCorePhonologyApi.class);
-		var phonologyApi = maybePhonologyApi.orElseThrow(() -> new LangforgePluginException("Failed to retrieve phonology API."));
-
-		System.out.println(phonologyApi.getPhonologyModel().getSyllablePatterns());
+		phonologyApi = maybePhonologyApi.orElseThrow(() -> new LangforgePluginException("Failed to retrieve phonology API."));
 
 		var lexiconMenuItem = new MenuItem("Lexicon");
 		lexiconMenuItem.setOnAction(event -> {
@@ -86,7 +85,7 @@ public final class LangforgeCoreLexiconPlugin implements LangforgePlugin {
 			return;
 		}
 
-		var lexiconController = new LexiconController(lexiconModel);
+		var lexiconController = new LexiconController(lexiconModel, phonologyApi.getPhonologyModel());
 		lexiconTabVisible = true;
 		var tab = new Tab("Lexicon", lexiconController);
 		tab.setOnClosed(event -> lexiconTabVisible = false);

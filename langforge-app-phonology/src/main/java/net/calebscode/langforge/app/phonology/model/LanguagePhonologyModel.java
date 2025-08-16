@@ -1,22 +1,27 @@
 package net.calebscode.langforge.app.phonology.model;
 
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.ObservableList;
+
 public class LanguagePhonologyModel {
 
 	private final PhonologicalInventoryModel phonologicalInventory;
 	private final SyllablePatternCategoryMapModel syllablePatternCategories;
-	private final SyllablePatternCollectionModel syllablePatterns;
 	private final PhonologicalRuleCollectionModel phonologicalRules;
+
+	private final ListProperty<String> syllablePatterns;
 
 	public LanguagePhonologyModel(
 		PhonologicalInventoryModel phonologicalInventory,
 		SyllablePatternCategoryMapModel syllablePatternCategories,
-		SyllablePatternCollectionModel syllablePatterns,
-		PhonologicalRuleCollectionModel phonologicalRules
+		PhonologicalRuleCollectionModel phonologicalRules,
+		ObservableList<String> syllablePatterns
 	) {
 		this.phonologicalInventory = phonologicalInventory;
 		this.syllablePatternCategories = syllablePatternCategories;
-		this.syllablePatterns = syllablePatterns;
 		this.phonologicalRules = phonologicalRules;
+		this.syllablePatterns = new SimpleListProperty<>(syllablePatterns);
 	}
 
 	public PhonologicalInventoryModel getPhonologicalInventory() {
@@ -27,12 +32,20 @@ public class LanguagePhonologyModel {
 		return syllablePatternCategories;
 	}
 
-	public SyllablePatternCollectionModel getSyllablePatterns() {
+	public PhonologicalRuleCollectionModel getPhonologicalRules() {
+		return phonologicalRules;
+	}
+
+	public ListProperty<String> syllablePatternsProperty() {
 		return syllablePatterns;
 	}
 
-	public PhonologicalRuleCollectionModel getPhonologicalRules() {
-		return phonologicalRules;
+	public ObservableList<String> getSyllablePatterns() {
+		return syllablePatterns.get();
+	}
+
+	public void setSyllablePatterns(ObservableList<String> syllablePatterns) {
+		this.syllablePatterns.set(syllablePatterns);
 	}
 
 }
