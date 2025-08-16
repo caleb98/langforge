@@ -11,74 +11,63 @@ import java.util.stream.Collectors;
 import net.calebscode.langforge.app.LangforgeApplication;
 import net.calebscode.langforge.app.LangforgeApplicationModel;
 import net.calebscode.langforge.app.LangforgePluginContext;
+import net.calebscode.langforge.app.util.VersionNumber;
 
 public class PluginManager {
 
 	private Map<LangforgePlugin, LangforgePluginContext> pluginContexts = new HashMap<>();
+	private boolean pluginsLoaded = false;
 	private LangforgeApplicationModel appModel;
+	private LangforgePluginApiProvider apiProvider = new LangforgePluginApiProvider();
 
 	public PluginManager(LangforgeApplicationModel appModel) {
 		this.appModel = appModel;
 	}
 
 	public void loadPlugins() throws DuplicatePluginIdException {
+		if (pluginsLoaded) {
+			throw new IllegalStateException("Cannot call loadPlugin() after plugins have already been loaded.");
+		}
+
 		ServiceLoader<LangforgePlugin> pluginLoader = ServiceLoader.load(LangforgePlugin.class);
 		var plugins = pluginLoader.stream().map(Provider::get).toList();
 
 		verifyNoDuplicatePluginIds(plugins);
 
 		plugins.forEach(plugin -> {
-			pluginContexts.put(plugin, new LangforgePluginContext(plugin, appModel));
+			pluginContexts.put(plugin, new LangforgePluginContext(plugin, appModel, apiProvider));
 		});
 
 		var initResults = plugins.stream().collect(Collectors.partitioningBy(this::initPlugin));
-		var succeeded = initResults.get(true);
+		var initializedPlugins = initResults.get(true);
 
-		var dependencies = succeeded.stream()
+		apiProvider.setInitialized();
+
+		var pluginDependencies = initializedPlugins.stream()
 				.collect(Collectors.toMap(
 					plugin -> plugin,
 					plugin -> new HashMap<>(plugin.getDependencies())
 				));
 
-		var loadOrder = new ArrayList<LangforgePlugin>();
-		var check = new ArrayList<LangforgePlugin>();
+		// While computing the load order, the pluginDependencies map is updated and
+		// dependencies that are marked for load are removed. The result is that all
+		// successfully loaded plugins should have no more entries in the pluginDependencies
+		// map. The presence of any dependencies indicates that the dependency could
+		// not be satisfied, so log those.
+		var loadOrder = computeLoadOrder(initializedPlugins, pluginDependencies);
+		logPluginsWithUnsatisfiedDependencies(pluginDependencies);
 
-		for (var plugin : succeeded) {
-			if (dependencies.get(plugin).isEmpty()) {
-				check.add(plugin);
-				dependencies.remove(plugin);
-			}
-		}
+		loadOrder.forEach(this::loadPlugin);
+		pluginsLoaded = true;
+	}
 
-		while (!check.isEmpty()) {
-			var currentPlugin = check.removeFirst();
-			loadOrder.add(currentPlugin);
-
-			var iter = dependencies.entrySet().iterator();
-			while(iter.hasNext()) {
-				var entry = iter.next();
-				var plugin = entry.getKey();
-				var deps = entry.getValue();
-
-				if (deps.containsKey(currentPlugin.getId())) {
-					var requiredVersion = deps.get(currentPlugin.getId());
-					var actualVersion = currentPlugin.getVersion();
-					if (actualVersion.compareTo(requiredVersion) >= 0) {
-						deps.remove(currentPlugin.getId());
-					}
-				}
-
-				if (deps.isEmpty()) {
-					iter.remove();
-					check.add(plugin);
-				}
-			}
-		}
-
-		// If there's still plugins with unsatisfied dependencies, alert the user.
-		if (!dependencies.isEmpty()) {
-			System.out.println("WARNING: The following plugins have dependencies that are not present or which failed to initialize. They will not be loaded.");
-			for (var entry : dependencies.entrySet()) {
+	private void logPluginsWithUnsatisfiedDependencies(
+		Map<LangforgePlugin, HashMap<String, VersionNumber>> pluginDependencies
+	) {
+		if (!pluginDependencies.isEmpty()) {
+			System.out.println("WARNING: The following plugins have dependencies that are not present"
+					+ " or which failed to initialize. They will not be loaded.");
+			for (var entry : pluginDependencies.entrySet()) {
 				var plugin = entry.getKey();
 				var deps = entry.getValue();
 
@@ -98,8 +87,47 @@ public class PluginManager {
 				}
 			}
 		}
+	}
 
-		loadOrder.forEach(this::loadPlugin);
+	private ArrayList<LangforgePlugin> computeLoadOrder(
+		List<LangforgePlugin> initializedPlugins,
+		Map<LangforgePlugin, HashMap<String, VersionNumber>> pluginDependencies
+	) {
+		var loadOrder = new ArrayList<LangforgePlugin>();
+		var check = new ArrayList<LangforgePlugin>();
+
+		for (var plugin : initializedPlugins) {
+			if (pluginDependencies.get(plugin).isEmpty()) {
+				check.add(plugin);
+				pluginDependencies.remove(plugin);
+			}
+		}
+
+		while (!check.isEmpty()) {
+			var currentPlugin = check.removeFirst();
+			loadOrder.add(currentPlugin);
+
+			var iter = pluginDependencies.entrySet().iterator();
+			while(iter.hasNext()) {
+				var entry = iter.next();
+				var plugin = entry.getKey();
+				var deps = entry.getValue();
+
+				if (deps.containsKey(currentPlugin.getId())) {
+					var requiredVersion = deps.get(currentPlugin.getId());
+					var actualVersion = currentPlugin.getVersion();
+					if (actualVersion.compareTo(requiredVersion) >= 0) {
+						deps.remove(currentPlugin.getId());
+					}
+				}
+
+				if (deps.isEmpty()) {
+					iter.remove();
+					check.add(plugin);
+				}
+			}
+		}
+		return loadOrder;
 	}
 
 	private void verifyNoDuplicatePluginIds(List<LangforgePlugin> plugins) throws DuplicatePluginIdException {

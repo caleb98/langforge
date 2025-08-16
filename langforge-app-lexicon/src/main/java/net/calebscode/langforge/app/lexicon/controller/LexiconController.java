@@ -13,18 +13,20 @@ import javafx.scene.control.cell.ChoiceBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.HBox;
 import net.calebscode.langforge.LexicalCategory;
-import net.calebscode.langforge.Word;
 import net.calebscode.langforge.app.lexicon.model.LexiconEntryModel;
 import net.calebscode.langforge.app.lexicon.model.LexiconModel;
+import net.calebscode.langforge.app.lexicon.ui.LexiconWordTableCell;
 import net.calebscode.langforge.app.lexicon.ui.RemoveLexicalCategoryDialog;
 import net.calebscode.langforge.app.lexicon.util.LexicalCategoryStringConverter;
 import net.calebscode.langforge.app.util.FXMLController;
+import net.calebscode.langforge.phonology.phoneme.PhonemeSequence;
+import net.calebscode.langforge.phonology.phoneme.StandardPhonemes;
 
 public class LexiconController extends HBox implements FXMLController {
 
 	@FXML private TableView<LexiconEntryModel> wordsTable;
 
-	@FXML private TableColumn<LexiconEntryModel, Word> wordColumn;
+	@FXML private TableColumn<LexiconEntryModel, PhonemeSequence> wordColumn;
 	@FXML private TableColumn<LexiconEntryModel, LexicalCategory> categoryColumn;
 	@FXML private TableColumn<LexiconEntryModel, String> definitionColumn;
 
@@ -36,8 +38,8 @@ public class LexiconController extends HBox implements FXMLController {
 		load(() -> {
 			wordsTable.itemsProperty().bind(lexiconModel.entriesProperty());
 
-//			wordColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-//			wordColumn.setCellValueFactory(cellData -> cellData.getValue().wordProperty());
+			wordColumn.setCellFactory(column -> new LexiconWordTableCell<>(StandardPhonemes.IPA_MAPPER));
+			wordColumn.setCellValueFactory(cellData -> cellData.getValue().wordProperty());
 
 			categoryColumn.setCellFactory(ChoiceBoxTableCell.forTableColumn(
 				new LexicalCategoryStringConverter(),

@@ -5,23 +5,23 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import net.calebscode.langforge.LexicalCategory;
-import net.calebscode.langforge.Word;
+import net.calebscode.langforge.phonology.phoneme.PhonemeSequence;
 
 public class LexiconEntryModel {
 
-	private final ObjectProperty<Word> word = new SimpleObjectProperty<>();
+	private final ObjectProperty<PhonemeSequence> word = new SimpleObjectProperty<>();
 	private final ObjectProperty<LexicalCategory> category = new SimpleObjectProperty<>();
 	private final StringProperty definition = new SimpleStringProperty("No definition provided.");
 
-	public ObjectProperty<Word> wordProperty() {
+	public ObjectProperty<PhonemeSequence> wordProperty() {
 		return word;
 	}
 
-	public Word getWord() {
+	public PhonemeSequence getWord() {
 		return word.get();
 	}
 
-	public void setWord(Word word) {
+	public void setWord(PhonemeSequence word) {
 		this.word.set(word);
 	}
 

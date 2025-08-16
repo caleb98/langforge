@@ -9,6 +9,7 @@ import net.calebscode.langforge.app.core.LangforgeCorePlugin;
 import net.calebscode.langforge.app.lexicon.controller.LexiconController;
 import net.calebscode.langforge.app.lexicon.model.LexiconModel;
 import net.calebscode.langforge.app.phonology.LangforgeCorePhonologyPlugin;
+import net.calebscode.langforge.app.phonology.api.LangforgeCorePhonologyApi;
 import net.calebscode.langforge.app.plugin.LangforgePlugin;
 import net.calebscode.langforge.app.plugin.LangforgePluginException;
 import net.calebscode.langforge.app.plugin.ui.MenuItemDefinition;
@@ -67,6 +68,11 @@ public final class LangforgeCoreLexiconPlugin implements LangforgePlugin {
 
 	@Override
 	public void load(LangforgePluginContext context) throws LangforgePluginException {
+		var maybePhonologyApi =  context.getApi(LangforgeCorePhonologyApi.class);
+		var phonologyApi = maybePhonologyApi.orElseThrow(() -> new LangforgePluginException("Failed to retrieve phonology API."));
+
+		System.out.println(phonologyApi.getPhonologyModel().getSyllablePatterns());
+
 		var lexiconMenuItem = new MenuItem("Lexicon");
 		lexiconMenuItem.setOnAction(event -> {
 			showLexiconTab();

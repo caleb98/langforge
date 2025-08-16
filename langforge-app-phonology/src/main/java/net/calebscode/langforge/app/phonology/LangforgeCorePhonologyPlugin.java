@@ -8,6 +8,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import net.calebscode.langforge.app.LangforgeApplication;
 import net.calebscode.langforge.app.LangforgePluginContext;
+import net.calebscode.langforge.app.phonology.api.LangforgeCorePhonologyApi;
 import net.calebscode.langforge.app.phonology.controller.PhonologyController;
 import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
 import net.calebscode.langforge.app.phonology.model.PhonologicalRuleCollectionModel;
@@ -69,6 +70,8 @@ public final class LangforgeCorePhonologyPlugin implements LangforgePlugin {
 			new SyllablePatternCollectionModel(),
 			new PhonologicalRuleCollectionModel()
 		);
+
+		context.registerApi(new LangforgeCorePhonologyApi(phonologyModel));
 	}
 
 	@Override
