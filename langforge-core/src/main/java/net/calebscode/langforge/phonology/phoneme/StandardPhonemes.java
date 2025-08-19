@@ -185,7 +185,7 @@ public class StandardPhonemes {
 
 
 	// Standard Phoneme Map
-	public static final PhonemeStringMap IPA_PHONEME_STRING_MAP = new PhonemeStringMap();
+	public static final PhonemeRepresentationMapper IPA_PHONEME_REPRESENTATION_MAPPER;
 	public static final List<Phoneme> IPA_PHONEMES;
 
 	static {
@@ -910,127 +910,135 @@ public class StandardPhonemes {
 			.build();
 
 		// Vowels
-		IPA_PHONEME_STRING_MAP.addMapping("i", CLOSE_FRONT_UNROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("y", CLOSE_FRONT_ROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("ɨ", CLOSE_CENTRAL_UNROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("ʉ", CLOSE_CENTRAL_ROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("ɯ", CLOSE_BRACK_UNROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("u", CLOSE_BRACK_ROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("ɪ", NEAR_CLOSE_FRONT_UNROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("ʏ", NEAR_CLOSE_FRONT_ROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("ʊ", NEAR_CLOSE_BRACK_ROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("e", CLOSE_MID_FRONT_UNROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("ø", CLOSE_MID_FRONT_ROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("ɘ", CLOSE_MID_CENTRAL_UNROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("ɵ", CLOSE_MID_CENTRAL_ROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("ɤ", CLOSE_MID_BRACK_UNROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("o", CLOSE_MID_BRACK_ROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("e̞", MID_FRONT_UNROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("ø̞", MID_FRONT_ROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("ə", MID_CENTRAL_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("ɤ̞", MID_BRACK_UNROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("o̞", MID_BRACK_ROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("ɛ", OPEN_MID_FRONT_UNROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("œ", OPEN_MID_FRONT_ROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("ɜ", OPEN_MID_CENTRAL_UNROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("ɞ", OPEN_MID_CENTRAL_ROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("ʌ", OPEN_MID_BRACK_UNROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("ɔ", OPEN_MID_BRACK_ROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("æ", NEAR_OPEN_FRONT_UNROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("ɐ", NEAR_OPEN_CENTRAL_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("a", OPEN_FRONT_UNROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("ɶ", OPEN_FRONT_ROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("ä", OPEN_CENTRAL_UNROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("ɑ", OPEN_BRACK_UNROUNDED_VOWEL);
-		IPA_PHONEME_STRING_MAP.addMapping("ɒ", OPEN_BRACK_ROUNDED_VOWEL);
+		var ipaPhonemeRepresentationMapper = new PhonemeRepresentationMap();
+		ipaPhonemeRepresentationMapper.addMapping("i", CLOSE_FRONT_UNROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("y", CLOSE_FRONT_ROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("ɨ", CLOSE_CENTRAL_UNROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("ʉ", CLOSE_CENTRAL_ROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("ɯ", CLOSE_BRACK_UNROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("u", CLOSE_BRACK_ROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("ɪ", NEAR_CLOSE_FRONT_UNROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("ʏ", NEAR_CLOSE_FRONT_ROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("ʊ", NEAR_CLOSE_BRACK_ROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("e", CLOSE_MID_FRONT_UNROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("ø", CLOSE_MID_FRONT_ROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("ɘ", CLOSE_MID_CENTRAL_UNROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("ɵ", CLOSE_MID_CENTRAL_ROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("ɤ", CLOSE_MID_BRACK_UNROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("o", CLOSE_MID_BRACK_ROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("e̞", MID_FRONT_UNROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("ø̞", MID_FRONT_ROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("ə", MID_CENTRAL_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("ɤ̞", MID_BRACK_UNROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("o̞", MID_BRACK_ROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("ɛ", OPEN_MID_FRONT_UNROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("œ", OPEN_MID_FRONT_ROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("ɜ", OPEN_MID_CENTRAL_UNROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("ɞ", OPEN_MID_CENTRAL_ROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("ʌ", OPEN_MID_BRACK_UNROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("ɔ", OPEN_MID_BRACK_ROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("æ", NEAR_OPEN_FRONT_UNROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("ɐ", NEAR_OPEN_CENTRAL_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("a", OPEN_FRONT_UNROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("ɶ", OPEN_FRONT_ROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("ä", OPEN_CENTRAL_UNROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("ɑ", OPEN_BRACK_UNROUNDED_VOWEL);
+		ipaPhonemeRepresentationMapper.addMapping("ɒ", OPEN_BRACK_ROUNDED_VOWEL);
 
 		// Plosives
-		IPA_PHONEME_STRING_MAP.addMapping("p", VOICELESS_BILABIAL_PLOSIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("b", VOICED_BILABIAL_PLOSIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("t̪", VOICELESS_DENTAL_PLOSIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("d̪", VOICED_DENTAL_PLOSIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("t", VOICELESS_ALVEOLAR_PLOSIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("d", VOICED_ALVEOLAR_PLOSIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("ʈ", VOICELESS_RETROFLEX_PLOSIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("ɖ", VOICED_RETROFLEX_PLOSIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("c", VOICELESS_PALATAL_PLOSIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("ɟ", VOICED_PALATAL_PLOSIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("k", VOICELESS_VELAR_PLOSIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("g", VOICED_VELAR_PLOSIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("q", VOICELESS_UVULAR_PLOSIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("ɢ", VOICED_UVULAR_PLOSIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("ʔ", VOICELESS_GLOTTAL_PLOSIVE);
+		ipaPhonemeRepresentationMapper.addMapping("p", VOICELESS_BILABIAL_PLOSIVE);
+		ipaPhonemeRepresentationMapper.addMapping("b", VOICED_BILABIAL_PLOSIVE);
+		ipaPhonemeRepresentationMapper.addMapping("t̪", VOICELESS_DENTAL_PLOSIVE);
+		ipaPhonemeRepresentationMapper.addMapping("d̪", VOICED_DENTAL_PLOSIVE);
+		ipaPhonemeRepresentationMapper.addMapping("t", VOICELESS_ALVEOLAR_PLOSIVE);
+		ipaPhonemeRepresentationMapper.addMapping("d", VOICED_ALVEOLAR_PLOSIVE);
+		ipaPhonemeRepresentationMapper.addMapping("ʈ", VOICELESS_RETROFLEX_PLOSIVE);
+		ipaPhonemeRepresentationMapper.addMapping("ɖ", VOICED_RETROFLEX_PLOSIVE);
+		ipaPhonemeRepresentationMapper.addMapping("c", VOICELESS_PALATAL_PLOSIVE);
+		ipaPhonemeRepresentationMapper.addMapping("ɟ", VOICED_PALATAL_PLOSIVE);
+		ipaPhonemeRepresentationMapper.addMapping("k", VOICELESS_VELAR_PLOSIVE);
+		ipaPhonemeRepresentationMapper.addMapping("g", VOICED_VELAR_PLOSIVE);
+		ipaPhonemeRepresentationMapper.addMapping("q", VOICELESS_UVULAR_PLOSIVE);
+		ipaPhonemeRepresentationMapper.addMapping("ɢ", VOICED_UVULAR_PLOSIVE);
+		ipaPhonemeRepresentationMapper.addMapping("ʔ", VOICELESS_GLOTTAL_PLOSIVE);
 
 		// Nasals
-		IPA_PHONEME_STRING_MAP.addMapping("m", VOICED_BILABIAL_NASAL);
-		IPA_PHONEME_STRING_MAP.addMapping("ɱ", VOICED_LABIODENTAL_NASAL);
-		IPA_PHONEME_STRING_MAP.addMapping("n", VOICED_ALVEOLAR_NASAL);
-		IPA_PHONEME_STRING_MAP.addMapping("ɳ", VOICED_RETROFLEX_NASAL);
-		IPA_PHONEME_STRING_MAP.addMapping("ɲ", VOICED_PALATAL_NASAL);
-		IPA_PHONEME_STRING_MAP.addMapping("ŋ", VOICED_VELAR_NASAL);
-		IPA_PHONEME_STRING_MAP.addMapping("ɴ", VOICED_UVULAR_NASAL);
+		ipaPhonemeRepresentationMapper.addMapping("m", VOICED_BILABIAL_NASAL);
+		ipaPhonemeRepresentationMapper.addMapping("ɱ", VOICED_LABIODENTAL_NASAL);
+		ipaPhonemeRepresentationMapper.addMapping("n", VOICED_ALVEOLAR_NASAL);
+		ipaPhonemeRepresentationMapper.addMapping("ɳ", VOICED_RETROFLEX_NASAL);
+		ipaPhonemeRepresentationMapper.addMapping("ɲ", VOICED_PALATAL_NASAL);
+		ipaPhonemeRepresentationMapper.addMapping("ŋ", VOICED_VELAR_NASAL);
+		ipaPhonemeRepresentationMapper.addMapping("ɴ", VOICED_UVULAR_NASAL);
 
 		// Trills
-		IPA_PHONEME_STRING_MAP.addMapping("ʙ", VOICED_BILABIAL_TRILL);
-		IPA_PHONEME_STRING_MAP.addMapping("r", VOICED_ALVEOLAR_TRILL);
-		IPA_PHONEME_STRING_MAP.addMapping("ʀ", VOICED_UVULAR_TRILL);
+		ipaPhonemeRepresentationMapper.addMapping("ʙ", VOICED_BILABIAL_TRILL);
+		ipaPhonemeRepresentationMapper.addMapping("r", VOICED_ALVEOLAR_TRILL);
+		ipaPhonemeRepresentationMapper.addMapping("ʀ", VOICED_UVULAR_TRILL);
 
 		// Flaps
-		IPA_PHONEME_STRING_MAP.addMapping("ⱱ", VOICED_LABIODENTAL_FLAP);
-		IPA_PHONEME_STRING_MAP.addMapping("ɾ", VOICED_ALVEOLAR_FLAP);
-		IPA_PHONEME_STRING_MAP.addMapping("ɽ", VOICED_RETROFLEX_FLAP);
+		ipaPhonemeRepresentationMapper.addMapping("ⱱ", VOICED_LABIODENTAL_FLAP);
+		ipaPhonemeRepresentationMapper.addMapping("ɾ", VOICED_ALVEOLAR_FLAP);
+		ipaPhonemeRepresentationMapper.addMapping("ɽ", VOICED_RETROFLEX_FLAP);
 
 		// Fricatives
-		IPA_PHONEME_STRING_MAP.addMapping("ɸ", VOICELESS_BILABIAL_FRICATIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("β", VOICED_BILABIAL_FRICATIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("f", VOICELESS_LABIODENTAL_FRICATIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("v", VOICED_LABIODENTAL_FRICATIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("θ", VOICELESS_DENTAL_FRICATIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("ð", VOICED_DENTAL_FRICATIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("s", VOICELESS_ALVEOLAR_FRICATIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("z", VOICED_ALVEOLAR_FRICATIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("ʃ", VOICELESS_POST_ALVEOLAR_FRICATIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("ʒ", VOICED_POST_ALVEOLAR_FRICATIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("ʂ", VOICELESS_RETROFLEX_FRICATIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("ʐ", VOICED_RETROFLEX_FRICATIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("ç", VOICELESS_PALATAL_FRICATIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("ʝ", VOICED_PALATAL_FRICATIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("x", VOICELESS_VELAR_FRICATIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("ɣ", VOICED_VELAR_FRICATIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("χ", VOICELESS_UVULAR_FRICATIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("ʁ", VOICED_UVULAR_FRICATIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("ħ", VOICELESS_PHARYNGEAL_FRICATIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("ʕ", VOICED_PHARYNGEAL_FRICATIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("h", VOICELESS_GLOTTAL_FRICATIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("ɦ", VOICED_GLOTTAL_FRICATIVE);
+		ipaPhonemeRepresentationMapper.addMapping("ɸ", VOICELESS_BILABIAL_FRICATIVE);
+		ipaPhonemeRepresentationMapper.addMapping("β", VOICED_BILABIAL_FRICATIVE);
+		ipaPhonemeRepresentationMapper.addMapping("f", VOICELESS_LABIODENTAL_FRICATIVE);
+		ipaPhonemeRepresentationMapper.addMapping("v", VOICED_LABIODENTAL_FRICATIVE);
+		ipaPhonemeRepresentationMapper.addMapping("θ", VOICELESS_DENTAL_FRICATIVE);
+		ipaPhonemeRepresentationMapper.addMapping("ð", VOICED_DENTAL_FRICATIVE);
+		ipaPhonemeRepresentationMapper.addMapping("s", VOICELESS_ALVEOLAR_FRICATIVE);
+		ipaPhonemeRepresentationMapper.addMapping("z", VOICED_ALVEOLAR_FRICATIVE);
+		ipaPhonemeRepresentationMapper.addMapping("ʃ", VOICELESS_POST_ALVEOLAR_FRICATIVE);
+		ipaPhonemeRepresentationMapper.addMapping("ʒ", VOICED_POST_ALVEOLAR_FRICATIVE);
+		ipaPhonemeRepresentationMapper.addMapping("ʂ", VOICELESS_RETROFLEX_FRICATIVE);
+		ipaPhonemeRepresentationMapper.addMapping("ʐ", VOICED_RETROFLEX_FRICATIVE);
+		ipaPhonemeRepresentationMapper.addMapping("ç", VOICELESS_PALATAL_FRICATIVE);
+		ipaPhonemeRepresentationMapper.addMapping("ʝ", VOICED_PALATAL_FRICATIVE);
+		ipaPhonemeRepresentationMapper.addMapping("x", VOICELESS_VELAR_FRICATIVE);
+		ipaPhonemeRepresentationMapper.addMapping("ɣ", VOICED_VELAR_FRICATIVE);
+		ipaPhonemeRepresentationMapper.addMapping("χ", VOICELESS_UVULAR_FRICATIVE);
+		ipaPhonemeRepresentationMapper.addMapping("ʁ", VOICED_UVULAR_FRICATIVE);
+		ipaPhonemeRepresentationMapper.addMapping("ħ", VOICELESS_PHARYNGEAL_FRICATIVE);
+		ipaPhonemeRepresentationMapper.addMapping("ʕ", VOICED_PHARYNGEAL_FRICATIVE);
+		ipaPhonemeRepresentationMapper.addMapping("h", VOICELESS_GLOTTAL_FRICATIVE);
+		ipaPhonemeRepresentationMapper.addMapping("ɦ", VOICED_GLOTTAL_FRICATIVE);
 
 		// Lateral Fricatives
-		IPA_PHONEME_STRING_MAP.addMapping("ɬ", VOICELESS_ALVEOLAR_LATERAL_FRICATIVE);
-		IPA_PHONEME_STRING_MAP.addMapping("ɮ", VOICED_ALVEOLAR_LATERAL_FRICATIVE);
+		ipaPhonemeRepresentationMapper.addMapping("ɬ", VOICELESS_ALVEOLAR_LATERAL_FRICATIVE);
+		ipaPhonemeRepresentationMapper.addMapping("ɮ", VOICED_ALVEOLAR_LATERAL_FRICATIVE);
 
 		// Approximates
-		IPA_PHONEME_STRING_MAP.addMapping("ʋ", VOICED_LABIODENTAL_APPROXIMATE);
-		IPA_PHONEME_STRING_MAP.addMapping("ɹ", VOICED_ALVEOLAR_APPROXIMATE);
-		IPA_PHONEME_STRING_MAP.addMapping("ɻ", VOICED_RETROFLEX_APPROXIMATE);
-		IPA_PHONEME_STRING_MAP.addMapping("j", VOICED_PALATAL_APPROXIMATE);
-		IPA_PHONEME_STRING_MAP.addMapping("ɰ", VOICED_VELAR_APPROXIMATE);
-		IPA_PHONEME_STRING_MAP.addMapping("w", VOICED_LABIOVELAR_APPROXIXIMATE);
+		ipaPhonemeRepresentationMapper.addMapping("ʋ", VOICED_LABIODENTAL_APPROXIMATE);
+		ipaPhonemeRepresentationMapper.addMapping("ɹ", VOICED_ALVEOLAR_APPROXIMATE);
+		ipaPhonemeRepresentationMapper.addMapping("ɻ", VOICED_RETROFLEX_APPROXIMATE);
+		ipaPhonemeRepresentationMapper.addMapping("j", VOICED_PALATAL_APPROXIMATE);
+		ipaPhonemeRepresentationMapper.addMapping("ɰ", VOICED_VELAR_APPROXIMATE);
+		ipaPhonemeRepresentationMapper.addMapping("w", VOICED_LABIOVELAR_APPROXIXIMATE);
 
 		// Lateral Approximates
-		IPA_PHONEME_STRING_MAP.addMapping("l", VOICED_ALVEOLAR_LATERAL_APPROXIMATE);
-		IPA_PHONEME_STRING_MAP.addMapping("ɭ", VOICED_RETROFLEX_LATERAL_APPROXIMATE);
-		IPA_PHONEME_STRING_MAP.addMapping("ʎ", VOICED_PALATAL_LATERAL_APPROXIMATE);
-		IPA_PHONEME_STRING_MAP.addMapping("ʟ", VOICED_VELAR_LATERAL_APPROXIMATE);
+		ipaPhonemeRepresentationMapper.addMapping("l", VOICED_ALVEOLAR_LATERAL_APPROXIMATE);
+		ipaPhonemeRepresentationMapper.addMapping("ɭ", VOICED_RETROFLEX_LATERAL_APPROXIMATE);
+		ipaPhonemeRepresentationMapper.addMapping("ʎ", VOICED_PALATAL_LATERAL_APPROXIMATE);
+		ipaPhonemeRepresentationMapper.addMapping("ʟ", VOICED_VELAR_LATERAL_APPROXIMATE);
 
 		// Affricates
-		IPA_PHONEME_STRING_MAP.addMapping("t͡s", VOICELESS_ALVEOLAR_AFFRICATE);
-		IPA_PHONEME_STRING_MAP.addMapping("d͡z", VOICED_ALVEOLAR_AFFRICATE);
-		IPA_PHONEME_STRING_MAP.addMapping("t͡ʃ", VOICELESS_PALATO_ALVEOLAR_AFFRICATE);
-		IPA_PHONEME_STRING_MAP.addMapping("d͡ʒ", VOICED_PALATO_ALVEOLAR_AFFRICATE);
-		IPA_PHONEME_STRING_MAP.addMapping("t͡ɕ", VOICELESS_ALVEOLO_PALATAL_AFFRICATE);
-		IPA_PHONEME_STRING_MAP.addMapping("d͡ʑ", VOICED_ALVEOLO_PALATAL_AFFRICATE);
-		IPA_PHONEME_STRING_MAP.addMapping("ʈ͡ʂ", VOICELESS_RETROFLEX_AFFRICATE);
-		IPA_PHONEME_STRING_MAP.addMapping("ɖ͡ʐ", VOICED_RETROFLEX_AFFRICATE);
+		ipaPhonemeRepresentationMapper.addMapping("t͡s", VOICELESS_ALVEOLAR_AFFRICATE);
+		ipaPhonemeRepresentationMapper.addMapping("d͡z", VOICED_ALVEOLAR_AFFRICATE);
+		ipaPhonemeRepresentationMapper.addMapping("t͡ʃ", VOICELESS_PALATO_ALVEOLAR_AFFRICATE);
+		ipaPhonemeRepresentationMapper.addMapping("d͡ʒ", VOICED_PALATO_ALVEOLAR_AFFRICATE);
+		ipaPhonemeRepresentationMapper.addMapping("t͡ɕ", VOICELESS_ALVEOLO_PALATAL_AFFRICATE);
+		ipaPhonemeRepresentationMapper.addMapping("d͡ʑ", VOICED_ALVEOLO_PALATAL_AFFRICATE);
+		ipaPhonemeRepresentationMapper.addMapping("ʈ͡ʂ", VOICELESS_RETROFLEX_AFFRICATE);
+		ipaPhonemeRepresentationMapper.addMapping("ɖ͡ʐ", VOICED_RETROFLEX_AFFRICATE);
+
+		// Ensure that the IPA_PHONEME_REPRESENTATION_MAPPER is readonly by wrapping
+		// it in a collection. This prevents client code from casting it to a basic
+		// PhonemeRepresentationMap and calling methods to modify the mappings.
+		var wrapper = new PhonemeRepresentationCollection();
+		wrapper.addPhonemeMap(ipaPhonemeRepresentationMapper);
+		IPA_PHONEME_REPRESENTATION_MAPPER = wrapper;
 
 		// Create the list of all IPA phonemes
 		var ipaPhonemesList = new ArrayList<Phoneme>();

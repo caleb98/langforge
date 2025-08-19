@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class PhonemeStringMap implements PhonemeRepresentationMapper {
+public class PhonemeRepresentationMap implements PhonemeRepresentationMapper {
 
 	private Map<String, Phoneme> stringToPhoneme = new HashMap<>();
 	private Map<Phoneme, String> phonemeToString = new HashMap<>();

@@ -1,6 +1,6 @@
 package net.calebscode.langforge.phonology.rules;
 
-import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.IPA_PHONEME_STRING_MAP;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.IPA_PHONEME_REPRESENTATION_MAPPER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -21,7 +21,7 @@ import net.calebscode.langforge.phonology.syllable.SyllableUtils;
 
 public class PhonologicalRuleApplicatorTest {
 
-	private static final PhonemeSequenceRenderer RENDERER = new PhonemeSequenceRenderer(IPA_PHONEME_STRING_MAP);
+	private static final PhonemeSequenceRenderer RENDERER = new PhonemeSequenceRenderer(IPA_PHONEME_REPRESENTATION_MAPPER);
 
 	private static SyllablePatternCategoryMap categoryMap = new SyllablePatternCategoryMap();;
 
@@ -178,19 +178,19 @@ public class PhonologicalRuleApplicatorTest {
 	}
 
 	private PhonologicalRule compileRule(String rule) {
-		return new PhonologicalRuleCompiler(IPA_PHONEME_STRING_MAP).compile(rule);
+		return new PhonologicalRuleCompiler(IPA_PHONEME_REPRESENTATION_MAPPER).compile(rule);
 	}
 
 	private static Phoneme ipaPhoneme(String ipaString) throws PhonemeRepresentationMappingException {
 		return new PhonemeSequenceBuilder()
-				.append(ipaString, IPA_PHONEME_STRING_MAP)
+				.append(ipaString, IPA_PHONEME_REPRESENTATION_MAPPER)
 				.build()
 				.phonemeAt(0);
 	}
 
 	private static PhonemeString ipaSequence(String ipaString) throws PhonemeRepresentationMappingException {
 		return new PhonemeSequenceBuilder()
-				.append(ipaString, IPA_PHONEME_STRING_MAP)
+				.append(ipaString, IPA_PHONEME_REPRESENTATION_MAPPER)
 				.build();
 	}
 

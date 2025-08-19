@@ -23,7 +23,7 @@ import net.calebscode.langforge.phonology.phoneme.StandardPhonemes;
 
 public class SyllableManagementController extends AnchorPane implements FXMLController {
 
-	private PhonemeRepresentationMapper phonemeMapper = StandardPhonemes.IPA_PHONEME_STRING_MAP;
+	private PhonemeRepresentationMapper phonemeMapper = StandardPhonemes.IPA_PHONEME_REPRESENTATION_MAPPER;
 
 	private LanguagePhonologyModel phonologyModel;
 

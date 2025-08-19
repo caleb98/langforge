@@ -4,7 +4,7 @@ import java.util.Set;
 
 public class PhonemeRepresentationCollection implements PhonemeRepresentationMapper {
 
-	private PhonemeStringMap map = new PhonemeStringMap();
+	private PhonemeRepresentationMap map = new PhonemeRepresentationMap();
 
 	public void addPhonemeMap(PhonemeRepresentationMapper newMap) {
 		for(var entry : newMap.entrySet()) {

@@ -1,6 +1,6 @@
 package net.calebscode.langforge.phonology;
 
-import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.IPA_PHONEME_STRING_MAP;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.IPA_PHONEME_REPRESENTATION_MAPPER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -17,7 +17,7 @@ import net.calebscode.langforge.phonology.syllable.SyllableUtils;
 
 public class SyllablePatternPhonemeSequenceValidatorTest {
 
-	private static final PhonemeSequenceRenderer RENDERER = new PhonemeSequenceRenderer(IPA_PHONEME_STRING_MAP);
+	private static final PhonemeSequenceRenderer RENDERER = new PhonemeSequenceRenderer(IPA_PHONEME_REPRESENTATION_MAPPER);
 
 	private SyllablePatternCategoryMap categories;
 
@@ -96,14 +96,14 @@ public class SyllablePatternPhonemeSequenceValidatorTest {
 
 	private static Phoneme ipaPhoneme(String ipaString) throws PhonemeRepresentationMappingException {
 		return new PhonemeSequenceBuilder()
-				.append(ipaString, IPA_PHONEME_STRING_MAP)
+				.append(ipaString, IPA_PHONEME_REPRESENTATION_MAPPER)
 				.build()
 				.phonemeAt(0);
 	}
 
 	private static PhonemeString ipaSequence(String ipaString) throws PhonemeRepresentationMappingException {
 		return new PhonemeSequenceBuilder()
-				.append(ipaString, IPA_PHONEME_STRING_MAP)
+				.append(ipaString, IPA_PHONEME_REPRESENTATION_MAPPER)
 				.build();
 	}
 

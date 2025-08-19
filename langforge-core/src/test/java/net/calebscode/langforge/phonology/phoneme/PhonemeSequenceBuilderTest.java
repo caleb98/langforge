@@ -25,7 +25,7 @@ public class PhonemeSequenceBuilderTest {
 
 	@Test
 	void appendIpaStringPhonemes() throws PhonemeRepresentationMappingException {
-		builder.append("kat", IPA_PHONEME_STRING_MAP);
+		builder.append("kat", IPA_PHONEME_REPRESENTATION_MAPPER);
 		var expected = new PhonemeString(
 				List.of(VOICELESS_VELAR_PLOSIVE, OPEN_FRONT_UNROUNDED_VOWEL, VOICELESS_ALVEOLAR_PLOSIVE),
 				List.of(DEFAULT_CONTEXT, DEFAULT_CONTEXT, DEFAULT_CONTEXT));
@@ -37,7 +37,7 @@ public class PhonemeSequenceBuilderTest {
 
 	@Test
 	void appendIpaStringSyllable() throws PhonemeRepresentationMappingException {
-		builder.append(".ka.ta.", IPA_PHONEME_STRING_MAP);
+		builder.append(".ka.ta.", IPA_PHONEME_REPRESENTATION_MAPPER);
 		var expected = new PhonemeString(
 				List.of(VOICELESS_VELAR_PLOSIVE, OPEN_FRONT_UNROUNDED_VOWEL, VOICELESS_ALVEOLAR_PLOSIVE, OPEN_FRONT_UNROUNDED_VOWEL),
 				List.of(
@@ -54,7 +54,7 @@ public class PhonemeSequenceBuilderTest {
 
 	@Test
 	void appendIpaStringWord() throws PhonemeRepresentationMappingException {
-		builder.append("#kat#", IPA_PHONEME_STRING_MAP);
+		builder.append("#kat#", IPA_PHONEME_REPRESENTATION_MAPPER);
 		var expected = new PhonemeString(
 				List.of(VOICELESS_VELAR_PLOSIVE, OPEN_FRONT_UNROUNDED_VOWEL, VOICELESS_ALVEOLAR_PLOSIVE),
 				List.of(
@@ -70,7 +70,7 @@ public class PhonemeSequenceBuilderTest {
 
 	@Test
 	void appendIpaStringMultisyllabicWord() throws PhonemeRepresentationMappingException {
-		builder.append("#ka.ta#", IPA_PHONEME_STRING_MAP);
+		builder.append("#ka.ta#", IPA_PHONEME_REPRESENTATION_MAPPER);
 		var expected = new PhonemeString(
 				List.of(VOICELESS_VELAR_PLOSIVE, OPEN_FRONT_UNROUNDED_VOWEL, VOICELESS_ALVEOLAR_PLOSIVE, OPEN_FRONT_UNROUNDED_VOWEL),
 				List.of(
@@ -87,7 +87,7 @@ public class PhonemeSequenceBuilderTest {
 
 	@Test
 	void appendIpaStringUnmappableIpa() {
-		assertThrows(PhonemeRepresentationMappingException.class, () -> builder.append("a", new PhonemeStringMap()));
+		assertThrows(PhonemeRepresentationMappingException.class, () -> builder.append("a", new PhonemeRepresentationMap()));
 	}
 
 	@Test

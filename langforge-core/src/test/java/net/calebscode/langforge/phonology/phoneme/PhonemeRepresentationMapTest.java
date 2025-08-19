@@ -8,16 +8,16 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class PhonemeStringMapTest {
+public class PhonemeRepresentationMapTest {
 
 	private final Phoneme testPhoneme1 = new Phoneme(Map.of("foo", "bar"));
 	private final Phoneme testPhoneme2 = new Phoneme(Map.of("zig", "zag"));
 
-	private PhonemeStringMap phonemeMap;
+	private PhonemeRepresentationMap phonemeMap;
 
 	@BeforeEach
 	void init() {
-		phonemeMap = new PhonemeStringMap();
+		phonemeMap = new PhonemeRepresentationMap();
 	}
 
 	@Test

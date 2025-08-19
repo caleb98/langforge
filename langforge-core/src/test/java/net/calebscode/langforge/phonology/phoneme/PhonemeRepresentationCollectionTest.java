@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test;
 
 public class PhonemeRepresentationCollectionTest {
 
-	private static final PhonemeStringMap firstMapper = new PhonemeStringMap();
-	private static final PhonemeStringMap secondMapper = new PhonemeStringMap();
+	private static final PhonemeRepresentationMap firstMapper = new PhonemeRepresentationMap();
+	private static final PhonemeRepresentationMap secondMapper = new PhonemeRepresentationMap();
 
 	private static final Phoneme phoneme1 = new Phoneme(Map.of("foo", "bar"));
 	private static final Phoneme phoneme2 = new Phoneme(Map.of("zig", "zag"));

@@ -18,7 +18,7 @@ public class PhonemeSequenceTest {
 	private static final Phoneme PHONEME_B = new Phoneme(Map.of("zig", "zag"));
 	private static final Phoneme PHONEME_C = new Phoneme(Map.of("hip", "hop"));
 
-	private static final PhonemeSequenceRenderer RENDERER = new PhonemeSequenceRenderer(IPA_PHONEME_STRING_MAP);
+	private static final PhonemeSequenceRenderer RENDERER = new PhonemeSequenceRenderer(IPA_PHONEME_REPRESENTATION_MAPPER);
 	private static final PhonemeContext DEFAULT_CONTEXT = new PhonemeContext(false, false, false, false);
 
 	@Test
