@@ -14,11 +14,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
 import net.calebscode.langforge.app.phonology.model.PhonologicalRuleModel;
-import net.calebscode.langforge.phonology.PhonemeStringValidationException;
-import net.calebscode.langforge.phonology.SyllablePatternValidator;
 import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMappingException;
-import net.calebscode.langforge.phonology.phoneme.PhonemeStringBuilder;
 import net.calebscode.langforge.phonology.phoneme.string.PhonemeString;
+import net.calebscode.langforge.phonology.phoneme.string.PhonemeStringBuilder;
+import net.calebscode.langforge.phonology.phoneme.string.PhonemeStringValidationException;
+import net.calebscode.langforge.phonology.phoneme.string.SyllablePatternValidator;
 import net.calebscode.langforge.phonology.rules.PhonologicalRuleApplicationException;
 import net.calebscode.langforge.phonology.rules.PhonologicalRuleApplicator;
 
@@ -62,7 +62,6 @@ public class LexiconWordTableCell<S> extends TableCell<S, PhonemeString> {
 
 	@Override
 	public void commitEdit(PhonemeString newValue) {
-		// TODO Auto-generated method stub
 		super.commitEdit(newValue);
 	}
 
