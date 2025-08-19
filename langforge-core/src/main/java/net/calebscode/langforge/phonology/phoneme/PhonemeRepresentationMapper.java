@@ -16,7 +16,7 @@ public interface PhonemeRepresentationMapper {
 
 	public boolean canMap(String string);
 
-	public String getIpa(Phoneme phoneme);
+	public String getRepresentation(Phoneme phoneme);
 
 	public Phoneme getPhoneme(String ipa);
 

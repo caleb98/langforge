@@ -3,13 +3,12 @@ package net.calebscode.langforge.phonology.phoneme;
 import java.util.ArrayList;
 
 import net.calebscode.langforge.Word;
-import net.calebscode.langforge.phonology.phoneme.PhonemeSequence.PhonemeMetadata;
 import net.calebscode.langforge.phonology.syllable.Syllable;
 
 public class PhonemeSequenceBuilder {
 
 	private ArrayList<Phoneme> phonemes = new ArrayList<>();
-	private ArrayList<PhonemeMetadata> metadata = new ArrayList<>();
+	private ArrayList<PhonemeContext> contexts = new ArrayList<>();
 
 	private boolean foundWordBoundary = false;
 	private boolean foundSyllableBoundary = false;
@@ -48,12 +47,12 @@ public class PhonemeSequenceBuilder {
 	}
 
 	public PhonemeSequenceBuilder append(Phoneme phoneme) {
-		var newMeta = new PhonemeMetadata(foundSyllableBoundary, false, foundWordBoundary, false);
+		var newContext = new PhonemeContext(foundSyllableBoundary, false, foundWordBoundary, false);
 
-		finalizePreviousPhonemeMetadata();
+		finalizePreviousPhonemeContext();
 
 		phonemes.add(phoneme);
-		metadata.add(newMeta);
+		contexts.add(newContext);
 		return this;
 	}
 
@@ -81,21 +80,21 @@ public class PhonemeSequenceBuilder {
 		return this;
 	}
 
-	public PhonemeSequence build() {
-		finalizePreviousPhonemeMetadata();
-		return new PhonemeSequence(phonemes, metadata);
+	public PhonemeString build() {
+		finalizePreviousPhonemeContext();
+		return new PhonemeString(phonemes, contexts);
 	}
 
-	private void finalizePreviousPhonemeMetadata() {
-		if (metadata.size() > 0) {
-			var prevMeta = metadata.getLast();
-			var prevMetaUpdated = new PhonemeMetadata(
-					prevMeta.isSyllableStart(),
+	private void finalizePreviousPhonemeContext() {
+		if (contexts.size() > 0) {
+			var previousContext = contexts.getLast();
+			var previousContextUpdated = new PhonemeContext(
+					previousContext.isSyllableStart(),
 					foundSyllableBoundary,
-					prevMeta.isWordStart(),
+					previousContext.isWordStart(),
 					foundWordBoundary
 				);
-			metadata.set(metadata.size() - 1, prevMetaUpdated);
+			contexts.set(contexts.size() - 1, previousContextUpdated);
 		}
 
 		foundWordBoundary = false;

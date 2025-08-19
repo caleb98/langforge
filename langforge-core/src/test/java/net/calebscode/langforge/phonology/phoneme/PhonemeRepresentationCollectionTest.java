@@ -62,12 +62,12 @@ public class PhonemeRepresentationCollectionTest {
 		collection.addPhonemeMap(firstMapper);
 		collection.addPhonemeMap(secondMapper);
 
-		assertEquals("a", collection.getIpa(phoneme1));
-		assertEquals("z", collection.getIpa(phoneme3));
-		assertEquals("b", collection.getIpa(phoneme4));
+		assertEquals("a", collection.getRepresentation(phoneme1));
+		assertEquals("z", collection.getRepresentation(phoneme3));
+		assertEquals("b", collection.getRepresentation(phoneme4));
 
-		assertEquals(null, collection.getIpa(phoneme2));
-		assertEquals(null, collection.getIpa(phoneme5));
+		assertEquals(null, collection.getRepresentation(phoneme2));
+		assertEquals(null, collection.getRepresentation(phoneme5));
 	}
 
 	@Test
@@ -102,20 +102,20 @@ public class PhonemeRepresentationCollectionTest {
 		collection.addPhonemeMap(secondMapper);
 
 		// Valid mappings
-		assertEquals("a", collection.getIpa(collection.getPhoneme("a")));
-		assertEquals("b", collection.getIpa(collection.getPhoneme("b")));
-		assertEquals("z", collection.getIpa(collection.getPhoneme("z")));
+		assertEquals("a", collection.getRepresentation(collection.getPhoneme("a")));
+		assertEquals("b", collection.getRepresentation(collection.getPhoneme("b")));
+		assertEquals("z", collection.getRepresentation(collection.getPhoneme("z")));
 
-		assertEquals(phoneme1, collection.getPhoneme(collection.getIpa(phoneme1)));
-		assertEquals(phoneme3, collection.getPhoneme(collection.getIpa(phoneme3)));
-		assertEquals(phoneme4, collection.getPhoneme(collection.getIpa(phoneme4)));
+		assertEquals(phoneme1, collection.getPhoneme(collection.getRepresentation(phoneme1)));
+		assertEquals(phoneme3, collection.getPhoneme(collection.getRepresentation(phoneme3)));
+		assertEquals(phoneme4, collection.getPhoneme(collection.getRepresentation(phoneme4)));
 
 		// Invalid mappings
-		assertEquals(null, collection.getIpa(collection.getPhoneme("c")));
-		assertEquals(null, collection.getIpa(collection.getPhoneme("d")));
+		assertEquals(null, collection.getRepresentation(collection.getPhoneme("c")));
+		assertEquals(null, collection.getRepresentation(collection.getPhoneme("d")));
 
-		assertEquals(null, collection.getPhoneme(collection.getIpa(phoneme2)));
-		assertEquals(null, collection.getPhoneme(collection.getIpa(phoneme5)));
+		assertEquals(null, collection.getPhoneme(collection.getRepresentation(phoneme2)));
+		assertEquals(null, collection.getPhoneme(collection.getRepresentation(phoneme5)));
 	}
 
 }

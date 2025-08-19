@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import net.calebscode.langforge.phonology.phoneme.PhonemeSequence;
+import net.calebscode.langforge.phonology.phoneme.PhonemeString;
 import net.calebscode.langforge.phonology.phoneme.PhonemeSequenceBuilder;
 import net.calebscode.langforge.phonology.syllable.Syllable;
 import net.calebscode.langforge.phonology.syllable.SyllablePatternCategoryMap;
@@ -23,7 +23,7 @@ public class SyllablePatternPhonemeSequenceValidator implements PhonemeSequenceV
 	}
 
 	@Override
-	public PhonemeSequence validate(PhonemeSequence sequence) throws PhonemeSequenceValidationException {
+	public PhonemeString validate(PhonemeString sequence) throws PhonemeSequenceValidationException {
 		var syllablePatterns = getSyllablePatterns(sequence, sequence.length() - 1);
 		if (syllablePatterns == null) {
 			throw new PhonemeSequenceValidationException("Could not parse sequence into series of valid syllables.");
@@ -31,8 +31,8 @@ public class SyllablePatternPhonemeSequenceValidator implements PhonemeSequenceV
 
 		var syllables = new ArrayList<Syllable>(syllablePatterns.size());
 		for (var syllablePattern : syllablePatterns) {
-			syllables.add(new Syllable(sequence.subsequence(0, syllablePattern.length()).getPhonemes()));
-			sequence = sequence.subsequence(syllablePattern.length());
+			syllables.add(new Syllable(sequence.substring(0, syllablePattern.length()).getPhonemes()));
+			sequence = sequence.substring(syllablePattern.length());
 		}
 
 		var builder = new PhonemeSequenceBuilder();
@@ -43,7 +43,7 @@ public class SyllablePatternPhonemeSequenceValidator implements PhonemeSequenceV
 		return builder.build();
 	}
 
-	private List<String> getSyllablePatterns(PhonemeSequence sequence, int position) throws PhonemeSequenceValidationException {
+	private List<String> getSyllablePatterns(PhonemeString sequence, int position) throws PhonemeSequenceValidationException {
 		// We're done once we're past the start of the phoneme sequence.
 		if (position < 0) {
 			return List.of();
@@ -76,7 +76,7 @@ public class SyllablePatternPhonemeSequenceValidator implements PhonemeSequenceV
 		return null;
 	}
 
-	private Set<String> getPossibleSyllablePatterns(PhonemeSequence sequence, int position, String currentPattern) throws PhonemeSequenceValidationException {
+	private Set<String> getPossibleSyllablePatterns(PhonemeString sequence, int position, String currentPattern) throws PhonemeSequenceValidationException {
 		// Stop when we're out of phonemes or our pattern is invalid.
 		if (!validPatterns.stream().anyMatch(p -> p.endsWith(currentPattern))) {
 			return Set.of();

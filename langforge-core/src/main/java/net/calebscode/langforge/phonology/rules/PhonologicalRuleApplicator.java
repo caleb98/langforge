@@ -11,7 +11,7 @@ import net.calebscode.langforge.phonology.PhonemeSequenceValidationException;
 import net.calebscode.langforge.phonology.PhonemeSequenceValidator;
 import net.calebscode.langforge.phonology.PhonologicalRuleApplicationException;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
-import net.calebscode.langforge.phonology.phoneme.PhonemeSequence;
+import net.calebscode.langforge.phonology.phoneme.PhonemeString;
 import net.calebscode.langforge.phonology.phoneme.PhonemeSequenceBuilder;
 import net.calebscode.langforge.phonology.rules.PhonologicalRuleCompiler.Feature;
 import net.calebscode.langforge.phonology.rules.PhonologicalRuleCompiler.NullPhoneme;
@@ -25,7 +25,7 @@ public class PhonologicalRuleApplicator implements PhonemeRepresentationMatcher 
 
 	private PhonologicalRule rule;
 
-	private PhonemeSequence sequence;
+	private PhonemeString sequence;
 	private int position;
 	private int replacePosition;
 	private Map<BindKey, String> binds = new HashMap<>();
@@ -41,8 +41,8 @@ public class PhonologicalRuleApplicator implements PhonemeRepresentationMatcher 
 	 * @return
 	 * @throws PhonologicalRuleApplicationException
 	 */
-	public PhonemeSequence apply(
-		PhonemeSequence inputSequence,
+	public PhonemeString apply(
+		PhonemeString inputSequence,
 		PhonemeSequenceValidator validator,
 		boolean lenient
 	) throws PhonologicalRuleApplicationException {
@@ -104,16 +104,16 @@ public class PhonologicalRuleApplicator implements PhonemeRepresentationMatcher 
 		return sequence;
 	}
 
-	private PhonemeSequence deletePhoneme() {
-		var front = sequence.subsequence(0, replacePosition);
-		var back = sequence.subsequence(replacePosition + 1);
+	private PhonemeString deletePhoneme() {
+		var front = sequence.substring(0, replacePosition);
+		var back = sequence.substring(replacePosition + 1);
 
 		return front.append(back);
 	}
 
-	private PhonemeSequence insertPhoneme(PhonemeLiteral literal) {
-		var front = sequence.subsequence(0, replacePosition);
-		var back = sequence.subsequence(replacePosition);
+	private PhonemeString insertPhoneme(PhonemeLiteral literal) {
+		var front = sequence.substring(0, replacePosition);
+		var back = sequence.substring(replacePosition);
 
 		Phoneme insert = literal.phoneme();
 		var insertSeq = new PhonemeSequenceBuilder().append(insert).build();
@@ -121,7 +121,7 @@ public class PhonologicalRuleApplicator implements PhonemeRepresentationMatcher 
 		return front.append(insertSeq).append(back);
 	}
 
-	private PhonemeSequence replaceFeatures(PhonemeFeatureset featureset) throws PhonologicalRuleApplicationException {
+	private PhonemeString replaceFeatures(PhonemeFeatureset featureset) throws PhonologicalRuleApplicationException {
 		Map<String, String> newFeatures = new HashMap<>(sequence.phonemeAt(replacePosition).features());
 
 		for (var feature : featureset.features()) {

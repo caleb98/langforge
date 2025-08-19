@@ -2,13 +2,12 @@ package net.calebscode.langforge;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import net.calebscode.langforge.phonology.IpaRenderable;
-import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMapper;
+import net.calebscode.langforge.phonology.PhonemeSequence;
+import net.calebscode.langforge.phonology.phoneme.Phoneme;
 import net.calebscode.langforge.phonology.syllable.Syllable;
 
-public class Word implements IpaRenderable {
+public class Word implements PhonemeSequence {
 
 	private List<Syllable> syllables = new ArrayList<>();
 
@@ -23,11 +22,11 @@ public class Word implements IpaRenderable {
 	}
 
 	@Override
-	public String render(PhonemeRepresentationMapper mapper) {
-		return syllables.stream()
-				.flatMap(syllable -> syllable.phonemes().stream())
-				.map(mapper::getIpa)
-				.collect(Collectors.joining());
+	public List<Phoneme> getPhonemes() {
+		return syllables
+			.stream()
+			.flatMap(syllable -> syllable.phonemes().stream())
+			.toList();
 	}
 
 }

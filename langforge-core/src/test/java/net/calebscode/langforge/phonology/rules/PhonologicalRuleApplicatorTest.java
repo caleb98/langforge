@@ -11,16 +11,19 @@ import org.junit.jupiter.api.Test;
 
 import net.calebscode.langforge.phonology.PhonologicalRuleApplicationException;
 import net.calebscode.langforge.phonology.SyllablePatternPhonemeSequenceValidator;
-import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMappingException;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
-import net.calebscode.langforge.phonology.phoneme.PhonemeSequence;
+import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMappingException;
 import net.calebscode.langforge.phonology.phoneme.PhonemeSequenceBuilder;
+import net.calebscode.langforge.phonology.phoneme.PhonemeSequenceRenderer;
+import net.calebscode.langforge.phonology.phoneme.PhonemeString;
 import net.calebscode.langforge.phonology.syllable.SyllablePatternCategoryMap;
 import net.calebscode.langforge.phonology.syllable.SyllableUtils;
 
 public class PhonologicalRuleApplicatorTest {
 
-	private static SyllablePatternCategoryMap categoryMap = new SyllablePatternCategoryMap();
+	private static final PhonemeSequenceRenderer RENDERER = new PhonemeSequenceRenderer(IPA_PHONEME_STRING_MAP);
+
+	private static SyllablePatternCategoryMap categoryMap = new SyllablePatternCategoryMap();;
 
 	@BeforeAll
 	static void beforeAll() throws PhonemeRepresentationMappingException {
@@ -167,7 +170,7 @@ public class PhonologicalRuleApplicatorTest {
 				var test = ipaSequence(inputIpa);
 				var result = applicator.apply(test, validator, lenient);
 
-				assertEquals(expectIpa, result.render(IPA_PHONEME_STRING_MAP));
+				assertEquals(expectIpa, RENDERER.renderWithContext(result));
 			}
 		} catch (PhonologicalRuleApplicationException ex) {
 			fail(ex);
@@ -185,7 +188,7 @@ public class PhonologicalRuleApplicatorTest {
 				.phonemeAt(0);
 	}
 
-	private static PhonemeSequence ipaSequence(String ipaString) throws PhonemeRepresentationMappingException {
+	private static PhonemeString ipaSequence(String ipaString) throws PhonemeRepresentationMappingException {
 		return new PhonemeSequenceBuilder()
 				.append(ipaString, IPA_PHONEME_STRING_MAP)
 				.build();

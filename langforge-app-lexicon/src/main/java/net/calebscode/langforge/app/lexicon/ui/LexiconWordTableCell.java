@@ -18,11 +18,11 @@ import net.calebscode.langforge.phonology.PhonologicalRuleApplicationException;
 import net.calebscode.langforge.phonology.SyllablePatternPhonemeSequenceValidator;
 import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMappingException;
 import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMapper;
-import net.calebscode.langforge.phonology.phoneme.PhonemeSequence;
+import net.calebscode.langforge.phonology.phoneme.PhonemeString;
 import net.calebscode.langforge.phonology.phoneme.PhonemeSequenceBuilder;
 import net.calebscode.langforge.phonology.rules.PhonologicalRuleApplicator;
 
-public class LexiconWordTableCell<S> extends TableCell<S, PhonemeSequence> {
+public class LexiconWordTableCell<S> extends TableCell<S, PhonemeString> {
 
 	private final Text label;
 	private final TextField edit;
@@ -74,13 +74,13 @@ public class LexiconWordTableCell<S> extends TableCell<S, PhonemeSequence> {
 	}
 
 	@Override
-	public void commitEdit(PhonemeSequence newValue) {
+	public void commitEdit(PhonemeString newValue) {
 		// TODO Auto-generated method stub
 		super.commitEdit(newValue);
 	}
 
 	@Override
-	protected void updateItem(PhonemeSequence item, boolean empty) {
+	protected void updateItem(PhonemeString item, boolean empty) {
 		super.updateItem(item, empty);
 
 		if (empty || item == null) {
@@ -94,7 +94,7 @@ public class LexiconWordTableCell<S> extends TableCell<S, PhonemeSequence> {
 	}
 
 	private void onEditAction(ActionEvent event) {
-		PhonemeSequence sequence;
+		PhonemeString sequence;
 
 		try {
 			var ipa = edit.getText();
@@ -125,7 +125,7 @@ public class LexiconWordTableCell<S> extends TableCell<S, PhonemeSequence> {
 				.map(PhonologicalRuleApplicator::new)
 				.toList();
 
-			PhonemeSequence originalSequence;
+			PhonemeString originalSequence;
 			do {
 				originalSequence = sequence;
 				for (var ruleApplicator : activeRules) {

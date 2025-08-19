@@ -50,7 +50,7 @@ public class PhonemeStringMap implements PhonemeRepresentationMapper {
 	}
 
 	@Override
-	public String getIpa(Phoneme phoneme) {
+	public String getRepresentation(Phoneme phoneme) {
 		return phonemeToString.get(phoneme);
 	}
 

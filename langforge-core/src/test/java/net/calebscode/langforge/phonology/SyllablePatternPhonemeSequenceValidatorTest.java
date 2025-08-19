@@ -7,14 +7,17 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMappingException;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
-import net.calebscode.langforge.phonology.phoneme.PhonemeSequence;
+import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMappingException;
 import net.calebscode.langforge.phonology.phoneme.PhonemeSequenceBuilder;
+import net.calebscode.langforge.phonology.phoneme.PhonemeSequenceRenderer;
+import net.calebscode.langforge.phonology.phoneme.PhonemeString;
 import net.calebscode.langforge.phonology.syllable.SyllablePatternCategoryMap;
 import net.calebscode.langforge.phonology.syllable.SyllableUtils;
 
 public class SyllablePatternPhonemeSequenceValidatorTest {
+
+	private static final PhonemeSequenceRenderer RENDERER = new PhonemeSequenceRenderer(IPA_PHONEME_STRING_MAP);
 
 	private SyllablePatternCategoryMap categories;
 
@@ -35,7 +38,7 @@ public class SyllablePatternPhonemeSequenceValidatorTest {
 
 		var validated = validator.validate(input);
 
-		assertEquals(".kjoj.ko.ko.jjo.kjo.", validated.render(IPA_PHONEME_STRING_MAP));
+		assertEquals(".kjoj.ko.ko.jjo.kjo.", RENDERER.renderWithContext(validated));
 	}
 
 	@Test
@@ -74,7 +77,7 @@ public class SyllablePatternPhonemeSequenceValidatorTest {
 
 		var validated = validator.validate(input);
 
-		assertEquals(".ob.bob.bbob.bbbob.bbbbob.", validated .render(IPA_PHONEME_STRING_MAP));
+		assertEquals(".ob.bob.bbob.bbbob.bbbbob.", RENDERER.renderWithContext(validated));
 	}
 
 	@Test
@@ -88,7 +91,7 @@ public class SyllablePatternPhonemeSequenceValidatorTest {
 		var input = ipaSequence("optkpokpko");
 
 		var validated = validator.validate(input);
-		assertEquals(".op.tkpokpk.o.", validated.render(IPA_PHONEME_STRING_MAP));
+		assertEquals(".op.tkpokpk.o.", RENDERER.renderWithContext(validated));
 	}
 
 	private static Phoneme ipaPhoneme(String ipaString) throws PhonemeRepresentationMappingException {
@@ -98,7 +101,7 @@ public class SyllablePatternPhonemeSequenceValidatorTest {
 				.phonemeAt(0);
 	}
 
-	private static PhonemeSequence ipaSequence(String ipaString) throws PhonemeRepresentationMappingException {
+	private static PhonemeString ipaSequence(String ipaString) throws PhonemeRepresentationMappingException {
 		return new PhonemeSequenceBuilder()
 				.append(ipaString, IPA_PHONEME_STRING_MAP)
 				.build();

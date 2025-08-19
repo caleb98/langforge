@@ -23,8 +23,8 @@ public class PhonemeRepresentationCollection implements PhonemeRepresentationMap
 	}
 
 	@Override
-	public String getIpa(Phoneme phoneme) {
-		return map.getIpa(phoneme);
+	public String getRepresentation(Phoneme phoneme) {
+		return map.getRepresentation(phoneme);
 	}
 
 	@Override

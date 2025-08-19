@@ -20,14 +20,14 @@ import net.calebscode.langforge.app.lexicon.ui.RemoveLexicalCategoryDialog;
 import net.calebscode.langforge.app.lexicon.util.LexicalCategoryStringConverter;
 import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
 import net.calebscode.langforge.app.util.FXMLController;
-import net.calebscode.langforge.phonology.phoneme.PhonemeSequence;
+import net.calebscode.langforge.phonology.phoneme.PhonemeString;
 import net.calebscode.langforge.phonology.phoneme.StandardPhonemes;
 
 public class LexiconController extends HBox implements FXMLController {
 
 	@FXML private TableView<LexiconEntryModel> wordsTable;
 
-	@FXML private TableColumn<LexiconEntryModel, PhonemeSequence> wordColumn;
+	@FXML private TableColumn<LexiconEntryModel, PhonemeString> wordColumn;
 	@FXML private TableColumn<LexiconEntryModel, LexicalCategory> categoryColumn;
 	@FXML private TableColumn<LexiconEntryModel, String> definitionColumn;
 
