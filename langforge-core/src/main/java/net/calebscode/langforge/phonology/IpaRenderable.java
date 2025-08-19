@@ -1,9 +1,9 @@
 package net.calebscode.langforge.phonology;
 
-import net.calebscode.langforge.phonology.phoneme.IpaPhonemeMapper;
+import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMapper;
 
 public interface IpaRenderable {
 
-	public String render(IpaPhonemeMapper mapper);
+	public String render(PhonemeRepresentationMapper mapper);
 
 }

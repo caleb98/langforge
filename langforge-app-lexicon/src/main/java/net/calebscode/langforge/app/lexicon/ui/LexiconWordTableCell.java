@@ -16,8 +16,8 @@ import net.calebscode.langforge.app.phonology.model.PhonologicalRuleModel;
 import net.calebscode.langforge.phonology.PhonemeSequenceValidationException;
 import net.calebscode.langforge.phonology.PhonologicalRuleApplicationException;
 import net.calebscode.langforge.phonology.SyllablePatternPhonemeSequenceValidator;
-import net.calebscode.langforge.phonology.phoneme.IpaMappingException;
-import net.calebscode.langforge.phonology.phoneme.IpaPhonemeMapper;
+import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMappingException;
+import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMapper;
 import net.calebscode.langforge.phonology.phoneme.PhonemeSequence;
 import net.calebscode.langforge.phonology.phoneme.PhonemeSequenceBuilder;
 import net.calebscode.langforge.phonology.rules.PhonologicalRuleApplicator;
@@ -27,11 +27,11 @@ public class LexiconWordTableCell<S> extends TableCell<S, PhonemeSequence> {
 	private final Text label;
 	private final TextField edit;
 
-	private final ObjectProperty<IpaPhonemeMapper> ipaMapper;
+	private final ObjectProperty<PhonemeRepresentationMapper> ipaMapper;
 	private final LanguagePhonologyModel phonologyModel;
 
 	public LexiconWordTableCell(
-		IpaPhonemeMapper ipaMapper,
+		PhonemeRepresentationMapper ipaMapper,
 		LanguagePhonologyModel phonologyModel
 	) {
 		this.ipaMapper = new SimpleObjectProperty<>(ipaMapper);
@@ -45,11 +45,11 @@ public class LexiconWordTableCell<S> extends TableCell<S, PhonemeSequence> {
 		setText(null);
 	}
 
-	public ObjectProperty<IpaPhonemeMapper> ipaMapperProperty() {
+	public ObjectProperty<PhonemeRepresentationMapper> ipaMapperProperty() {
 		return ipaMapper;
 	}
 
-	public IpaPhonemeMapper getIpaMapper() {
+	public PhonemeRepresentationMapper getIpaMapper() {
 		return ipaMapper.get();
 	}
 
@@ -101,7 +101,7 @@ public class LexiconWordTableCell<S> extends TableCell<S, PhonemeSequence> {
 			sequence = new PhonemeSequenceBuilder()
 				.append(ipa, getIpaMapper())
 				.build();
-		} catch (IpaMappingException ex) {
+		} catch (PhonemeRepresentationMappingException ex) {
 			var errorAlert = new Alert(AlertType.ERROR);
 			errorAlert.setTitle("IPA Error");
 			errorAlert.setHeaderText("Failed to parse IPA.");

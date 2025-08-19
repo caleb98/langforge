@@ -8,16 +8,16 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class IpaPhonemeMapTest {
+public class PhonemeStringMapTest {
 
 	private final Phoneme testPhoneme1 = new Phoneme(Map.of("foo", "bar"));
 	private final Phoneme testPhoneme2 = new Phoneme(Map.of("zig", "zag"));
 
-	private IpaPhonemeMap phonemeMap;
+	private PhonemeStringMap phonemeMap;
 
 	@BeforeEach
 	void init() {
-		phonemeMap = new IpaPhonemeMap();
+		phonemeMap = new PhonemeStringMap();
 	}
 
 	@Test
@@ -107,8 +107,8 @@ public class IpaPhonemeMapTest {
 	void entrySet() {
 		phonemeMap.addMapping("a", testPhoneme1);
 
-		assertEquals(Set.of(new IpaPhonemeMapper.Entry("a", testPhoneme1)), phonemeMap.entrySet());
-		assertEquals(Set.of(new IpaPhonemeMapper.Entry("a", new Phoneme(Map.of("foo", "bar")))), phonemeMap.entrySet());
+		assertEquals(Set.of(new PhonemeRepresentationMapper.Entry("a", testPhoneme1)), phonemeMap.entrySet());
+		assertEquals(Set.of(new PhonemeRepresentationMapper.Entry("a", new Phoneme(Map.of("foo", "bar")))), phonemeMap.entrySet());
 	}
 
 	@Test

@@ -17,9 +17,9 @@ class SyllablePatternCompiler extends Compiler<Set<String>> {
 		var allPatterns = Set.of("");
 		for (var part : resolvers) {
 			allPatterns = allPatterns
-					.stream()
-					.flatMap(existing -> part.resolve().stream().map(resolved -> existing + resolved))
-					.collect(Collectors.toSet());
+				.stream()
+				.flatMap(existing -> part.resolve().stream().map(resolved -> existing + resolved))
+				.collect(Collectors.toSet());
 		}
 
 		return allPatterns;

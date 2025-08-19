@@ -41,7 +41,7 @@ public class LexiconController extends HBox implements FXMLController {
 
 			wordColumn.setCellFactory(column -> {
 				var cell = new LexiconWordTableCell<LexiconEntryModel>(
-					StandardPhonemes.IPA_MAPPER,
+					StandardPhonemes.IPA_PHONEME_STRING_MAP,
 					phonologyModel
 				);
 				cell.setEditable(true);

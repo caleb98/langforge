@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import net.calebscode.langforge.phonology.IpaRenderable;
-import net.calebscode.langforge.phonology.phoneme.IpaPhonemeMapper;
+import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMapper;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 
 public record Syllable(List<Phoneme> phonemes) implements IpaRenderable {
@@ -19,7 +19,7 @@ public record Syllable(List<Phoneme> phonemes) implements IpaRenderable {
 	}
 
 	@Override
-	public String render(IpaPhonemeMapper mapper) {
+	public String render(PhonemeRepresentationMapper mapper) {
 		return phonemes.stream().map(mapper::getIpa).collect(Collectors.joining());
 	}
 

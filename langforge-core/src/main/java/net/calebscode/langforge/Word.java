@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import net.calebscode.langforge.phonology.IpaRenderable;
-import net.calebscode.langforge.phonology.phoneme.IpaPhonemeMapper;
+import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMapper;
 import net.calebscode.langforge.phonology.syllable.Syllable;
 
 public class Word implements IpaRenderable {
@@ -23,7 +23,7 @@ public class Word implements IpaRenderable {
 	}
 
 	@Override
-	public String render(IpaPhonemeMapper mapper) {
+	public String render(PhonemeRepresentationMapper mapper) {
 		return syllables.stream()
 				.flatMap(syllable -> syllable.phonemes().stream())
 				.map(mapper::getIpa)

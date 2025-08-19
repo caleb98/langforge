@@ -17,13 +17,13 @@ import javafx.scene.layout.AnchorPane;
 import javafx.util.converter.DefaultStringConverter;
 import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
 import net.calebscode.langforge.app.util.FXMLController;
-import net.calebscode.langforge.phonology.phoneme.IpaPhonemeMapper;
+import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMapper;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 import net.calebscode.langforge.phonology.phoneme.StandardPhonemes;
 
 public class SyllableManagementController extends AnchorPane implements FXMLController {
 
-	private IpaPhonemeMapper phonemeMapper = StandardPhonemes.IPA_MAPPER;
+	private PhonemeRepresentationMapper phonemeMapper = StandardPhonemes.IPA_PHONEME_STRING_MAP;
 
 	private LanguagePhonologyModel phonologyModel;
 

@@ -9,7 +9,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
-import net.calebscode.langforge.phonology.phoneme.IpaPhonemeMapper;
+import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMapper;
 import net.calebscode.langforge.phonology.rules.PhonologicalRule;
 import net.calebscode.langforge.phonology.rules.PhonologicalRuleCompiler;
 
@@ -22,7 +22,7 @@ public class PhonologicalRuleModel {
 	private ObjectProperty<Optional<PhonologicalRule>> rule = new SimpleObjectProperty<>(Optional.empty());
 	private StringProperty compileError = new SimpleStringProperty("");
 
-	public PhonologicalRuleModel(IpaPhonemeMapper ipaMapper) {
+	public PhonologicalRuleModel(PhonemeRepresentationMapper ipaMapper) {
 		compiler = new PhonologicalRuleCompiler(ipaMapper);
 		source.addListener(this::onSourceChanged);
 	}

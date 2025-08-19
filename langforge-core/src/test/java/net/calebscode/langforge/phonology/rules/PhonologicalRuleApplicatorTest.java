@@ -1,6 +1,6 @@
 package net.calebscode.langforge.phonology.rules;
 
-import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.IPA_MAPPER;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.IPA_PHONEME_STRING_MAP;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import net.calebscode.langforge.phonology.PhonologicalRuleApplicationException;
 import net.calebscode.langforge.phonology.SyllablePatternPhonemeSequenceValidator;
-import net.calebscode.langforge.phonology.phoneme.IpaMappingException;
+import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMappingException;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 import net.calebscode.langforge.phonology.phoneme.PhonemeSequence;
 import net.calebscode.langforge.phonology.phoneme.PhonemeSequenceBuilder;
@@ -23,7 +23,7 @@ public class PhonologicalRuleApplicatorTest {
 	private static SyllablePatternCategoryMap categoryMap = new SyllablePatternCategoryMap();
 
 	@BeforeAll
-	static void beforeAll() throws IpaMappingException {
+	static void beforeAll() throws PhonemeRepresentationMappingException {
 		categoryMap.addPhoneme('C', ipaPhoneme("t"));
 		categoryMap.addPhoneme('C', ipaPhoneme("d"));
 		categoryMap.addPhoneme('C', ipaPhoneme("s"));
@@ -39,7 +39,7 @@ public class PhonologicalRuleApplicatorTest {
 	}
 
 	@Test
-	void applySubstitutionRule() throws IpaMappingException {
+	void applySubstitutionRule() throws PhonemeRepresentationMappingException {
 		testRuleApplications(
 			"CV",
 			"/a/ -> [i] / [j] _",
@@ -54,7 +54,7 @@ public class PhonologicalRuleApplicatorTest {
 	}
 
 	@Test
-	void applyAssimilationRule() throws IpaMappingException {
+	void applyAssimilationRule() throws PhonemeRepresentationMappingException {
 		testRuleApplications(
 			"CV(C)",
 			"[+consonant] -> [0_place] / [+consonant, 0_place] _",
@@ -69,7 +69,7 @@ public class PhonologicalRuleApplicatorTest {
 	}
 
 	@Test
-	void testDeletionRule() throws IpaMappingException {
+	void testDeletionRule() throws PhonemeRepresentationMappingException {
 		testRuleApplications(
 			"CV(C)",
 			"[+consonant, 0_place, 1_type] -> ~ / [+consonant, 0_place, 1_type] _",
@@ -83,7 +83,7 @@ public class PhonologicalRuleApplicatorTest {
 	}
 
 	@Test
-	void testInsertionRule() throws IpaMappingException {
+	void testInsertionRule() throws PhonemeRepresentationMappingException {
 		testRuleApplications(
 			"CV",
 			"~ -> [a] / [+consonant] _ [+consonant]",
@@ -99,7 +99,7 @@ public class PhonologicalRuleApplicatorTest {
 	}
 
 	@Test
-	void testWordBoundaryBeginningOfWord() throws IpaMappingException {
+	void testWordBoundaryBeginningOfWord() throws PhonemeRepresentationMappingException {
 		testRuleApplications(
 			"(C)V",
 			"~ -> [a] / # _ [+consonant]",
@@ -113,7 +113,7 @@ public class PhonologicalRuleApplicatorTest {
 	}
 
 	@Test
-	void testWordBoundaryEndOfWord() throws IpaMappingException {
+	void testWordBoundaryEndOfWord() throws PhonemeRepresentationMappingException {
 		testRuleApplications(
 			"CV(C)",
 			"~ -> [s] / [+vowel] _ #",
@@ -127,7 +127,7 @@ public class PhonologicalRuleApplicatorTest {
 	}
 
 	@Test
-	void testSyllableBoundaryBeginningOfSyllable() throws IpaMappingException {
+	void testSyllableBoundaryBeginningOfSyllable() throws PhonemeRepresentationMappingException {
 		testRuleApplications(
 			"(C)V(C)",
 			"[+consonant, -voiced] -> [+voicing:voiced] / . _",
@@ -141,7 +141,7 @@ public class PhonologicalRuleApplicatorTest {
 	}
 
 	@Test
-	void testSyllableBoundaryEndOfSyllable() throws IpaMappingException {
+	void testSyllableBoundaryEndOfSyllable() throws PhonemeRepresentationMappingException {
 		testRuleApplications(
 			"CV(G)",
 			"~ -> [j] / [+front, +vowel] _ .",
@@ -153,7 +153,7 @@ public class PhonologicalRuleApplicatorTest {
 		);
 	}
 
-	private void testRuleApplications(String patternSource, String ruleSource, boolean lenient, Map<String, String> expectations) throws IpaMappingException {
+	private void testRuleApplications(String patternSource, String ruleSource, boolean lenient, Map<String, String> expectations) throws PhonemeRepresentationMappingException {
 		try {
 			var patterns = SyllableUtils.expandSyllablePatterns(patternSource);
 			var validator = new SyllablePatternPhonemeSequenceValidator(categoryMap, patterns);
@@ -167,7 +167,7 @@ public class PhonologicalRuleApplicatorTest {
 				var test = ipaSequence(inputIpa);
 				var result = applicator.apply(test, validator, lenient);
 
-				assertEquals(expectIpa, result.render(IPA_MAPPER));
+				assertEquals(expectIpa, result.render(IPA_PHONEME_STRING_MAP));
 			}
 		} catch (PhonologicalRuleApplicationException ex) {
 			fail(ex);
@@ -175,19 +175,19 @@ public class PhonologicalRuleApplicatorTest {
 	}
 
 	private PhonologicalRule compileRule(String rule) {
-		return new PhonologicalRuleCompiler(IPA_MAPPER).compile(rule);
+		return new PhonologicalRuleCompiler(IPA_PHONEME_STRING_MAP).compile(rule);
 	}
 
-	private static Phoneme ipaPhoneme(String ipaString) throws IpaMappingException {
+	private static Phoneme ipaPhoneme(String ipaString) throws PhonemeRepresentationMappingException {
 		return new PhonemeSequenceBuilder()
-				.append(ipaString, IPA_MAPPER)
+				.append(ipaString, IPA_PHONEME_STRING_MAP)
 				.build()
 				.phonemeAt(0);
 	}
 
-	private static PhonemeSequence ipaSequence(String ipaString) throws IpaMappingException {
+	private static PhonemeSequence ipaSequence(String ipaString) throws PhonemeRepresentationMappingException {
 		return new PhonemeSequenceBuilder()
-				.append(ipaString, IPA_MAPPER)
+				.append(ipaString, IPA_PHONEME_STRING_MAP)
 				.build();
 	}
 

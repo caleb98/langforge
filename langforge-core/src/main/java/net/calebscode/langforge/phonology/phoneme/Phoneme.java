@@ -38,7 +38,7 @@ public record Phoneme(Map<String, String> features) implements IpaRenderable {
 	}
 
 	@Override
-	public String render(IpaPhonemeMapper mapper) {
+	public String render(PhonemeRepresentationMapper mapper) {
 		return mapper.getIpa(this);
 	}
 

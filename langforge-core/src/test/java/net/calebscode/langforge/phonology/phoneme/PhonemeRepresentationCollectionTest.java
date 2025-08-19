@@ -9,10 +9,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class IpaPhonemeCollectionTest {
+public class PhonemeRepresentationCollectionTest {
 
-	private static final IpaPhonemeMap firstMapper = new IpaPhonemeMap();
-	private static final IpaPhonemeMap secondMapper = new IpaPhonemeMap();
+	private static final PhonemeStringMap firstMapper = new PhonemeStringMap();
+	private static final PhonemeStringMap secondMapper = new PhonemeStringMap();
 
 	private static final Phoneme phoneme1 = new Phoneme(Map.of("foo", "bar"));
 	private static final Phoneme phoneme2 = new Phoneme(Map.of("zig", "zag"));
@@ -20,7 +20,7 @@ public class IpaPhonemeCollectionTest {
 	private static final Phoneme phoneme4 = new Phoneme(Map.of("sun", "moon"));
 	private static final Phoneme phoneme5 = new Phoneme(Map.of("open", "close"));
 
-	private IpaPhonemeCollection collection;
+	private PhonemeRepresentationCollection collection;
 
 	@BeforeAll
 	static void beforeAll() {
@@ -34,7 +34,7 @@ public class IpaPhonemeCollectionTest {
 
 	@BeforeEach
 	void beforeEach() {
-		collection = new IpaPhonemeCollection();
+		collection = new PhonemeRepresentationCollection();
 	}
 
 	@Test
@@ -89,9 +89,9 @@ public class IpaPhonemeCollectionTest {
 		collection.addPhonemeMap(secondMapper);
 
 		var expected = Set.of(
-				new IpaPhonemeMapper.Entry("a", new Phoneme(Map.of("foo", "bar"))),
-				new IpaPhonemeMapper.Entry("b", new Phoneme(Map.of("sun", "moon"))),
-				new IpaPhonemeMapper.Entry("z", new Phoneme(Map.of("up", "down"))));
+				new PhonemeRepresentationMapper.Entry("a", new Phoneme(Map.of("foo", "bar"))),
+				new PhonemeRepresentationMapper.Entry("b", new Phoneme(Map.of("sun", "moon"))),
+				new PhonemeRepresentationMapper.Entry("z", new Phoneme(Map.of("up", "down"))));
 
 		assertEquals(expected, collection.entrySet());
 	}

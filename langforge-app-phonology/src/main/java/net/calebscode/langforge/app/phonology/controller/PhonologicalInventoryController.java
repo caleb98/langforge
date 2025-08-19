@@ -1,6 +1,6 @@
 package net.calebscode.langforge.app.phonology.controller;
 
-import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.IPA_MAPPER;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.IPA_PHONEME_STRING_MAP;
 
 import java.util.Optional;
 
@@ -49,7 +49,7 @@ public class PhonologicalInventoryController extends VBox implements FXMLControl
 		phonemesTable.getColumns().clear();
 
 		var representationColumn = new TableColumn<Phoneme, String>("Representation");
-		representationColumn.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().render(IPA_MAPPER)));
+		representationColumn.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().render(IPA_PHONEME_STRING_MAP)));
 		representationColumn.setStyle("-fx-alignment: CENTER;");
 		phonemesTable.getColumns().add(representationColumn);
 

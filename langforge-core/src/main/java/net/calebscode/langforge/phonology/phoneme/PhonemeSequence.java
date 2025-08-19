@@ -114,7 +114,7 @@ public class PhonemeSequence implements IpaRenderable {
 	}
 
 	@Override
-	public String render(IpaPhonemeMapper mapper) {
+	public String render(PhonemeRepresentationMapper mapper) {
 		if (phonemes.size() == 0) {
 			return "";
 		}
