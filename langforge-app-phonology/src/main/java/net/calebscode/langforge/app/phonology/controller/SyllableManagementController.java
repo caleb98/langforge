@@ -2,6 +2,7 @@ package net.calebscode.langforge.app.phonology.controller;
 
 import static javafx.beans.binding.Bindings.createObjectBinding;
 import static javafx.collections.FXCollections.observableArrayList;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.IPA_PHONEME_SEQUENCE_RENDERER;
 
 import java.util.ArrayList;
 
@@ -17,13 +18,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.util.converter.DefaultStringConverter;
 import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
 import net.calebscode.langforge.app.util.FXMLController;
-import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMapper;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
-import net.calebscode.langforge.phonology.phoneme.StandardPhonemes;
 
 public class SyllableManagementController extends AnchorPane implements FXMLController {
-
-	private PhonemeRepresentationMapper phonemeMapper = StandardPhonemes.IPA_PHONEME_REPRESENTATION_MAPPER;
 
 	private LanguagePhonologyModel phonologyModel;
 
@@ -212,7 +209,7 @@ public class SyllableManagementController extends AnchorPane implements FXMLCont
 					setText(null);
 					setGraphic(null);
 				} else {
-					setText(item.render(phonemeMapper));
+					setText(IPA_PHONEME_SEQUENCE_RENDERER.render(item));
 				}
 			}
 		};

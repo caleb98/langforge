@@ -1,9 +1,10 @@
 package net.calebscode.langforge.app.lexicon.ui;
 
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.IPA_PHONEME_REPRESENTATION_MAPPER;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.IPA_PHONEME_SEQUENCE_RENDERER;
+
 import java.util.Optional;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -17,9 +18,8 @@ import net.calebscode.langforge.phonology.PhonemeSequenceValidationException;
 import net.calebscode.langforge.phonology.PhonologicalRuleApplicationException;
 import net.calebscode.langforge.phonology.SyllablePatternPhonemeSequenceValidator;
 import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMappingException;
-import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMapper;
-import net.calebscode.langforge.phonology.phoneme.PhonemeString;
 import net.calebscode.langforge.phonology.phoneme.PhonemeSequenceBuilder;
+import net.calebscode.langforge.phonology.phoneme.PhonemeString;
 import net.calebscode.langforge.phonology.rules.PhonologicalRuleApplicator;
 
 public class LexiconWordTableCell<S> extends TableCell<S, PhonemeString> {
@@ -27,14 +27,9 @@ public class LexiconWordTableCell<S> extends TableCell<S, PhonemeString> {
 	private final Text label;
 	private final TextField edit;
 
-	private final ObjectProperty<PhonemeRepresentationMapper> ipaMapper;
 	private final LanguagePhonologyModel phonologyModel;
 
-	public LexiconWordTableCell(
-		PhonemeRepresentationMapper ipaMapper,
-		LanguagePhonologyModel phonologyModel
-	) {
-		this.ipaMapper = new SimpleObjectProperty<>(ipaMapper);
+	public LexiconWordTableCell(LanguagePhonologyModel phonologyModel) {
 		this.phonologyModel = phonologyModel;
 
 		label = new Text();
@@ -43,14 +38,6 @@ public class LexiconWordTableCell<S> extends TableCell<S, PhonemeString> {
 
 		setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
 		setText(null);
-	}
-
-	public ObjectProperty<PhonemeRepresentationMapper> ipaMapperProperty() {
-		return ipaMapper;
-	}
-
-	public PhonemeRepresentationMapper getIpaMapper() {
-		return ipaMapper.get();
 	}
 
 	@Override
@@ -88,7 +75,7 @@ public class LexiconWordTableCell<S> extends TableCell<S, PhonemeString> {
 			return;
 		}
 
-		var rendered = item.render(ipaMapper.get());
+		var rendered = IPA_PHONEME_SEQUENCE_RENDERER.render(item);
 		label.setText(rendered);
 		setGraphic(label);
 	}
@@ -99,7 +86,7 @@ public class LexiconWordTableCell<S> extends TableCell<S, PhonemeString> {
 		try {
 			var ipa = edit.getText();
 			sequence = new PhonemeSequenceBuilder()
-				.append(ipa, getIpaMapper())
+				.append(ipa, IPA_PHONEME_REPRESENTATION_MAPPER)
 				.build();
 		} catch (PhonemeRepresentationMappingException ex) {
 			var errorAlert = new Alert(AlertType.ERROR);

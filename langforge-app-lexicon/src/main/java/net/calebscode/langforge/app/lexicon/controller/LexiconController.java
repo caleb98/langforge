@@ -21,7 +21,6 @@ import net.calebscode.langforge.app.lexicon.util.LexicalCategoryStringConverter;
 import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
 import net.calebscode.langforge.app.util.FXMLController;
 import net.calebscode.langforge.phonology.phoneme.PhonemeString;
-import net.calebscode.langforge.phonology.phoneme.StandardPhonemes;
 
 public class LexiconController extends HBox implements FXMLController {
 
@@ -40,10 +39,7 @@ public class LexiconController extends HBox implements FXMLController {
 			wordsTable.itemsProperty().bind(lexiconModel.entriesProperty());
 
 			wordColumn.setCellFactory(column -> {
-				var cell = new LexiconWordTableCell<LexiconEntryModel>(
-					StandardPhonemes.IPA_PHONEME_REPRESENTATION_MAPPER,
-					phonologyModel
-				);
+				var cell = new LexiconWordTableCell<LexiconEntryModel>(phonologyModel);
 				cell.setEditable(true);
 				return cell;
 			});

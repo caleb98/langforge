@@ -1,5 +1,7 @@
 package net.calebscode.langforge.app.phonology.factory;
 
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.IPA_PHONEME_SEQUENCE_RENDERER;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +15,6 @@ import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import net.calebscode.langforge.app.phonology.model.PhonologicalInventoryModel;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
-import net.calebscode.langforge.phonology.phoneme.StandardPhonemes;
 
 public class PhonemeButtonsCellFactory implements Callback<TableColumn<String, List<Phoneme>>, TableCell<String, List<Phoneme>>> {
 
@@ -46,7 +47,7 @@ public class PhonemeButtonsCellFactory implements Callback<TableColumn<String, L
 
 				var newButtons = new ArrayList<Node>();
 				for (var phoneme : item) {
-					var button = new Button(phoneme.render(StandardPhonemes.IPA_PHONEME_REPRESENTATION_MAPPER));
+					var button = new Button(IPA_PHONEME_SEQUENCE_RENDERER.render(phoneme));
 					button.setOnMouseClicked(event -> {
 						model.phonemesProperty().add(phoneme);
 					});

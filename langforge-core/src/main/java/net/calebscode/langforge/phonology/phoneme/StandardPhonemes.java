@@ -186,6 +186,7 @@ public class StandardPhonemes {
 
 	// Standard Phoneme Map
 	public static final PhonemeRepresentationMapper IPA_PHONEME_REPRESENTATION_MAPPER;
+	public static final PhonemeSequenceRenderer IPA_PHONEME_SEQUENCE_RENDERER;
 	public static final List<Phoneme> IPA_PHONEMES;
 
 	static {
@@ -1039,6 +1040,8 @@ public class StandardPhonemes {
 		var wrapper = new PhonemeRepresentationCollection();
 		wrapper.addPhonemeMap(ipaPhonemeRepresentationMapper);
 		IPA_PHONEME_REPRESENTATION_MAPPER = wrapper;
+
+		IPA_PHONEME_SEQUENCE_RENDERER = new PhonemeSequenceRenderer(IPA_PHONEME_REPRESENTATION_MAPPER);
 
 		// Create the list of all IPA phonemes
 		var ipaPhonemesList = new ArrayList<Phoneme>();
