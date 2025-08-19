@@ -48,7 +48,15 @@ public class LexiconWordTableCell<S> extends TableCell<S, PhonemeString> {
 			return;
 		}
 
-		edit.setText("");
+		var item = getItem();
+		if (item != null) {
+			var rendered = IPA_PHONEME_SEQUENCE_RENDERER.render(item);
+			edit.setText(rendered);
+		}
+		else {
+			edit.setText("");
+		}
+
 		setGraphic(edit);
 		edit.selectAll();
 		edit.requestFocus();
@@ -75,7 +83,9 @@ public class LexiconWordTableCell<S> extends TableCell<S, PhonemeString> {
 		}
 
 		var rendered = IPA_PHONEME_SEQUENCE_RENDERER.render(item);
-		label.setText(rendered);
+		var renderedContext = IPA_PHONEME_SEQUENCE_RENDERER.renderWithContext(item);
+		var text = String.format("%s (%s)", rendered, renderedContext);
+		label.setText(text);
 		setGraphic(label);
 	}
 
