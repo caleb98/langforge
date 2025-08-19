@@ -129,7 +129,7 @@ public class LexiconWordTableCell<S> extends TableCell<S, PhonemeSequence> {
 			do {
 				originalSequence = sequence;
 				for (var ruleApplicator : activeRules) {
-					sequence = ruleApplicator.apply(sequence, validator, false);
+					sequence = ruleApplicator.apply(sequence, validator, true);
 				}
 			} while (!sequence.equals(originalSequence));
 

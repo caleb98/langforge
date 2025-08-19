@@ -37,11 +37,15 @@ public class PhonologicalRuleApplicator implements PhonemeRepresentationMatcher 
 	/**
 	 * @param inputSequence
 	 * @param validator
-	 * @param lenient whether or the rule application should fail if a sequence cannot be validated
+	 * @param lenient whether or the rule application should fail if a sequence cannot be validated after a rule has been applied
 	 * @return
 	 * @throws PhonologicalRuleApplicationException
 	 */
-	public PhonemeSequence apply(PhonemeSequence inputSequence, PhonemeSequenceValidator validator, boolean lenient) throws PhonologicalRuleApplicationException {
+	public PhonemeSequence apply(
+		PhonemeSequence inputSequence,
+		PhonemeSequenceValidator validator,
+		boolean lenient
+	) throws PhonologicalRuleApplicationException {
 		position = 0;
 		sequence = inputSequence;
 
