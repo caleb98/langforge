@@ -1,4 +1,4 @@
-package net.calebscode.langforge.phonology.phoneme;
+package net.calebscode.langforge.phonology.phoneme.string;
 
 import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,9 +9,13 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import net.calebscode.langforge.phonology.phoneme.PhonemeString.PhonemeTransition;
+import net.calebscode.langforge.phonology.phoneme.Phoneme;
+import net.calebscode.langforge.phonology.phoneme.PhonemeContext;
+import net.calebscode.langforge.phonology.phoneme.PhonemeSequenceRenderer;
+import net.calebscode.langforge.phonology.phoneme.string.PhonemeString;
+import net.calebscode.langforge.phonology.phoneme.string.PhonemeString.PhonemeTransition;
 
-public class PhonemeSequenceTest {
+public class PhonemeStringTest {
 
 	private static final Phoneme NULL_PHONEME = new Phoneme(Map.of());
 	private static final Phoneme PHONEME_A = new Phoneme(Map.of("foo", "bar"));

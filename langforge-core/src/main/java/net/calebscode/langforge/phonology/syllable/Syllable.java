@@ -3,8 +3,8 @@ package net.calebscode.langforge.phonology.syllable;
 import java.util.Collections;
 import java.util.List;
 
-import net.calebscode.langforge.phonology.PhonemeSequence;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
+import net.calebscode.langforge.phonology.phoneme.PhonemeSequence;
 
 public record Syllable(List<Phoneme> phonemes) implements PhonemeSequence {
 

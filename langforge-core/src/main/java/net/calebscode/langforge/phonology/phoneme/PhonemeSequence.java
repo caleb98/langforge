@@ -1,9 +1,6 @@
-package net.calebscode.langforge.phonology;
+package net.calebscode.langforge.phonology.phoneme;
 
 import java.util.List;
-
-import net.calebscode.langforge.phonology.phoneme.Phoneme;
-import net.calebscode.langforge.phonology.phoneme.PhonemeContext;
 
 public interface PhonemeSequence {
 

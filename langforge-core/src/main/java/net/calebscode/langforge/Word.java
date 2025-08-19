@@ -3,8 +3,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.calebscode.langforge.phonology.PhonemeSequence;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
+import net.calebscode.langforge.phonology.phoneme.PhonemeSequence;
 import net.calebscode.langforge.phonology.syllable.Syllable;
 
 public class Word implements PhonemeSequence {

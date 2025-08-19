@@ -9,13 +9,12 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import net.calebscode.langforge.phonology.PhonologicalRuleApplicationException;
-import net.calebscode.langforge.phonology.SyllablePatternPhonemeSequenceValidator;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMappingException;
-import net.calebscode.langforge.phonology.phoneme.PhonemeSequenceBuilder;
 import net.calebscode.langforge.phonology.phoneme.PhonemeSequenceRenderer;
-import net.calebscode.langforge.phonology.phoneme.PhonemeString;
+import net.calebscode.langforge.phonology.phoneme.string.PhonemeString;
+import net.calebscode.langforge.phonology.phoneme.string.PhonemeStringBuilder;
+import net.calebscode.langforge.phonology.phoneme.string.SyllablePatternValidator;
 import net.calebscode.langforge.phonology.syllable.SyllablePatternCategoryMap;
 import net.calebscode.langforge.phonology.syllable.SyllableUtils;
 
@@ -159,7 +158,7 @@ public class PhonologicalRuleApplicatorTest {
 	private void testRuleApplications(String patternSource, String ruleSource, boolean lenient, Map<String, String> expectations) throws PhonemeRepresentationMappingException {
 		try {
 			var patterns = SyllableUtils.expandSyllablePatterns(patternSource);
-			var validator = new SyllablePatternPhonemeSequenceValidator(categoryMap, patterns);
+			var validator = new SyllablePatternValidator(categoryMap, patterns);
 			var rule = compileRule(ruleSource);
 			var applicator = new PhonologicalRuleApplicator(rule);
 
@@ -182,14 +181,14 @@ public class PhonologicalRuleApplicatorTest {
 	}
 
 	private static Phoneme ipaPhoneme(String ipaString) throws PhonemeRepresentationMappingException {
-		return new PhonemeSequenceBuilder()
+		return new PhonemeStringBuilder()
 				.append(ipaString, IPA_PHONEME_REPRESENTATION_MAPPER)
 				.build()
 				.phonemeAt(0);
 	}
 
 	private static PhonemeString ipaSequence(String ipaString) throws PhonemeRepresentationMappingException {
-		return new PhonemeSequenceBuilder()
+		return new PhonemeStringBuilder()
 				.append(ipaString, IPA_PHONEME_REPRESENTATION_MAPPER)
 				.build();
 	}

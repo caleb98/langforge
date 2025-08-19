@@ -14,12 +14,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
 import net.calebscode.langforge.app.phonology.model.PhonologicalRuleModel;
-import net.calebscode.langforge.phonology.PhonemeSequenceValidationException;
-import net.calebscode.langforge.phonology.PhonologicalRuleApplicationException;
-import net.calebscode.langforge.phonology.SyllablePatternPhonemeSequenceValidator;
+import net.calebscode.langforge.phonology.PhonemeStringValidationException;
+import net.calebscode.langforge.phonology.SyllablePatternValidator;
 import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMappingException;
-import net.calebscode.langforge.phonology.phoneme.PhonemeSequenceBuilder;
-import net.calebscode.langforge.phonology.phoneme.PhonemeString;
+import net.calebscode.langforge.phonology.phoneme.PhonemeStringBuilder;
+import net.calebscode.langforge.phonology.phoneme.string.PhonemeString;
+import net.calebscode.langforge.phonology.rules.PhonologicalRuleApplicationException;
 import net.calebscode.langforge.phonology.rules.PhonologicalRuleApplicator;
 
 public class LexiconWordTableCell<S> extends TableCell<S, PhonemeString> {
@@ -85,7 +85,7 @@ public class LexiconWordTableCell<S> extends TableCell<S, PhonemeString> {
 
 		try {
 			var ipa = edit.getText();
-			sequence = new PhonemeSequenceBuilder()
+			sequence = new PhonemeStringBuilder()
 				.append(ipa, IPA_PHONEME_REPRESENTATION_MAPPER)
 				.build();
 		} catch (PhonemeRepresentationMappingException ex) {
@@ -97,7 +97,7 @@ public class LexiconWordTableCell<S> extends TableCell<S, PhonemeString> {
 			return;
 		}
 
-		var validator = new SyllablePatternPhonemeSequenceValidator(
+		var validator = new SyllablePatternValidator(
 			phonologyModel.getSyllablePatternCategories(),
 			phonologyModel.getSyllablePatterns());
 
@@ -131,7 +131,7 @@ public class LexiconWordTableCell<S> extends TableCell<S, PhonemeString> {
 
 		try {
 			sequence = validator.validate(sequence);
-		} catch (PhonemeSequenceValidationException ex) {
+		} catch (PhonemeStringValidationException ex) {
 			var errorAlert = new Alert(AlertType.ERROR);
 			errorAlert.setTitle("Syllable Validation Error");
 			errorAlert.setHeaderText("Word did not match a valid syllable structure.");

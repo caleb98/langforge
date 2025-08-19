@@ -7,12 +7,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import net.calebscode.langforge.phonology.PhonemeSequenceValidationException;
-import net.calebscode.langforge.phonology.PhonemeSequenceValidator;
-import net.calebscode.langforge.phonology.PhonologicalRuleApplicationException;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
-import net.calebscode.langforge.phonology.phoneme.PhonemeString;
-import net.calebscode.langforge.phonology.phoneme.PhonemeSequenceBuilder;
+import net.calebscode.langforge.phonology.phoneme.string.PhonemeString;
+import net.calebscode.langforge.phonology.phoneme.string.PhonemeStringBuilder;
+import net.calebscode.langforge.phonology.phoneme.string.PhonemeStringValidationException;
+import net.calebscode.langforge.phonology.phoneme.string.PhonemeStringValidator;
 import net.calebscode.langforge.phonology.rules.PhonologicalRuleCompiler.Feature;
 import net.calebscode.langforge.phonology.rules.PhonologicalRuleCompiler.NullPhoneme;
 import net.calebscode.langforge.phonology.rules.PhonologicalRuleCompiler.PhonemeFeatureset;
@@ -43,7 +42,7 @@ public class PhonologicalRuleApplicator implements PhonemeRepresentationMatcher 
 	 */
 	public PhonemeString apply(
 		PhonemeString inputSequence,
-		PhonemeSequenceValidator validator,
+		PhonemeStringValidator validator,
 		boolean lenient
 	) throws PhonologicalRuleApplicationException {
 		position = 0;
@@ -83,7 +82,7 @@ public class PhonologicalRuleApplicator implements PhonemeRepresentationMatcher 
 					start = -1;
 					try {
 						sequence = validator.validate(sequence);
-					} catch (PhonemeSequenceValidationException ex) {
+					} catch (PhonemeStringValidationException ex) {
 						if (!lenient) {
 							 var message = String.format("Unable to apply rule: %s", ex.getMessage());
 							 throw new PhonologicalRuleApplicationException(message, ex);
@@ -95,7 +94,7 @@ public class PhonologicalRuleApplicator implements PhonemeRepresentationMatcher 
 
 		try {
 			sequence = validator.validate(sequence);
-		} catch (PhonemeSequenceValidationException ex) {
+		} catch (PhonemeStringValidationException ex) {
 			if (!lenient) {
 				 var message = String.format("Unable to apply rule: %s", ex.getMessage());
 				 throw new PhonologicalRuleApplicationException(message, ex);
@@ -116,7 +115,7 @@ public class PhonologicalRuleApplicator implements PhonemeRepresentationMatcher 
 		var back = sequence.substring(replacePosition);
 
 		Phoneme insert = literal.phoneme();
-		var insertSeq = new PhonemeSequenceBuilder().append(insert).build();
+		var insertSeq = new PhonemeStringBuilder().append(insert).build();
 
 		return front.append(insertSeq).append(back);
 	}

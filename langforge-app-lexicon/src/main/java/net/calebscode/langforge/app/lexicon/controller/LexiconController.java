@@ -20,7 +20,7 @@ import net.calebscode.langforge.app.lexicon.ui.RemoveLexicalCategoryDialog;
 import net.calebscode.langforge.app.lexicon.util.LexicalCategoryStringConverter;
 import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
 import net.calebscode.langforge.app.util.FXMLController;
-import net.calebscode.langforge.phonology.phoneme.PhonemeString;
+import net.calebscode.langforge.phonology.phoneme.string.PhonemeString;
 
 public class LexiconController extends HBox implements FXMLController {
 

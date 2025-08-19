@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import net.calebscode.langforge.phonology.PhonemeSequence;
-
 public record Phoneme(Map<String, String> features) implements PhonemeSequence {
 
 	public Phoneme(Map<String, String> features) {

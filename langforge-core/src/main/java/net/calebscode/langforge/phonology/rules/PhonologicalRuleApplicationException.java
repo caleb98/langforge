@@ -1,4 +1,4 @@
-package net.calebscode.langforge.phonology;
+package net.calebscode.langforge.phonology.rules;
 
 public class PhonologicalRuleApplicationException extends Exception {
 

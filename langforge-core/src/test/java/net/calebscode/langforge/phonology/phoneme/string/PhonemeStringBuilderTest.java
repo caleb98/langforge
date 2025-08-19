@@ -1,4 +1,4 @@
-package net.calebscode.langforge.phonology.phoneme;
+package net.calebscode.langforge.phonology.phoneme.string;
 
 import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -10,17 +10,22 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import net.calebscode.langforge.Word;
+import net.calebscode.langforge.phonology.phoneme.PhonemeContext;
+import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMap;
+import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMappingException;
+import net.calebscode.langforge.phonology.phoneme.string.PhonemeString;
+import net.calebscode.langforge.phonology.phoneme.string.PhonemeStringBuilder;
 import net.calebscode.langforge.phonology.syllable.Syllable;
 
-public class PhonemeSequenceBuilderTest {
+public class PhonemeStringBuilderTest {
 
 	private static final PhonemeContext DEFAULT_CONTEXT = new PhonemeContext(false, false, false, false);
 
-	private PhonemeSequenceBuilder builder;
+	private PhonemeStringBuilder builder;
 
 	@BeforeEach
 	void beforeEach() {
-		builder = new PhonemeSequenceBuilder();
+		builder = new PhonemeStringBuilder();
 	}
 
 	@Test

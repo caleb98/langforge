@@ -5,7 +5,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import net.calebscode.langforge.LexicalCategory;
-import net.calebscode.langforge.phonology.phoneme.PhonemeString;
+import net.calebscode.langforge.phonology.phoneme.string.PhonemeString;
 
 public class LexiconEntryModel {
 

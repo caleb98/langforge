@@ -1,11 +1,15 @@
-package net.calebscode.langforge.phonology.phoneme;
+package net.calebscode.langforge.phonology.phoneme.string;
 
 import java.util.ArrayList;
 
 import net.calebscode.langforge.Word;
+import net.calebscode.langforge.phonology.phoneme.Phoneme;
+import net.calebscode.langforge.phonology.phoneme.PhonemeContext;
+import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMapper;
+import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMappingException;
 import net.calebscode.langforge.phonology.syllable.Syllable;
 
-public class PhonemeSequenceBuilder {
+public class PhonemeStringBuilder {
 
 	private ArrayList<Phoneme> phonemes = new ArrayList<>();
 	private ArrayList<PhonemeContext> contexts = new ArrayList<>();
@@ -13,7 +17,7 @@ public class PhonemeSequenceBuilder {
 	private boolean foundWordBoundary = false;
 	private boolean foundSyllableBoundary = false;
 
-	public PhonemeSequenceBuilder append(String ipa, PhonemeRepresentationMapper mapper) throws PhonemeRepresentationMappingException {
+	public PhonemeStringBuilder append(String ipa, PhonemeRepresentationMapper mapper) throws PhonemeRepresentationMappingException {
 		for (int i = 0; i < ipa.length(); i++) {
 			if (ipa.charAt(i) == '#') {
 				foundWordBoundary = true;
@@ -46,7 +50,7 @@ public class PhonemeSequenceBuilder {
 		return this;
 	}
 
-	public PhonemeSequenceBuilder append(Phoneme phoneme) {
+	public PhonemeStringBuilder append(Phoneme phoneme) {
 		var newContext = new PhonemeContext(foundSyllableBoundary, false, foundWordBoundary, false);
 
 		finalizePreviousPhonemeContext();
@@ -56,26 +60,26 @@ public class PhonemeSequenceBuilder {
 		return this;
 	}
 
-	public PhonemeSequenceBuilder append(Syllable syllable) {
+	public PhonemeStringBuilder append(Syllable syllable) {
 		appendSyllableBoundary();
 		syllable.phonemes().stream().forEach(this::append);
 		appendSyllableBoundary();
 		return this;
 	}
 
-	public PhonemeSequenceBuilder append(Word word) {
+	public PhonemeStringBuilder append(Word word) {
 		appendWordBoundary();
 		word.getSyllables().forEach(this::append);
 		appendWordBoundary();
 		return this;
 	}
 
-	public PhonemeSequenceBuilder appendSyllableBoundary() {
+	public PhonemeStringBuilder appendSyllableBoundary() {
 		foundSyllableBoundary = true;
 		return this;
 	}
 
-	public PhonemeSequenceBuilder appendWordBoundary() {
+	public PhonemeStringBuilder appendWordBoundary() {
 		foundWordBoundary = true;
 		return this;
 	}

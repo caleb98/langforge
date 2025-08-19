@@ -3,8 +3,6 @@ package net.calebscode.langforge.phonology.phoneme;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import net.calebscode.langforge.phonology.PhonemeSequence;
-
 public class PhonemeSequenceRenderer {
 
 	private PhonemeRepresentationMapper phonemeMapper;
