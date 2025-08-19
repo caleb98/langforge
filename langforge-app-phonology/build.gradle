@@ -1,3 +1,7 @@
 plugins {
     id 'buildlogic.langforge-plugin-conventions'
 }
+
+dependencies {
+    implementation project(":langforge-app-core")
+}

@@ -2,13 +2,11 @@ package net.calebscode.langforge.phonology.syllable;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import net.calebscode.langforge.phonology.IpaRenderable;
-import net.calebscode.langforge.phonology.phoneme.IpaPhonemeMapper;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
+import net.calebscode.langforge.phonology.phoneme.PhonemeSequence;
 
-public record Syllable(List<Phoneme> phonemes) implements IpaRenderable {
+public record Syllable(List<Phoneme> phonemes) implements PhonemeSequence {
 
 	public Syllable(List<Phoneme> phonemes) {
 		this.phonemes = Collections.unmodifiableList(phonemes);
@@ -19,8 +17,8 @@ public record Syllable(List<Phoneme> phonemes) implements IpaRenderable {
 	}
 
 	@Override
-	public String render(IpaPhonemeMapper mapper) {
-		return phonemes.stream().map(mapper::getIpa).collect(Collectors.joining());
+	public List<Phoneme> getPhonemes() {
+		return phonemes;
 	}
 
 }

@@ -3,15 +3,15 @@ package net.calebscode.langforge.phonology.rules;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.calebscode.langforge.phonology.phoneme.IpaPhonemeMapper;
+import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMapper;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 import net.calebscode.langforge.util.Compiler;
 
 public class PhonologicalRuleCompiler extends Compiler<PhonologicalRule> {
 
-	private IpaPhonemeMapper ipaMapper;
+	private PhonemeRepresentationMapper ipaMapper;
 
-	public PhonologicalRuleCompiler(IpaPhonemeMapper ipaMapper) {
+	public PhonologicalRuleCompiler(PhonemeRepresentationMapper ipaMapper) {
 		this.ipaMapper = ipaMapper;
 	}
 

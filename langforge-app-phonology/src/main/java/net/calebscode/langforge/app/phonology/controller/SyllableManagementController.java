@@ -2,48 +2,40 @@ package net.calebscode.langforge.app.phonology.controller;
 
 import static javafx.beans.binding.Bindings.createObjectBinding;
 import static javafx.collections.FXCollections.observableArrayList;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.IPA_PHONEME_SEQUENCE_RENDERER;
 
 import java.util.ArrayList;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.ListChangeListener.Change;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.AnchorPane;
+import javafx.util.converter.DefaultStringConverter;
 import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
-import net.calebscode.langforge.app.phonology.model.SyllablePatternCategoryMapModel;
-import net.calebscode.langforge.app.phonology.model.SyllablePatternCollectionModel;
-import net.calebscode.langforge.app.phonology.model.SyllablePatternEditorModel;
 import net.calebscode.langforge.app.util.FXMLController;
-import net.calebscode.langforge.phonology.phoneme.IpaPhonemeMapper;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
-import net.calebscode.langforge.phonology.phoneme.StandardPhonemes;
 
 public class SyllableManagementController extends AnchorPane implements FXMLController {
 
-	private IpaPhonemeMapper phonemeMapper = StandardPhonemes.IPA_MAPPER;
-
-	private SyllablePatternCategoryMapModel syllablePatternCategories;
-	private SyllablePatternCollectionModel syllablePatterns;
+	private LanguagePhonologyModel phonologyModel;
 
 	@FXML private ListView<Character> categoriesList;
 	@FXML private ListView<Phoneme> phonemesList;
 	@FXML private ListView<Phoneme> inventoryList;
 
-	@FXML private ListView<StringProperty> patternsList;
+	@FXML private ListView<String> patternsList;
 
 	public SyllableManagementController(LanguagePhonologyModel phonologyModel) {
-		syllablePatternCategories = phonologyModel.getSyllablePatternCategories();
-		syllablePatterns = phonologyModel.getSyllablePatterns();
+		this.phonologyModel = phonologyModel;
 
 		load(() -> {
 			var phonologicalInventory = phonologyModel.getPhonologicalInventory();
+			var syllablePatternCategories = phonologyModel.getSyllablePatternCategories();
 
 			categoriesList.itemsProperty().bind(createObjectBinding(() -> {
 				return observableArrayList(syllablePatternCategories.categoryMapProperty().keySet());
@@ -83,10 +75,8 @@ public class SyllableManagementController extends AnchorPane implements FXMLCont
 			// any syllable categories.
 			phonologicalInventory.phonemesProperty().addListener(this::phonemesUpdated);
 
-			patternsList.setCellFactory(this::syllablePatternEditorModelCellFactory);
-			patternsList.itemsProperty().bind(syllablePatterns.patternsProperty());
-
-			//
+			patternsList.setCellFactory(this::syllablePatternListCellFactory);
+			patternsList.itemsProperty().bind(phonologyModel.syllablePatternsProperty());
 		});
 	}
 
@@ -114,7 +104,7 @@ public class SyllableManagementController extends AnchorPane implements FXMLCont
 
 		if (maybeResult.isPresent()) {
 			var category = maybeResult.get();
-			syllablePatternCategories.addCategory(category.charAt(0));
+			phonologyModel.getSyllablePatternCategories().addCategory(category.charAt(0));
 		}
 	}
 
@@ -122,7 +112,7 @@ public class SyllableManagementController extends AnchorPane implements FXMLCont
 	private void removeCategory(ActionEvent event) {
 		var category = categoriesList.getSelectionModel().getSelectedItem();
 		if (category != null) {
-			syllablePatternCategories.removeCategory(category);
+			phonologyModel.getSyllablePatternCategories().removeCategory(category);
 		}
 	}
 
@@ -132,7 +122,7 @@ public class SyllableManagementController extends AnchorPane implements FXMLCont
 		var category = categoriesList.getSelectionModel().getSelectedItem();
 
 		for (var phoneme : toAdd) {
-			syllablePatternCategories.addPhoneme(category, phoneme);
+			phonologyModel.getSyllablePatternCategories().addPhoneme(category, phoneme);
 		}
 	}
 
@@ -142,15 +132,15 @@ public class SyllableManagementController extends AnchorPane implements FXMLCont
 		var category = categoriesList.getSelectionModel().getSelectedItem();
 
 		for (var phoneme : toRemove) {
-			syllablePatternCategories.removePhoneme(category, phoneme);
+			phonologyModel.getSyllablePatternCategories().removePhoneme(category, phoneme);
 		}
 	}
 
 	@FXML
 	private void createPattern(ActionEvent event) {
-		syllablePatterns
-			.patternsProperty()
-			.add(new SimpleStringProperty(""));
+		phonologyModel
+			.getSyllablePatterns()
+			.add("");
 	}
 
 	@FXML
@@ -158,39 +148,55 @@ public class SyllableManagementController extends AnchorPane implements FXMLCont
 		var toRemove = new ArrayList<>(patternsList.getSelectionModel().getSelectedItems());
 
 		for (var pattern : toRemove) {
-			syllablePatterns.patternsProperty().remove(pattern);
+			phonologyModel.getSyllablePatterns().remove(pattern);
 		}
 
+	}
+
+	private ListCell<String> syllablePatternListCellFactory(ListView<String> list) {
+		return new TextFieldListCell<>(new DefaultStringConverter()) {
+			@Override
+			public void startEdit() {
+				super.startEdit();
+				setStyle("");
+			}
+
+			@Override
+			public void cancelEdit() {
+				super.cancelEdit();
+				updatePlaceholderText();
+			}
+
+			@Override
+			public void updateItem(String item, boolean empty) {
+				super.updateItem(item, empty);
+				updatePlaceholderText();
+			}
+
+			private void updatePlaceholderText() {
+				if (isEmpty()) {
+					return;
+				}
+
+				var item = getItem();
+				if (item == null || item.isEmpty()) {
+					setText("Enter pattern...");
+					setStyle("-fx-font-style: italic;");
+				}
+				else {
+					setText(item);
+					setStyle("");
+				}
+			}
+		};
 	}
 
 	private void phonemesUpdated(Change<? extends Phoneme> change) {
 		while (change.next()) {
 			for (var removed : change.getRemoved()) {
-				syllablePatternCategories.removePhonemeForAllCategories(removed);
+				phonologyModel.getSyllablePatternCategories().removePhonemeForAllCategories(removed);
 			}
 		}
-	}
-
-	private ListCell<StringProperty> syllablePatternEditorModelCellFactory(ListView<StringProperty> list) {
-		return new ListCell<>() {
-			{
-				setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-				prefWidthProperty().bind(list.widthProperty().subtract(2));
-			}
-			@Override
-			protected void updateItem(StringProperty item, boolean empty) {
-				super.updateItem(item, empty);
-
-				if (empty || item == null) {
-					setText(null);
-					setGraphic(null);
-				} else {
-					var editorModel = new SyllablePatternEditorModel();
-					editorModel.patternProperty().bindBidirectional(item);
-					setGraphic(new SyllablePatternEditorController(editorModel));
-				}
-			}
-		};
 	}
 
 	private ListCell<Phoneme> mappedPhonemeCellFactory(ListView<Phoneme> list) {
@@ -203,7 +209,7 @@ public class SyllableManagementController extends AnchorPane implements FXMLCont
 					setText(null);
 					setGraphic(null);
 				} else {
-					setText(item.render(phonemeMapper));
+					setText(IPA_PHONEME_SEQUENCE_RENDERER.render(item));
 				}
 			}
 		};
