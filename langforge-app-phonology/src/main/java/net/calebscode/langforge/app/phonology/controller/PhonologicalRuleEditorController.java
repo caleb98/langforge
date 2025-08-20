@@ -5,7 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import net.calebscode.langforge.app.phonology.model.PhonologicalRuleModel;
-import net.calebscode.langforge.app.util.FXMLController;
+import net.calebscode.langforge.app.ui.FXMLController;
 
 public class PhonologicalRuleEditorController extends VBox implements FXMLController {
 

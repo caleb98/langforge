@@ -9,8 +9,8 @@ import javafx.scene.layout.VBox;
 import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
 import net.calebscode.langforge.app.phonology.model.PhonologicalRuleCollectionModel;
 import net.calebscode.langforge.app.phonology.model.PhonologicalRuleModel;
+import net.calebscode.langforge.app.ui.FXMLController;
 import net.calebscode.langforge.app.ui.WrappingTableCell;
-import net.calebscode.langforge.app.util.FXMLController;
 import net.calebscode.langforge.phonology.phoneme.StandardPhonemes;
 
 public class PhonologicalRuleManagementController extends VBox implements FXMLController {

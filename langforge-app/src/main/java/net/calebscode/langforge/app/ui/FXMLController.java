@@ -1,4 +1,4 @@
-package net.calebscode.langforge.app.util;
+package net.calebscode.langforge.app.ui;
 
 import java.io.IOException;
 import java.io.PrintWriter;

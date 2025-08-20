@@ -17,7 +17,7 @@ import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.converter.DefaultStringConverter;
 import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
-import net.calebscode.langforge.app.util.FXMLController;
+import net.calebscode.langforge.app.ui.FXMLController;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 
 public class SyllableManagementController extends AnchorPane implements FXMLController {

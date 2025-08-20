@@ -17,7 +17,7 @@ import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
 import net.calebscode.langforge.app.phonology.model.PhonemeFeatureModel;
 import net.calebscode.langforge.app.phonology.model.PhonologicalInventoryModel;
 import net.calebscode.langforge.app.ui.ButtonTableCell;
-import net.calebscode.langforge.app.util.FXMLController;
+import net.calebscode.langforge.app.ui.FXMLController;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 
 public class PhonologicalInventoryController extends VBox implements FXMLController {

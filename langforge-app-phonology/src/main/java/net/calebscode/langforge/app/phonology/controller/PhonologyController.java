@@ -8,7 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
-import net.calebscode.langforge.app.util.FXMLController;
+import net.calebscode.langforge.app.ui.FXMLController;
 
 public class PhonologyController extends AnchorPane implements FXMLController {
 

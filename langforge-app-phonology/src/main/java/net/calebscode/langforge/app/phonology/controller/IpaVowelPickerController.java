@@ -18,7 +18,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
 import net.calebscode.langforge.app.phonology.factory.PhonemeButtonsCellFactory;
 import net.calebscode.langforge.app.phonology.model.PhonologicalInventoryModel;
-import net.calebscode.langforge.app.util.FXMLController;
+import net.calebscode.langforge.app.ui.FXMLController;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 import net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures;
 import net.calebscode.langforge.phonology.phoneme.StandardPhonemes;

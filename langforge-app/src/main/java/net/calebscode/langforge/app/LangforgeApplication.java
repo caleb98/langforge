@@ -2,6 +2,7 @@ package net.calebscode.langforge.app;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
@@ -20,14 +21,12 @@ public final class LangforgeApplication extends Application {
 	private PluginManager pluginManager;
 
 	private LangforgeApplicationModel appModel;
-	private LangforgeApplicationViewModel viewModel;
-	private LangforgeApplicationView ui;
+	private LangforgeApplicationController ui;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		appModel = new LangforgeApplicationModel();
-		viewModel = new LangforgeApplicationViewModel(appModel);
-		ui = new LangforgeApplicationView(viewModel);
+		ui = new LangforgeApplicationController(appModel);
 
 		pluginManager = new PluginManager(appModel);
 
@@ -38,7 +37,7 @@ public final class LangforgeApplication extends Application {
 			return;
 		}
 
-		primaryStage.setScene(ui.getScene());
+		primaryStage.setScene(new Scene(ui, 650, 480));
 		primaryStage.setTitle("Langforge");
 		primaryStage.setWidth(1280);
 		primaryStage.setHeight(720);
