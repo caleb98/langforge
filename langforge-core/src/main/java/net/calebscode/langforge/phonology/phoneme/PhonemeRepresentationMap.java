@@ -2,14 +2,18 @@ package net.calebscode.langforge.phonology.phoneme;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
+/// A [PhonemeRepresentationMapper] that associates [Phoneme]s with their [String] representations
+/// using an internal mapping between the two.
 public class PhonemeRepresentationMap implements PhonemeRepresentationMapper {
 
 	private Map<String, Phoneme> stringToPhoneme = new HashMap<>();
 	private Map<Phoneme, String> phonemeToString = new HashMap<>();
 
+	/// Adds a mapping between a [String] and a [Phoneme].
+	/// @param string the [String] value
+	/// @param phoneme the [Phoneme] value
 	public void addMapping(String string, Phoneme phoneme) {
 		// If a map contains a key, that means that key exists
 		// as a value in the other map. So, whenever we encounter
@@ -29,43 +33,44 @@ public class PhonemeRepresentationMap implements PhonemeRepresentationMapper {
 		phonemeToString.put(phoneme, string);
 	}
 
+	/// Removes the [Phoneme] mapping for the given [String].
+	/// @param string the string mapping to remove
+	/// @return the [Phoneme] that was mapped to the give [String]; `null` if there was no mapping
 	public Phoneme removeMapping(String string) {
 		phonemeToString.values().remove(string);
 		return stringToPhoneme.remove(string);
 	}
 
+	/// Removes the [String] mapping for a given [Phoneme].
+	/// @param phoneme the phoneme mapping to remove
+	/// @return the [String] that was mapped to the given [Phoneme]; `null` if there was no mapping
 	public String removeMapping(Phoneme phoneme) {
 		stringToPhoneme.values().remove(phoneme);
 		return phonemeToString.remove(phoneme);
 	}
 
+	/// {@inheritDoc}
 	@Override
 	public boolean canMap(Phoneme phoneme) {
 		return phonemeToString.containsKey(phoneme);
 	}
 
+	/// {@inheritDoc}
 	@Override
 	public boolean canMap(String string) {
 		return stringToPhoneme.containsKey(string);
 	}
 
+	/// {@inheritDoc}
 	@Override
-	public String getRepresentation(Phoneme phoneme) {
-		return phonemeToString.get(phoneme);
+	public Optional<String> getRepresentation(Phoneme phoneme) {
+		return Optional.ofNullable(phonemeToString.get(phoneme));
 	}
 
+	/// {@inheritDoc}
 	@Override
-	public Phoneme getPhoneme(String string) {
-		return stringToPhoneme.get(string);
-	}
-
-	@Override
-	public Set<Entry> entrySet() {
-		return stringToPhoneme
-			.entrySet()
-			.stream()
-			.map(entry -> new Entry(entry.getKey(), entry.getValue()))
-			.collect(Collectors.toSet());
+	public Optional<Phoneme> getPhoneme(String string) {
+		return Optional.ofNullable(stringToPhoneme.get(string));
 	}
 
 }

@@ -106,7 +106,14 @@ public class PhonologicalRuleCompiler extends Compiler<PhonologicalRule> {
 	private PhonemeLiteral phonemeLiteral(char terminalChar) {
 		String ipaString = ipa(terminalChar);
 		expect(terminalChar, "Expected closing '" + terminalChar + "' after phoneme literal.");
-		return new PhonemeLiteral(ipaMapper.getPhoneme(ipaString));
+		var maybePhoneme = ipaMapper.getPhoneme(ipaString);
+		if (maybePhoneme.isEmpty()) {
+			error("No phoneme mapping available for " + ipaString);
+			return null;
+		}
+		else {			
+			return new PhonemeLiteral(maybePhoneme.get());
+		}
 	}
 
 	private PhonemeFeatureset phonemeFeatureset() {

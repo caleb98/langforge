@@ -41,9 +41,8 @@ public class PhonemeStringBuilder {
 						"Unable to append representation string '" + ipa +
 						"' at position " + i + ". No corresponding phoneme was found.");
 				}
-
-				append(mapper.getPhoneme(longestMatch));
-
+				
+				mapper.getPhoneme(longestMatch).ifPresent(this::append);
 			}
 		}
 
