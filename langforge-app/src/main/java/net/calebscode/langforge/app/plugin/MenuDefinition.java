@@ -1,4 +1,4 @@
-package net.calebscode.langforge.app.plugin.ui;
+package net.calebscode.langforge.app.plugin;
 
 public record MenuDefinition(String name, int index) implements Comparable<MenuDefinition> {
 

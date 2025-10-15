@@ -1,4 +1,4 @@
-package net.calebscode.langforge.app.plugin;
+package net.calebscode.langforge.app;
 
 import java.util.Collections;
 import java.util.List;

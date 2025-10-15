@@ -1,5 +1,10 @@
-package net.calebscode.langforge.app.plugin;
+package net.calebscode.langforge.app;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,9 +13,7 @@ import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
 import java.util.stream.Collectors;
 
-import net.calebscode.langforge.app.LangforgeApplication;
-import net.calebscode.langforge.app.LangforgeApplicationModel;
-import net.calebscode.langforge.app.LangforgePluginContext;
+import net.calebscode.langforge.app.data.JsonDataStore;
 import net.calebscode.langforge.app.util.VersionNumber;
 
 public class PluginManager {
@@ -35,12 +38,13 @@ public class PluginManager {
 		verifyNoDuplicatePluginIds(plugins);
 
 		plugins.forEach(plugin -> {
-			pluginContexts.put(plugin, new LangforgePluginContext(plugin, appModel, apiProvider));
+			pluginContexts.put(plugin, new LangforgePluginContext(appModel, apiProvider));
 		});
 
 		var initResults = plugins.stream().collect(Collectors.partitioningBy(this::initPlugin));
 		var initializedPlugins = initResults.get(true);
 
+		loadPluginStates();
 		apiProvider.setInitialized();
 
 		var pluginDependencies = initializedPlugins.stream()
@@ -59,6 +63,71 @@ public class PluginManager {
 
 		loadOrder.forEach(this::loadPlugin);
 		pluginsLoaded = true;
+	}
+
+	public void savePluginStates() {
+		try {
+			var dataStore = new JsonDataStore();
+			var saveDir = Path.of("test");
+
+			Files.createDirectories(saveDir);
+
+			for (var pluginEntry : pluginContexts.entrySet()) {
+				var plugin = pluginEntry.getKey();
+				var context = pluginEntry.getValue();
+				var persistentModels = context.getPersistentModels();
+
+				if (persistentModels.isEmpty()) {
+					continue;
+				}
+
+				var fileName = String.format("%s.json", plugin.getId());
+				var filePath = saveDir.resolve(fileName);
+
+				if (Files.notExists(filePath) ) {
+					Files.createFile(filePath);
+				}
+
+				try (var outputStream = new FileOutputStream(filePath.toFile())) {
+					dataStore.save(persistentModels, outputStream);
+					outputStream.flush();
+				}
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public void loadPluginStates() {
+		try {
+			var dataStore = new JsonDataStore();
+			var saveDir = Path.of("test");
+
+			Files.createDirectories(saveDir);
+
+			for (var pluginEntry : pluginContexts.entrySet()) {
+				var plugin = pluginEntry.getKey();
+				var context = pluginEntry.getValue();
+				var persistentModels = context.getPersistentModels();
+
+				if (persistentModels.isEmpty()) {
+					continue;
+				}
+
+				var fileName = String.format("%s.json", plugin.getId());
+				var filePath = saveDir.resolve(fileName);
+
+				if (Files.notExists(filePath)) {
+					continue;
+				}
+
+				try (var inputStream = new FileInputStream(filePath.toFile())) {
+					dataStore.load(persistentModels, inputStream);
+				}
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	private void logPluginsWithUnsatisfiedDependencies(

@@ -1,4 +1,4 @@
-package net.calebscode.langforge.app.plugin.ui;
+package net.calebscode.langforge.app.plugin;
 
 import java.util.function.Supplier;
 

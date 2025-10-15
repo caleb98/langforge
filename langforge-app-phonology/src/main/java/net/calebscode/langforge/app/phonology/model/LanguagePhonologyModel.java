@@ -3,8 +3,10 @@ package net.calebscode.langforge.app.phonology.model;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.ObservableList;
+import net.calebscode.langforge.app.data.SaveLoadModel;
+import net.calebscode.langforge.app.data.TypeInfo;
 
-public class LanguagePhonologyModel {
+public class LanguagePhonologyModel extends SaveLoadModel {
 
 	private final PhonologicalInventoryModel phonologicalInventory;
 	private final SyllablePatternCategoryMapModel syllablePatternCategories;
@@ -22,6 +24,8 @@ public class LanguagePhonologyModel {
 		this.syllablePatternCategories = syllablePatternCategories;
 		this.phonologicalRules = phonologicalRules;
 		this.syllablePatterns = new SimpleListProperty<>(syllablePatterns);
+
+		persistList("syllablePatterns", String::new, new TypeInfo<String>(){}, this.syllablePatterns);
 	}
 
 	public PhonologicalInventoryModel getPhonologicalInventory() {

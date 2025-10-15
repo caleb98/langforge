@@ -21,8 +21,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Menu;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
-import net.calebscode.langforge.app.plugin.ui.MenuDefinition;
-import net.calebscode.langforge.app.plugin.ui.MenuItemDefinition;
+import net.calebscode.langforge.app.plugin.MenuDefinition;
+import net.calebscode.langforge.app.plugin.MenuItemDefinition;
 import net.calebscode.langforge.app.util.AggregateSet;
 
 public class LangforgeApplicationModel {
@@ -47,13 +47,13 @@ public class LangforgeApplicationModel {
 	}
 
 	public void registerPlugin(LangforgePluginContext context) {
-		menusInternal.aggregate(context.menus);
-		menuItemsInternal.aggregate(context.menuItems);
+		menusInternal.aggregate(context.menusProperty());
+		menuItemsInternal.aggregate(context.menuItemsProperty());
 	}
 
 	public void unregisterPlugin(LangforgePluginContext context) {
-		menusInternal.remove(context.menus);
-		menuItemsInternal.remove(context.menuItems);
+		menusInternal.remove(context.menusProperty());
+		menuItemsInternal.remove(context.menuItemsProperty());
 	}
 
 	private final class MenuListBinding extends ListBinding<Menu> {

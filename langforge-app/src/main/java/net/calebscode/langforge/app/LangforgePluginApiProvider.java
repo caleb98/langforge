@@ -1,9 +1,9 @@
-package net.calebscode.langforge.app.plugin;
+package net.calebscode.langforge.app;
 
 import java.util.HashMap;
 import java.util.Optional;
 
-public class LangforgePluginApiProvider {
+class LangforgePluginApiProvider {
 
 	private HashMap<Class<?>, Object> apis = new HashMap<>();
 	private boolean isInitialized = false;
@@ -12,7 +12,7 @@ public class LangforgePluginApiProvider {
 		isInitialized = true;
 	}
 
-	public <T> boolean registerApi(T api) {
+	<T> boolean registerApi(T api) {
 		var apiClass = api.getClass();
 
 		if (apis.containsKey(apiClass)) {
@@ -26,7 +26,7 @@ public class LangforgePluginApiProvider {
 		return true;
 	}
 
-	public <T> Optional<T> getApi(Class<T> apiClass) {
+	<T> Optional<T> getApi(Class<T> apiClass) {
 		if (!isInitialized) {
 			return Optional.empty();
 		}

@@ -1,8 +1,7 @@
-package net.calebscode.langforge.app.plugin;
+package net.calebscode.langforge.app;
 
 import java.util.Map;
 
-import net.calebscode.langforge.app.LangforgePluginContext;
 import net.calebscode.langforge.app.util.VersionNumber;
 
 public interface LangforgePlugin {

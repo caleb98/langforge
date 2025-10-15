@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     implementation project(':langforge-core')
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.19.0'
 }
 
 application {

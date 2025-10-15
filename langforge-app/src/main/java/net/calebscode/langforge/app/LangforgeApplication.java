@@ -6,8 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
-import net.calebscode.langforge.app.plugin.DuplicatePluginIdException;
-import net.calebscode.langforge.app.plugin.PluginManager;
+import javafx.stage.WindowEvent;
 import net.calebscode.langforge.app.util.VersionNumber;
 
 public final class LangforgeApplication extends Application {
@@ -37,6 +36,8 @@ public final class LangforgeApplication extends Application {
 			return;
 		}
 
+		primaryStage.setOnCloseRequest(this::onApplicationClose);
+
 		primaryStage.setScene(new Scene(ui, 650, 480));
 		primaryStage.setTitle("Langforge");
 		primaryStage.setWidth(1280);
@@ -47,6 +48,10 @@ public final class LangforgeApplication extends Application {
 		// Force the window to open in front of other windows at launch.
 		primaryStage.setAlwaysOnTop(true);
 		primaryStage.setAlwaysOnTop(false);
+	}
+
+	private void onApplicationClose(WindowEvent event) {
+		pluginManager.savePluginStates();
 	}
 
 	private void displayDuplicatePluginIdAlert(DuplicatePluginIdException duplicate) {

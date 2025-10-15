@@ -1,4 +1,4 @@
-package net.calebscode.langforge.app.plugin;
+package net.calebscode.langforge.app;
 
 public class LangforgePluginException extends Exception {
 

@@ -5,11 +5,11 @@ import java.util.Map;
 import javafx.application.Platform;
 import javafx.scene.control.MenuItem;
 import net.calebscode.langforge.app.LangforgeApplication;
+import net.calebscode.langforge.app.LangforgePlugin;
 import net.calebscode.langforge.app.LangforgePluginContext;
-import net.calebscode.langforge.app.plugin.LangforgePlugin;
-import net.calebscode.langforge.app.plugin.LangforgePluginException;
-import net.calebscode.langforge.app.plugin.ui.MenuDefinition;
-import net.calebscode.langforge.app.plugin.ui.MenuItemDefinition;
+import net.calebscode.langforge.app.LangforgePluginException;
+import net.calebscode.langforge.app.plugin.MenuDefinition;
+import net.calebscode.langforge.app.plugin.MenuItemDefinition;
 import net.calebscode.langforge.app.util.VersionNumber;
 
 public class LangforgeCorePlugin implements LangforgePlugin {
