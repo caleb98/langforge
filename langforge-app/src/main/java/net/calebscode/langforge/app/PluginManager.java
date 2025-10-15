@@ -13,11 +13,19 @@ import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.calebscode.langforge.app.data.JsonDataStore;
+import net.calebscode.langforge.app.LangforgeApplication;
+import net.calebscode.langforge.app.LangforgeApplicationModel;
+import net.calebscode.langforge.app.LangforgePluginContext;
 import net.calebscode.langforge.app.util.VersionNumber;
 
-public class PluginManager {
+public final class PluginManager {
 
+	private final static Logger logger = LoggerFactory.getLogger(PluginManager.class);
+	
 	private Map<LangforgePlugin, LangforgePluginContext> pluginContexts = new HashMap<>();
 	private boolean pluginsLoaded = false;
 	private LangforgeApplicationModel appModel;
@@ -134,28 +142,34 @@ public class PluginManager {
 		Map<LangforgePlugin, HashMap<String, VersionNumber>> pluginDependencies
 	) {
 		if (!pluginDependencies.isEmpty()) {
-			System.out.println("WARNING: The following plugins have dependencies that are not present"
-					+ " or which failed to initialize. They will not be loaded.");
+			var errorMessage = new StringBuilder();
+			errorMessage.append(
+				"The following plugins have dependencies that are not present"
+				+ " or which failed to initialize. They will not be loaded.\n"
+			);
+			
 			for (var entry : pluginDependencies.entrySet()) {
 				var plugin = entry.getKey();
 				var deps = entry.getValue();
 
-				System.out.printf(
+				errorMessage.append(String.format(
 					"\t%s (%s) [%s] missing:%n",
 					plugin.getName(),
 					plugin.getVersion(),
 					plugin.getId()
-				);
+				));
 
 				for (var dep : deps.entrySet()) {
-					System.out.printf(
+					errorMessage.append(String.format(
 						"\t\t> %s with minimum version %s%n",
 						dep.getKey(),
 						dep.getValue()
-					);
+					));
 				}
 			}
-		}
+			
+			logger.warn(errorMessage.toString());
+		} 
 	}
 
 	private ArrayList<LangforgePlugin> computeLoadOrder(
@@ -241,8 +255,8 @@ public class PluginManager {
 			plugin.load(context);
 			appModel.registerPlugin(context);
 
-			System.out.printf(
-				"Loaded plugin: %s %s (%s) - %s%n",
+			logger.info(
+				"Loaded plugin: {} {} ({}) - {}",
 				plugin.getName(),
 				plugin.getVersion(),
 				plugin.getId(),
@@ -250,8 +264,8 @@ public class PluginManager {
 			);
 		}
 		catch (LangforgePluginException ex) {
-			System.err.printf(
-				"Unable to load plugin '%s' (%s): %s\n",
+			logger.error(
+				"Unable to load plugin '{}' ({}): {}\n",
 				plugin.getName(),
 				plugin.getId(),
 				ex.getMessage());

@@ -2,192 +2,373 @@ package net.calebscode.langforge.phonology.phoneme;
 
 import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.*;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class StandardPhonemes {
 
-	// Vowels
+	/*
+	 * Vowels
+	 */
+	
+	/// A phoneme for IPA "i"
 	public static final Phoneme CLOSE_FRONT_UNROUNDED_VOWEL;
+
+	/// A phoneme for IPA "y"
 	public static final Phoneme CLOSE_FRONT_ROUNDED_VOWEL;
 
+	/// A phoneme for IPA "ɨ"
 	public static final Phoneme CLOSE_CENTRAL_UNROUNDED_VOWEL;
+
+	/// A phoneme for IPA "ʉ"
 	public static final Phoneme CLOSE_CENTRAL_ROUNDED_VOWEL;
 
+	/// A phoneme for IPA "ɯ"
 	public static final Phoneme CLOSE_BRACK_UNROUNDED_VOWEL;
+
+	/// A phoneme for IPA "u"
 	public static final Phoneme CLOSE_BRACK_ROUNDED_VOWEL;
 
-
+	/// A phoneme for IPA "ɪ"
 	public static final Phoneme NEAR_CLOSE_FRONT_UNROUNDED_VOWEL;
+
+	/// A phoneme for IPA "ʏ"
 	public static final Phoneme NEAR_CLOSE_FRONT_ROUNDED_VOWEL;
 
+	/// A phoneme for IPA "ʊ"
 	public static final Phoneme NEAR_CLOSE_BRACK_ROUNDED_VOWEL;
 
-
+	/// A phoneme for IPA "e"
 	public static final Phoneme CLOSE_MID_FRONT_UNROUNDED_VOWEL;
+
+	/// A phoneme for IPA "ø"
 	public static final Phoneme CLOSE_MID_FRONT_ROUNDED_VOWEL;
 
+	/// A phoneme for IPA "ɘ"
 	public static final Phoneme CLOSE_MID_CENTRAL_UNROUNDED_VOWEL;
+
+	/// A phoneme for IPA "ɵ"
 	public static final Phoneme CLOSE_MID_CENTRAL_ROUNDED_VOWEL;
 
+	/// A phoneme for IPA "ɤ"
 	public static final Phoneme CLOSE_MID_BRACK_UNROUNDED_VOWEL;
+
+	/// A phoneme for IPA "o"
 	public static final Phoneme CLOSE_MID_BRACK_ROUNDED_VOWEL;
 
-
+	/// A phoneme for IPA "e̞"
 	public static final Phoneme MID_FRONT_UNROUNDED_VOWEL;
+
+	/// A phoneme for IPA "ø̞"
 	public static final Phoneme MID_FRONT_ROUNDED_VOWEL;
 
+	/// A phoneme for IPA "ə"
 	public static final Phoneme MID_CENTRAL_VOWEL;
 
+	/// A phoneme for IPA "ɤ̞"
 	public static final Phoneme MID_BRACK_UNROUNDED_VOWEL;
+
+	/// A phoneme for IPA "o̞"
 	public static final Phoneme MID_BRACK_ROUNDED_VOWEL;
 
-
+	/// A phoneme for IPA "ɛ"
 	public static final Phoneme OPEN_MID_FRONT_UNROUNDED_VOWEL;
+
+	/// A phoneme for IPA "œ"
 	public static final Phoneme OPEN_MID_FRONT_ROUNDED_VOWEL;
 
+	/// A phoneme for IPA "ɜ"
 	public static final Phoneme OPEN_MID_CENTRAL_UNROUNDED_VOWEL;
+
+	/// A phoneme for IPA "ɞ"
 	public static final Phoneme OPEN_MID_CENTRAL_ROUNDED_VOWEL;
 
+	/// A phoneme for IPA "ʌ"
 	public static final Phoneme OPEN_MID_BRACK_UNROUNDED_VOWEL;
+
+	/// A phoneme for IPA "ɔ"
 	public static final Phoneme OPEN_MID_BRACK_ROUNDED_VOWEL;
 
-
+	/// A phoneme for IPA "æ"
 	public static final Phoneme NEAR_OPEN_FRONT_UNROUNDED_VOWEL;
+
+	/// A phoneme for IPA "ɐ"
 	public static final Phoneme NEAR_OPEN_CENTRAL_VOWEL;
 
-
+	/// A phoneme for IPA "a"
 	public static final Phoneme OPEN_FRONT_UNROUNDED_VOWEL;
+
+	/// A phoneme for IPA "ɶ"
 	public static final Phoneme OPEN_FRONT_ROUNDED_VOWEL;
 
+	/// A phoneme for IPA "ä"
 	public static final Phoneme OPEN_CENTRAL_UNROUNDED_VOWEL;
 
+	/// A phoneme for IPA "ɑ"
 	public static final Phoneme OPEN_BRACK_UNROUNDED_VOWEL;
+
+	/// A phoneme for IPA "ɒ"
 	public static final Phoneme OPEN_BRACK_ROUNDED_VOWEL;
 
-
-	// Plosives
+	/*
+	 * Plosives
+	 */
+	
+	/// A phoneme for IPA "p"
 	public static final Phoneme VOICELESS_BILABIAL_PLOSIVE;
+
+	/// A phoneme for IPA "b"
 	public static final Phoneme VOICED_BILABIAL_PLOSIVE;
 
+	/// A phoneme for IPA "t̪"
 	public static final Phoneme VOICELESS_DENTAL_PLOSIVE;
+
+	/// A phoneme for IPA "d̪"
 	public static final Phoneme VOICED_DENTAL_PLOSIVE;
 
+	/// A phoneme for IPA "t"
 	public static final Phoneme VOICELESS_ALVEOLAR_PLOSIVE;
+
+	/// A phoneme for IPA "d"
 	public static final Phoneme VOICED_ALVEOLAR_PLOSIVE;
 
+	/// A phoneme for IPA "ʈ"
 	public static final Phoneme VOICELESS_RETROFLEX_PLOSIVE;
+
+	/// A phoneme for IPA "ɖ"
 	public static final Phoneme VOICED_RETROFLEX_PLOSIVE;
 
+	/// A phoneme for IPA "c"
 	public static final Phoneme VOICELESS_PALATAL_PLOSIVE;
+
+	/// A phoneme for IPA "ɟ"
 	public static final Phoneme VOICED_PALATAL_PLOSIVE;
 
+	/// A phoneme for IPA "k"
 	public static final Phoneme VOICELESS_VELAR_PLOSIVE;
+
+	/// A phoneme for IPA "g"
 	public static final Phoneme VOICED_VELAR_PLOSIVE;
 
+	/// A phoneme for IPA "q"
 	public static final Phoneme VOICELESS_UVULAR_PLOSIVE;
+
+	/// A phoneme for IPA "ɢ"
 	public static final Phoneme VOICED_UVULAR_PLOSIVE;
 
+	/// A phoneme for IPA "ʔ"
 	public static final Phoneme VOICELESS_GLOTTAL_PLOSIVE;
 
-
-	// Nasals
+	/*
+	 * Nasals
+	 */
+	
+	/// A phoneme for IPA "m"
 	public static final Phoneme VOICED_BILABIAL_NASAL;
+
+	/// A phoneme for IPA "ɱ"
 	public static final Phoneme VOICED_LABIODENTAL_NASAL;
+
+	/// A phoneme for IPA "n"
 	public static final Phoneme VOICED_ALVEOLAR_NASAL;
+
+	/// A phoneme for IPA "ɳ"
 	public static final Phoneme VOICED_RETROFLEX_NASAL;
+
+	/// A phoneme for IPA "ɲ"
 	public static final Phoneme VOICED_PALATAL_NASAL;
+
+	/// A phoneme for IPA "ŋ"
 	public static final Phoneme VOICED_VELAR_NASAL;
+
+	/// A phoneme for IPA "ɴ"
 	public static final Phoneme VOICED_UVULAR_NASAL;
 
-
-	// Trills
+	/*
+	 * Trills
+	 */
+	
+	/// A phoneme for IPA "ʙ"
 	public static final Phoneme VOICED_BILABIAL_TRILL;
+
+	/// A phoneme for IPA "r"
 	public static final Phoneme VOICED_ALVEOLAR_TRILL;
+
+	/// A phoneme for IPA "ʀ"
 	public static final Phoneme VOICED_UVULAR_TRILL;
 
-
-	// Flaps
+	/*
+	 * Flaps
+	 */
+	
+	/// A phoneme for IPA "ⱱ"
 	public static final Phoneme VOICED_LABIODENTAL_FLAP;
+
+	/// A phoneme for IPA "ɾ"
 	public static final Phoneme VOICED_ALVEOLAR_FLAP;
+
+	/// A phoneme for IPA "ɽ"
 	public static final Phoneme VOICED_RETROFLEX_FLAP;
 
-
-	// Fricatives
+	/*
+	 * Fricatives
+	 */
+	
+	/// A phoneme for IPA "ɸ"
 	public static final Phoneme VOICELESS_BILABIAL_FRICATIVE;
+
+	/// A phoneme for IPA "β"
 	public static final Phoneme VOICED_BILABIAL_FRICATIVE;
 
+	/// A phoneme for IPA "f"
 	public static final Phoneme VOICELESS_LABIODENTAL_FRICATIVE;
+
+	/// A phoneme for IPA "v"
 	public static final Phoneme VOICED_LABIODENTAL_FRICATIVE;
 
+	/// A phoneme for IPA "θ"
 	public static final Phoneme VOICELESS_DENTAL_FRICATIVE;
+
+	/// A phoneme for IPA "ð"
 	public static final Phoneme VOICED_DENTAL_FRICATIVE;
 
+	/// A phoneme for IPA "s"
 	public static final Phoneme VOICELESS_ALVEOLAR_FRICATIVE;
+
+	/// A phoneme for IPA "z"
 	public static final Phoneme VOICED_ALVEOLAR_FRICATIVE;
 
+	/// A phoneme for IPA "ʃ"
 	public static final Phoneme VOICELESS_POST_ALVEOLAR_FRICATIVE;
+
+	/// A phoneme for IPA "ʒ"
 	public static final Phoneme VOICED_POST_ALVEOLAR_FRICATIVE;
 
+	/// A phoneme for IPA "ʂ"
 	public static final Phoneme VOICELESS_RETROFLEX_FRICATIVE;
+
+	/// A phoneme for IPA "ʐ"
 	public static final Phoneme VOICED_RETROFLEX_FRICATIVE;
 
+	/// A phoneme for IPA "ç"
 	public static final Phoneme VOICELESS_PALATAL_FRICATIVE;
+
+	/// A phoneme for IPA "ʝ"
 	public static final Phoneme VOICED_PALATAL_FRICATIVE;
 
+	/// A phoneme for IPA "x"
 	public static final Phoneme VOICELESS_VELAR_FRICATIVE;
+
+	/// A phoneme for IPA "ɣ"
 	public static final Phoneme VOICED_VELAR_FRICATIVE;
 
+	/// A phoneme for IPA "χ"
 	public static final Phoneme VOICELESS_UVULAR_FRICATIVE;
+
+	/// A phoneme for IPA "ʁ"
 	public static final Phoneme VOICED_UVULAR_FRICATIVE;
 
+	/// A phoneme for IPA "ħ"
 	public static final Phoneme VOICELESS_PHARYNGEAL_FRICATIVE;
+
+	/// A phoneme for IPA "ʕ"
 	public static final Phoneme VOICED_PHARYNGEAL_FRICATIVE;
 
+	/// A phoneme for IPA "h"
 	public static final Phoneme VOICELESS_GLOTTAL_FRICATIVE;
+
+	/// A phoneme for IPA "ɦ"
 	public static final Phoneme VOICED_GLOTTAL_FRICATIVE;
 
-
-	// Lateral Fricatives
+	/*
+	 * Lateral Fricatives
+	 */
+	
+	/// A phoneme for IPA "ɬ"
 	public static final Phoneme VOICELESS_ALVEOLAR_LATERAL_FRICATIVE;
+
+	/// A phoneme for IPA "ɮ"
 	public static final Phoneme VOICED_ALVEOLAR_LATERAL_FRICATIVE;
 
-
-	// Approximates
+	/*
+	 * Approximates
+	 */
+	
+	/// A phoneme for IPA "ʋ"
 	public static final Phoneme VOICED_LABIODENTAL_APPROXIMATE;
+
+	/// A phoneme for IPA "ɹ"
 	public static final Phoneme VOICED_ALVEOLAR_APPROXIMATE;
+
+	/// A phoneme for IPA "ɻ"
 	public static final Phoneme VOICED_RETROFLEX_APPROXIMATE;
+
+	/// A phoneme for IPA "j"
 	public static final Phoneme VOICED_PALATAL_APPROXIMATE;
+
+	/// A phoneme for IPA "ɰ"
 	public static final Phoneme VOICED_VELAR_APPROXIMATE;
+
+	/// A phoneme for IPA "w"
 	public static final Phoneme VOICED_LABIOVELAR_APPROXIXIMATE;
 
-
-	// Lateral Approximates
+	/*
+	 * Lateral Approximates
+	 */
+	
+	/// A phoneme for IPA "l"
 	public static final Phoneme VOICED_ALVEOLAR_LATERAL_APPROXIMATE;
+
+	/// A phoneme for IPA "ɭ"
 	public static final Phoneme VOICED_RETROFLEX_LATERAL_APPROXIMATE;
+
+	/// A phoneme for IPA "ʎ"
 	public static final Phoneme VOICED_PALATAL_LATERAL_APPROXIMATE;
+
+	/// A phoneme for IPA "ʟ"
 	public static final Phoneme VOICED_VELAR_LATERAL_APPROXIMATE;
 
-
-	// Affricates
+	/*
+	 * Affricates
+	 */
+	
+	/// A phoneme for IPA "t͡s"
 	public static final Phoneme VOICELESS_ALVEOLAR_AFFRICATE;
+
+	/// A phoneme for IPA "d͡z"
 	public static final Phoneme VOICED_ALVEOLAR_AFFRICATE;
 
+	/// A phoneme for IPA "t͡ʃ"
 	public static final Phoneme VOICELESS_PALATO_ALVEOLAR_AFFRICATE;
+
+	/// A phoneme for IPA "d͡ʒ"
 	public static final Phoneme VOICED_PALATO_ALVEOLAR_AFFRICATE;
 
+	/// A phoneme for IPA "t͡ɕ"
 	public static final Phoneme VOICELESS_ALVEOLO_PALATAL_AFFRICATE;
+
+	/// A phoneme for IPA "d͡ʑ"
 	public static final Phoneme VOICED_ALVEOLO_PALATAL_AFFRICATE;
 
+	/// A phoneme for IPA "ʈ͡ʂ"
 	public static final Phoneme VOICELESS_RETROFLEX_AFFRICATE;
+
+	/// A phoneme for IPA "ɖ͡ʐ"
 	public static final Phoneme VOICED_RETROFLEX_AFFRICATE;
 
+	/*
+	 * Utility Constants
+	 */
 
-	// Standard Phoneme Map
+	/// A [PhonemeRepresentationMapper] that is backed by the standard IPA phoneme representations.
 	public static final PhonemeRepresentationMapper IPA_PHONEME_REPRESENTATION_MAPPER;
+	
+	/// A [PhonemeSequenceRenderer] backed by [StandardPhonemes#IPA_PHONEME_REPRESENTATION_MAPPER].
 	public static final PhonemeSequenceRenderer IPA_PHONEME_SEQUENCE_RENDERER;
-	public static final List<Phoneme> IPA_PHONEMES;
+	
+	/// A set of all [Phoneme] constants defined in this class.
+	public static final Set<Phoneme> IPA_PHONEMES;
 
 	static {
 		CLOSE_FRONT_UNROUNDED_VOWEL = new PhonemeBuilder()
@@ -1034,17 +1215,11 @@ public class StandardPhonemes {
 		ipaPhonemeRepresentationMapper.addMapping("ʈ͡ʂ", VOICELESS_RETROFLEX_AFFRICATE);
 		ipaPhonemeRepresentationMapper.addMapping("ɖ͡ʐ", VOICED_RETROFLEX_AFFRICATE);
 
-		// Ensure that the IPA_PHONEME_REPRESENTATION_MAPPER is readonly by wrapping
-		// it in a collection. This prevents client code from casting it to a basic
-		// PhonemeRepresentationMap and calling methods to modify the mappings.
-		var wrapper = new PhonemeRepresentationCollection();
-		wrapper.addPhonemeMap(ipaPhonemeRepresentationMapper);
-		IPA_PHONEME_REPRESENTATION_MAPPER = wrapper;
-
+		IPA_PHONEME_REPRESENTATION_MAPPER = ipaPhonemeRepresentationMapper;
 		IPA_PHONEME_SEQUENCE_RENDERER = new PhonemeSequenceRenderer(IPA_PHONEME_REPRESENTATION_MAPPER);
 
 		// Create the list of all IPA phonemes
-		var ipaPhonemesList = new ArrayList<Phoneme>();
+		var ipaPhonemesList = new HashSet<Phoneme>();
 
 		ipaPhonemesList.add(CLOSE_FRONT_UNROUNDED_VOWEL);
 		ipaPhonemesList.add(CLOSE_FRONT_ROUNDED_VOWEL);
@@ -1150,7 +1325,7 @@ public class StandardPhonemes {
 		ipaPhonemesList.add(VOICELESS_RETROFLEX_AFFRICATE);
 		ipaPhonemesList.add(VOICED_RETROFLEX_AFFRICATE);
 
-		IPA_PHONEMES = Collections.unmodifiableList(ipaPhonemesList);
+		IPA_PHONEMES = Collections.unmodifiableSet(ipaPhonemesList);
 	}
 
 }

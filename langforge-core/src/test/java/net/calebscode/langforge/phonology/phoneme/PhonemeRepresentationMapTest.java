@@ -25,22 +25,22 @@ public class PhonemeRepresentationMapTest {
 		phonemeMap.addMapping("a", testPhoneme1);
 		phonemeMap.addMapping("b", testPhoneme2);
 
-		assertEquals("a", phonemeMap.getRepresentation(testPhoneme1));
-		assertEquals("b", phonemeMap.getRepresentation(testPhoneme2));
+		assertEquals("a", phonemeMap.getRepresentation(testPhoneme1).get());
+		assertEquals("b", phonemeMap.getRepresentation(testPhoneme2).get());
 
-		assertEquals(testPhoneme1, phonemeMap.getPhoneme("a"));
-		assertEquals(testPhoneme2, phonemeMap.getPhoneme("b"));
+		assertEquals(testPhoneme1, phonemeMap.getPhoneme("a").get());
+		assertEquals(testPhoneme2, phonemeMap.getPhoneme("b").get());
 
 		phonemeMap.addMapping("b", testPhoneme1);
 
-		assertEquals("b", phonemeMap.getRepresentation(testPhoneme1));
-		assertEquals(testPhoneme1, phonemeMap.getPhoneme("b"));
+		assertEquals("b", phonemeMap.getRepresentation(testPhoneme1).get());
+		assertEquals(testPhoneme1, phonemeMap.getPhoneme("b").get());
 
 		assertFalse(phonemeMap.canMap(testPhoneme2));
 		assertFalse(phonemeMap.canMap("a"));
 
-		assertNull(phonemeMap.getRepresentation(testPhoneme2));
-		assertNull(phonemeMap.getPhoneme("a"));
+		assertTrue(phonemeMap.getRepresentation(testPhoneme2).isEmpty());
+		assertTrue(phonemeMap.getPhoneme("a").isEmpty());
 	}
 
 	@Test
@@ -48,27 +48,27 @@ public class PhonemeRepresentationMapTest {
 		phonemeMap.addMapping("a", testPhoneme1);
 		phonemeMap.addMapping("b", testPhoneme2);
 
-		assertEquals("a", phonemeMap.getRepresentation(testPhoneme1));
-		assertEquals("b", phonemeMap.getRepresentation(testPhoneme2));
+		assertEquals("a", phonemeMap.getRepresentation(testPhoneme1).get());
+		assertEquals("b", phonemeMap.getRepresentation(testPhoneme2).get());
 
-		assertEquals(testPhoneme1, phonemeMap.getPhoneme("a"));
-		assertEquals(testPhoneme2, phonemeMap.getPhoneme("b"));
+		assertEquals(testPhoneme1, phonemeMap.getPhoneme("a").get());
+		assertEquals(testPhoneme2, phonemeMap.getPhoneme("b").get());
 
 		phonemeMap.removeMapping(testPhoneme1);
 
 		assertFalse(phonemeMap.canMap(testPhoneme1));
 		assertFalse(phonemeMap.canMap("a"));
 
-		assertNull(phonemeMap.getRepresentation(testPhoneme1));
-		assertNull(phonemeMap.getPhoneme("a"));
+		assertTrue(phonemeMap.getRepresentation(testPhoneme1).isEmpty());
+		assertTrue(phonemeMap.getPhoneme("a").isEmpty());
 
 		phonemeMap.removeMapping("b");
 
 		assertFalse(phonemeMap.canMap(testPhoneme2));
 		assertFalse(phonemeMap.canMap("b"));
 
-		assertNull(phonemeMap.getRepresentation(testPhoneme2));
-		assertNull(phonemeMap.getPhoneme("b"));
+		assertTrue(phonemeMap.getRepresentation(testPhoneme2).isEmpty());
+		assertTrue(phonemeMap.getPhoneme("b").isEmpty());
 	}
 
 	@Test
@@ -88,35 +88,27 @@ public class PhonemeRepresentationMapTest {
 	void getIpa() {
 		phonemeMap.addMapping("a", testPhoneme1);
 
-		assertEquals("a", phonemeMap.getRepresentation(testPhoneme1));
-		assertEquals("a", phonemeMap.getRepresentation(new Phoneme(Map.of("foo", "bar"))));
+		assertEquals("a", phonemeMap.getRepresentation(testPhoneme1).get());
+		assertEquals("a", phonemeMap.getRepresentation(new Phoneme(Map.of("foo", "bar"))).get());
 
-		assertNull(phonemeMap.getRepresentation(testPhoneme2));
-		assertNull(phonemeMap.getRepresentation(new Phoneme(Map.of("zig", "zag"))));
+		assertTrue(phonemeMap.getRepresentation(testPhoneme2).isEmpty());
+		assertTrue(phonemeMap.getRepresentation(new Phoneme(Map.of("zig", "zag"))).isEmpty());
 	}
 
 	@Test
 	void getPhoneme() {
 		phonemeMap.addMapping("a", testPhoneme1);
 
-		assertEquals(testPhoneme1, phonemeMap.getPhoneme("a"));
-		assertNull(phonemeMap.getPhoneme("b"));
-	}
-
-	@Test
-	void entrySet() {
-		phonemeMap.addMapping("a", testPhoneme1);
-
-		assertEquals(Set.of(new PhonemeRepresentationMapper.Entry("a", testPhoneme1)), phonemeMap.entrySet());
-		assertEquals(Set.of(new PhonemeRepresentationMapper.Entry("a", new Phoneme(Map.of("foo", "bar")))), phonemeMap.entrySet());
+		assertEquals(testPhoneme1, phonemeMap.getPhoneme("a").get());
+		assertTrue(phonemeMap.getPhoneme("b").isEmpty());
 	}
 
 	@Test
 	void validateInvariant() {
 		phonemeMap.addMapping("a", testPhoneme1);
 
-		assertEquals("a", phonemeMap.getRepresentation(phonemeMap.getPhoneme("a")));
-		assertEquals(testPhoneme1, phonemeMap.getPhoneme(phonemeMap.getRepresentation(testPhoneme1)));
+		assertEquals("a", phonemeMap.getRepresentation(phonemeMap.getPhoneme("a").get()).get());
+		assertEquals(testPhoneme1, phonemeMap.getPhoneme(phonemeMap.getRepresentation(testPhoneme1).get()).get());
 	}
 
 }
