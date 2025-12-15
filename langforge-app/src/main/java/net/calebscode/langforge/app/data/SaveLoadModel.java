@@ -10,8 +10,22 @@ import java.util.function.Supplier;
 
 import net.calebscode.langforge.app.data.SaveLoadValue.SaveLoadList;
 import net.calebscode.langforge.app.data.SaveLoadValue.SaveLoadObject;
+import net.calebscode.langforge.app.functional.ByteConsumer;
+import net.calebscode.langforge.app.functional.ByteSupplier;
+import net.calebscode.langforge.app.functional.CharacterConsumer;
+import net.calebscode.langforge.app.functional.CharacterSupplier;
+import net.calebscode.langforge.app.functional.DoubleConsumer;
+import net.calebscode.langforge.app.functional.DoubleSupplier;
+import net.calebscode.langforge.app.functional.FloatConsumer;
+import net.calebscode.langforge.app.functional.FloatSupplier;
 import net.calebscode.langforge.app.functional.IntegerConsumer;
 import net.calebscode.langforge.app.functional.IntegerSupplier;
+import net.calebscode.langforge.app.functional.LongConsumer;
+import net.calebscode.langforge.app.functional.LongSupplier;
+import net.calebscode.langforge.app.functional.SaveLoadModelConsumer;
+import net.calebscode.langforge.app.functional.SaveLoadModelSupplier;
+import net.calebscode.langforge.app.functional.ShortConsumer;
+import net.calebscode.langforge.app.functional.ShortSupplier;
 import net.calebscode.langforge.app.functional.StringConsumer;
 import net.calebscode.langforge.app.functional.StringSupplier;
 
@@ -39,8 +53,36 @@ public class SaveLoadModel {
 		persist(valueName, new SaveLoadObject<String>(String.class, getter, setter));
 	}
 	
+	protected void persist(String valueName, CharacterSupplier getter, CharacterConsumer setter) {
+		persist(valueName, new SaveLoadObject<Character>(Character.class, getter, setter));
+	}
+	
+	protected void persist(String valueName, ByteSupplier getter, ByteConsumer setter) {
+		persist(valueName, new SaveLoadObject<Byte>(Byte.class, getter, setter));
+	}
+	
+	protected void persist(String valueName, ShortSupplier getter, ShortConsumer setter) {
+		persist(valueName, new SaveLoadObject<Short>(Short.class, getter, setter));
+	}
+	
 	protected void persist(String valueName, IntegerSupplier getter, IntegerConsumer setter) {
 		persist(valueName, new SaveLoadObject<Integer>(Integer.class, getter, setter));
+	}
+	
+	protected void persist(String valueName, LongSupplier getter, LongConsumer setter) {
+		persist(valueName, new SaveLoadObject<Long>(Long.class, getter, setter));
+	}
+	
+	protected void persist(String valueName, FloatSupplier getter, FloatConsumer setter) {
+		persist(valueName, new SaveLoadObject<Float>(Float.class, getter, setter));
+	}
+	
+	protected void persist(String valueName, DoubleSupplier getter, DoubleConsumer setter) {
+		persist(valueName, new SaveLoadObject<Double>(Double.class, getter, setter));
+	}
+	
+	protected void persist(String valueName, SaveLoadModelSupplier getter, SaveLoadModelConsumer setter) {
+		persist(valueName, new SaveLoadObject<SaveLoadModel>(SaveLoadModel.class, getter, setter));
 	}
 
 	protected <T> void persistList(String valueName, RuntimeType<T> type, Supplier<List<T>> getter, Consumer<List<T>> setter) {

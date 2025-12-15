@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -65,6 +66,120 @@ public class JsonDataStoreTest {
 	}
 	
 	@Test
+	void saveCharacter() throws Exception {
+		testModel.addCharacter("value", 'a');
+		var output = new ByteArrayOutputStream();
+		
+		store.save(output, Map.of("model", testModel));
+		var json = output.toString(StandardCharsets.UTF_8);
+
+		var expected =
+			"""
+			{
+				"model": {
+					"value": "a"
+				}
+			}
+			""";
+
+		assertEquals(expected, json);
+	}
+	
+	@Test
+	void loadCharacter() throws Exception {
+		testModel.addCharacter("value");
+		var source =
+			"""
+			{
+				"model": {
+					"value": "b"
+				}
+			}
+			""";
+		
+		var input = new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
+		store.load(input, Map.of("model", testModel));
+
+		assertEquals('b', testModel.<Character>get("value"));
+	}
+	
+	@Test
+	void saveByte() throws Exception {
+		testModel.addByte("value", (byte) 5);
+		var output = new ByteArrayOutputStream();
+		
+		store.save(output, Map.of("model", testModel));
+		var json = output.toString(StandardCharsets.UTF_8);
+
+		var expected =
+			"""
+			{
+				"model": {
+					"value": 5
+				}
+			}
+			""";
+
+		assertEquals(expected, json);
+	}
+	
+	@Test
+	void loadByte() throws Exception {
+		testModel.addByte("value");
+		var source =
+			"""
+			{
+				"model": {
+					"value": 10
+				}
+			}
+			""";
+		
+		var input = new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
+		store.load(input, Map.of("model", testModel));
+
+		assertEquals((byte) 10, testModel.<Byte>get("value"));
+	}
+	
+	@Test
+	void saveShort() throws Exception {
+		testModel.addShort("value", (short) 12);
+		var output = new ByteArrayOutputStream();
+		
+		store.save(output, Map.of("model", testModel));
+		var json = output.toString(StandardCharsets.UTF_8);
+
+		var expected =
+			"""
+			{
+				"model": {
+					"value": 12
+				}
+			}
+			""";
+
+		assertEquals(expected, json);
+	}
+	
+	@Test
+	void loadShort() throws Exception {
+		testModel.addShort("value");
+		var source =
+			"""
+			{
+				"model": {
+					"value": 78
+				}
+			}
+			""";
+		
+		var input = new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
+		store.load(input, Map.of("model", testModel));
+
+		assertEquals((short) 78, testModel.<Short>get("value"));
+	}
+	
+	@Test
 	void saveInteger() throws Exception {
 		testModel.addInteger("value", 42);
 		var output = new ByteArrayOutputStream();
@@ -100,6 +215,173 @@ public class JsonDataStoreTest {
 		store.load(input, Map.of("model", testModel));
 
 		assertEquals(123, testModel.<Integer>get("value"));
+	}
+	
+	@Test
+	void saveLong() throws Exception {
+		testModel.addLong("value", 1234567891011121314L);
+		var output = new ByteArrayOutputStream();
+		
+		store.save(output, Map.of("model", testModel));
+		var json = output.toString(StandardCharsets.UTF_8);
+
+		var expected =
+			"""
+			{
+				"model": {
+					"value": 1234567891011121314
+				}
+			}
+			""";
+
+		assertEquals(expected, json);
+	}
+	
+	@Test
+	void loadLong() throws Exception {
+		testModel.addLong("value");
+		var source =
+			"""
+			{
+				"model": {
+					"value": 1234567891011121314
+				}
+			}
+			""";
+		
+		var input = new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
+		store.load(input, Map.of("model", testModel));
+
+		assertEquals(1234567891011121314L, testModel.<Long>get("value"));
+	}
+	
+	@Test
+	void saveFloat() throws Exception {
+		testModel.addFloat("value", 12.5993f);
+		var output = new ByteArrayOutputStream();
+		
+		store.save(output, Map.of("model", testModel));
+		var json = output.toString(StandardCharsets.UTF_8);
+
+		var expected =
+			"""
+			{
+				"model": {
+					"value": 12.5993
+				}
+			}
+			""";
+
+		assertEquals(expected, json);
+	}
+	
+	@Test
+	void loadFloat() throws Exception {
+		testModel.addFloat("value");
+		var source =
+			"""
+			{
+				"model": {
+					"value": 12.5993
+				}
+			}
+			""";
+		
+		var input = new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
+		store.load(input, Map.of("model", testModel));
+
+		assertEquals(12.5993f, testModel.<Float>get("value"));
+	}
+	
+	@Test
+	void saveDouble() throws Exception {
+		testModel.addDouble("value", 184.848491001);
+		var output = new ByteArrayOutputStream();
+		
+		store.save(output, Map.of("model", testModel));
+		var json = output.toString(StandardCharsets.UTF_8);
+
+		var expected =
+			"""
+			{
+				"model": {
+					"value": 184.848491001
+				}
+			}
+			""";
+
+		assertEquals(expected, json);
+	}
+	
+	@Test
+	void loadDouble() throws Exception {
+		testModel.addDouble("value");
+		var source =
+			"""
+			{
+				"model": {
+					"value": 184.848491001
+				}
+			}
+			""";
+		
+		var input = new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
+		store.load(input, Map.of("model", testModel));
+
+		assertEquals(184.848491001, testModel.<Double>get("value"));
+	}
+	
+	@Test
+	void saveModel() throws Exception {
+		var innerModel = new DynamicModel();
+		innerModel.addString("name", "san");
+		innerModel.addInteger("age", 21);
+		
+		testModel.addModel("user", innerModel);
+		var output = new ByteArrayOutputStream();
+		
+		store.save(output, Map.of("model", testModel));
+		var json = output.toString(StandardCharsets.UTF_8);
+
+		var expected =
+			"""
+			{
+				"model": {
+					"user": {
+						"name": "san",
+						"age": 21
+					}
+				}
+			}
+			""";
+
+		assertEquals(expected, json);
+	}
+	
+	@Test
+	void loadModel() throws Exception {
+		testModel.addModel("user", userModel -> {
+			userModel.addString("name");
+			userModel.addInteger("age");
+		});
+		var source =
+			"""
+			{
+				"model": {
+					"user": {
+						"name": "ashitaka",
+						"age": 20
+					}
+				}
+			}
+			""";
+		
+		var input = new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
+		store.load(input, Map.of("model", testModel));
+
+		var user = testModel.<DynamicModel>get("user");
+		assertEquals("ashitaka", user.<String>get("name"));
+		assertEquals(20, user.<Integer>get("age"));
 	}
 
 	@Test
@@ -330,6 +612,33 @@ public class JsonDataStoreTest {
 			persist(name, () -> (String) values.get(name), v -> values.put(name, v));
 		}
 		
+		void addCharacter(String name) {
+			addCharacter(name, null);
+		}
+		
+		void addCharacter(String name, Character value) {
+			values.put(name, value);
+			persist(name, () -> (Character) values.get(name), v -> values.put(name, v));
+		}
+		
+		void addByte(String name) {
+			addByte(name, null);
+		}
+		
+		void addByte(String name, Byte value) {
+			values.put(name, value);
+			persist(name, () -> (Byte) values.get(name), v -> values.put(name, v));
+		}
+		
+		void addShort(String name) {
+			addShort(name, null);
+		}
+		
+		void addShort(String name, Short value) {
+			values.put(name, value);
+			persist(name, () -> (Short) values.get(name), v -> values.put(name, v));
+		}
+		
 		void addInteger(String name) {
 			addInteger(name, null);
 		}
@@ -337,6 +646,44 @@ public class JsonDataStoreTest {
 		void addInteger(String name, Integer value) {
 			values.put(name, value);
 			persist(name, () -> (Integer) values.get(name), v -> values.put(name, v));
+		}
+		
+		void addLong(String name) {
+			addLong(name, null);
+		}
+		
+		void addLong(String name, Long value) {
+			values.put(name, value);
+			persist(name, () -> (Long) values.get(name), v -> values.put(name, v));
+		}
+		
+		void addFloat(String name) {
+			addFloat(name, null);
+		}
+		
+		void addFloat(String name, Float value) {
+			values.put(name, value);
+			persist(name, () -> (Float) values.get(name), v -> values.put(name, v));
+		}
+		
+		void addDouble(String name) {
+			addDouble(name, null);
+		}
+		
+		void addDouble(String name, Double value) {
+			values.put(name, value);
+			persist(name, () -> (Double) values.get(name), v -> values.put(name, v));
+		}
+		
+		void addModel(String name, Consumer<DynamicModel> configurer) {
+			var model = new DynamicModel();
+			configurer.accept(model);
+			addModel(name, model);
+		}
+		
+		void addModel(String name, SaveLoadModel model) {
+			values.put(name, model);
+			persist(name, () -> (SaveLoadModel) values.get(name), v -> values.put(name, v));
 		}
 		
 		<T> void addList(String name, RuntimeType<T> elementType) {

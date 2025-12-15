@@ -5,7 +5,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Map;
 
 import com.google.gson.Gson;
@@ -58,7 +63,7 @@ public class JsonDataStore implements DataStore {
 	public void load(InputStream input, Map<String, SaveLoadModel> models) throws IOException {
 		try (
 			var reader = gson.newJsonReader(new InputStreamReader(input))
-		 ) {
+		) {
 			JsonObject storeObject = gson.fromJson(reader, JsonObject.class);
 			
 			for (var modelName : storeObject.keySet()) {
@@ -83,12 +88,28 @@ public class JsonDataStore implements DataStore {
 		}
 	}
 	
+	private void writeModel(JsonObject output, SaveLoadModel model) {
+		for (var entry : model.getValues().entrySet()) {
+			var key = entry.getKey();
+			var value = entry.getValue();
+			writeValue(output, key, value);
+		}
+	}
+	
 	private void writeValue(JsonObject output, String name, SaveLoadValue<?> value) {
 		switch (value) {
 			case SaveLoadObject<?> saveLoadObject -> {
 				var object = saveLoadObject.getValue();
 				var type = saveLoadObject.type();
-				output.add(name, gson.toJsonTree(object, type));
+				
+				if (object instanceof SaveLoadModel saveLoadModel) {
+					var modelObject = new JsonObject();
+					writeModel(modelObject, saveLoadModel);
+					output.add(name, modelObject);
+				}
+				else {
+					output.add(name, gson.toJsonTree(object, type));
+				}
 			}
 	
 			case SaveLoadList<?> saveLoadList -> {
@@ -118,8 +139,21 @@ public class JsonDataStore implements DataStore {
 		switch (value) {
 			case SaveLoadObject<?> saveLoadObject -> {
 				var type = saveLoadObject.type();
-				var object = gson.fromJson(input, type);
-				value.setValueUnchecked(object);
+				
+				if (isTypeSaveLoadModel(type)) {
+					var object = value.getValue();
+					// TODO: throw a useful error if object is null
+					if (!(object instanceof SaveLoadModel model)) {
+						// TODO: throw error if the object isn't a save load model
+						// shouldn't be possible based on the type check, but still
+						return;
+					}
+					readModel(input.getAsJsonObject(), model);
+				}
+				else {
+					var object = gson.fromJson(input, type);
+					value.setValueUnchecked(object);
+				}
 			}
 	
 			case SaveLoadList<?> saveLoadList -> {
@@ -160,14 +194,6 @@ public class JsonDataStore implements DataStore {
 		list.setValue(result);
 	}
 	
-	private void writeModel(JsonObject output, SaveLoadModel model) {
-		for (var entry : model.getValues().entrySet()) {
-			var key = entry.getKey();
-			var value = entry.getValue();
-			writeValue(output, key, value);
-		}
-	}
-	
 	private void readModel(JsonObject input, SaveLoadModel model) {
 		for (var entry : input.entrySet()) {
 			var key = entry.getKey();
@@ -181,6 +207,17 @@ public class JsonDataStore implements DataStore {
 
 			readValue(value, modelProperty);
 		}
+	}
+	
+	private static boolean isTypeSaveLoadModel(Type type) {
+		if (type instanceof Class<?> c) {
+			return SaveLoadModel.class.isAssignableFrom(c);
+		}
+		else if (type instanceof ParameterizedType p) {
+			return isTypeSaveLoadModel(p.getRawType());
+		}
+		
+		return false;
 	}
 
 }
