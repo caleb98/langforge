@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     implementation project(':langforge-core')
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.19.0'
+    implementation 'com.google.code.gson:gson:2.13.1'
 }
 
 application {

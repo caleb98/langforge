@@ -1,33 +1,38 @@
 package net.calebscode.langforge.app.data;
 
-import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-abstract class SaveLoadValue<T> {
+public sealed interface SaveLoadValue<T> {
 
-	private final Supplier<T> getter;
-	private final Consumer<T> setter;
+	Supplier<T> getter();
+	Consumer<T> setter();
 
-	public SaveLoadValue(Supplier<T> getter, Consumer<T> setter) {
-		this.getter = getter;
-		this.setter = setter;
+	default T getValue() {
+		return getter().get();
 	}
 
-	public T getValue() {
-		return getter.get();
+	default void setValue(T value) {
+		setter().accept(value);
 	}
 
-	public void setValue(T value) {
-		setter.accept(value);
+	public record SaveLoadString(Supplier<String> getter, Consumer<String> setter) implements SaveLoadValue<String> {}
+	public record SaveLoadObject<T>(Type type, Supplier<T> getter, Consumer<T> setter) implements SaveLoadValue<T> {}
+	
+	public record SaveLoadList<E>(
+		Supplier<List<E>> getter,
+		Consumer<List<E>> setter,
+		Type elementType,
+		Supplier<E> elementFactory
+	) implements SaveLoadValue<List<E>> {
+		
+		List<E> newTypedList() {
+			return new ArrayList<E>();
+		}
+		
 	}
-
-	@Override
-	public String toString() {
-		return String.valueOf(getValue());
-	}
-
-	public abstract <SaveContext> void save(SaveLoadDataStore<SaveContext, ?> dataStore, SaveContext saveContext) throws IOException;
-	public abstract <LoadContext> void load(SaveLoadDataStore<?, LoadContext> dataStore, LoadContext loadContext) throws IOException;
 
 }

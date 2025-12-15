@@ -17,9 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.calebscode.langforge.app.data.JsonDataStore;
-import net.calebscode.langforge.app.LangforgeApplication;
-import net.calebscode.langforge.app.LangforgeApplicationModel;
-import net.calebscode.langforge.app.LangforgePluginContext;
+import net.calebscode.langforge.app.data.JsonDataStore;
 import net.calebscode.langforge.app.util.VersionNumber;
 
 public final class PluginManager {
@@ -97,7 +95,7 @@ public final class PluginManager {
 				}
 
 				try (var outputStream = new FileOutputStream(filePath.toFile())) {
-					dataStore.save(persistentModels, outputStream);
+					dataStore.save(outputStream, persistentModels);
 					outputStream.flush();
 				}
 			}
@@ -130,7 +128,7 @@ public final class PluginManager {
 				}
 
 				try (var inputStream = new FileInputStream(filePath.toFile())) {
-					dataStore.load(persistentModels, inputStream);
+					dataStore.load(inputStream, persistentModels);
 				}
 			}
 		} catch (IOException ex) {

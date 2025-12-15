@@ -2,302 +2,196 @@ package net.calebscode.langforge.app.data;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.PrettyPrinter;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
-public class JsonDataStore implements SaveLoadDataStore<JsonGenerator, JsonNode> {
+import net.calebscode.langforge.app.data.SaveLoadValue.SaveLoadList;
+import net.calebscode.langforge.app.data.SaveLoadValue.SaveLoadObject;
+import net.calebscode.langforge.app.data.SaveLoadValue.SaveLoadString;
 
-	private ObjectMapper mapper;
-	private JsonFactory factory;
-	private PrettyPrinter prettyPrinter;
+
+public class JsonDataStore implements DataStore {
+
+	private final Gson gson;
 
 	public JsonDataStore() {
-		mapper = new ObjectMapper();
-		factory = mapper.getFactory();
-		prettyPrinter = new CustomPrettyPrinter();
+		gson = new GsonBuilder()
+			.setPrettyPrinting()
+			.create();
 	}
 
 	@Override
-	public void save(Map<String, SaveLoadModel> models, OutputStream output) throws IOException {
-		var json = factory.createGenerator(output, JsonEncoding.UTF8);
-		json.setPrettyPrinter(prettyPrinter);
-		json.writeStartObject();
-
-		for (var modelEntry : models.entrySet()) {
-			var modelName = modelEntry.getKey();
-			var model = modelEntry.getValue();
-
-			json.writeFieldName(modelName);
-			saveModel(model, json);
+	public void save(OutputStream output, Map<String, SaveLoadModel> models) throws IOException {
+		
+		try (
+			var writer = gson.newJsonWriter(new OutputStreamWriter(output))
+		) {
+			var storeObject = new JsonObject();
+			
+			for (var entry : models.entrySet()) {
+				var modelObject = new JsonObject();
+				var modelName = entry.getKey();
+				var model = entry.getValue();
+				
+				writeModel(modelObject, model);
+				
+				storeObject.add(modelName, modelObject);
+			}
+			
+			writer.setIndent("\t");
+			gson.toJson(storeObject, writer);
+			writer.flush();
+			output.write("\n".getBytes(StandardCharsets.UTF_8));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
-		json.writeEndObject();
-		json.writeRaw(System.lineSeparator());
-		json.close();
 	}
-
+	
 	@Override
-	public void load(Map<String, SaveLoadModel> models, InputStream input) throws IOException {
-		var json = factory.createParser(input);
+	public void load(InputStream input, Map<String, SaveLoadModel> models) throws IOException {
 
-		var token = json.nextToken();
-		if (token != JsonToken.START_OBJECT) {
-			// TODO: log warning
-			return;
-		}
-
-		String modelName;
-		while ((modelName = json.nextFieldName()) != null) {
-			var model = models.get(modelName);
-			if (model == null) {
-				// TODO: print warning
-				continue;
+		try (
+			var reader = gson.newJsonReader(new InputStreamReader(input))
+		 ) {
+			JsonObject storeObject = gson.fromJson(reader, JsonObject.class);
+			
+			for (var modelName : storeObject.keySet()) {
+				if (!models.containsKey(modelName)) {
+					// TODO: error, the loaded json has an entry that does not map to a model in the code
+					continue;
+				}
+				
+				var modelObject = storeObject.get(modelName);
+				if (!modelObject.isJsonObject()) {
+					// TODO: error, the value for the model entry was not an object
+					continue;
+				}
+				
+				var model = models.get(modelName);
+				readModel(modelObject.getAsJsonObject(), model);
 			}
-
-			var nextToken = json.nextToken();
-			if (nextToken != JsonToken.START_OBJECT) {
-				throw new JsonMappingException(json, "Expected JSON Object value for persistent model name.");
-			}
-
-			ObjectNode modelNode = json.readValueAsTree();
-			loadModel(modelNode, model);
+			
+		 } catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
-		json.close();
 	}
-
-	private void saveModel(SaveLoadModel model, JsonGenerator json) throws IOException {
-		json.writeStartObject();
+	
+	private void writeValue(JsonObject output, String name, SaveLoadValue<?> value) {
+		switch (value) {
+			case SaveLoadString(var getter, _) -> output.addProperty(name, getter.get());
+			
+			case SaveLoadObject<?> saveLoadObject -> {
+				var object = saveLoadObject.getter().get();
+				
+				switch (object) {
+					
+					case String string -> output.addProperty(name, string);
+					default -> throw new IllegalArgumentException("Unexpected value: " + object);
+					
+				}
+			}
+	
+			case SaveLoadList<?> saveLoadList -> {
+				var list = saveLoadList.getValue();
+				var type = saveLoadList.elementType();
+				
+				var array = new JsonArray(list.size());
+				for (var element : list) {
+					if (element instanceof SaveLoadModel model) {
+						var obj = new JsonObject();
+						writeModel(obj, model);
+						array.add(obj);
+					}
+					else {
+						array.add(gson.toJsonTree(element, type));
+					}
+					
+				}
+				output.add(name, array);
+			}
+	
+			case null -> throw new NullPointerException("SaveLoadModel value may not be null.");
+		}
+	}
+	
+	private void readValue(JsonElement input, SaveLoadValue<?> value) {
+		switch (value) {
+			case SaveLoadString(_, var setter) -> setter.accept(input.getAsString());
+			
+			case SaveLoadObject<?> saveLoadObject -> {
+				
+			}
+	
+			case SaveLoadList<?> saveLoadList -> {
+				var array = input.getAsJsonArray();
+				readList(array, saveLoadList);
+			}
+	
+			case null -> {}
+		}
+	}
+	
+	private <E> void readList(JsonArray array, SaveLoadList<E> list) {
+		var type = list.elementType();
+		var result = list.newTypedList();
+		
+		var isListOfModels = type instanceof Class<?> clazz && SaveLoadModel.class.isAssignableFrom(clazz);
+		if (isListOfModels) {
+			for (var element : array) {
+				if (!(element instanceof JsonObject elementObject)) {
+					throw new RuntimeException("Expected array of objects");
+				}
+				
+				var newElement = list.elementFactory().get();
+				if (!(newElement instanceof SaveLoadModel model)) {
+					throw new RuntimeException("SaveLoadList element factory produced object not of type SaveLoadModel");
+				}
+				
+				readModel(elementObject, model);
+				result.add(newElement);
+			}
+		}
+		else {
+			for (var element : array) {
+				result.add(gson.fromJson(element, type));
+			}
+		}
+		
+		list.setValue(result);
+	}
+	
+	private void writeModel(JsonObject output, SaveLoadModel model) {
 		for (var entry : model.getValues().entrySet()) {
-			var valueName = entry.getKey();
+			var key = entry.getKey();
+			var value = entry.getValue();
+			writeValue(output, key, value);
+		}
+	}
+	
+	private void readModel(JsonObject input, SaveLoadModel model) {
+		for (var entry : input.entrySet()) {
+			var key = entry.getKey();
 			var value = entry.getValue();
 
-			json.writeFieldName(valueName);
-			value.save(this, json);
-		}
-		json.writeEndObject();
-	}
-
-	private <T> void loadModel(ObjectNode modelNode, SaveLoadModel model) throws IOException {
-		for (var entry : modelNode.properties()) {
-			var valueName = entry.getKey();
-			var valueJson = entry.getValue();
-
-			SaveLoadValue<?> property = model.getValues().get(valueName);
-			if (property == null) {
-				// TODO: log warning
+			var modelProperty = model.getValues().get(key);
+			if (modelProperty == null) {
+				// TODO: log or throw
 				continue;
 			}
 
-			property.load(this, valueJson);
+			readValue(value, modelProperty);
 		}
-	}
-
-	@Override
-	public void saveBoolean(SaveLoadBoolean value, JsonGenerator json) throws IOException {
-		json.writeBoolean(value.getValue());
-	}
-
-	@Override
-	public void saveByte(SaveLoadByte value, JsonGenerator json) throws IOException {
-		json.writeNumber(value.getValue());
-	}
-
-	@Override
-	public void saveCharacter(SaveLoadCharacter value, JsonGenerator json) throws IOException {
-		json.writeString(String.valueOf(value.getValue()));
-	}
-
-	@Override
-	public void saveDouble(SaveLoadDouble value, JsonGenerator json) throws IOException {
-		json.writeNumber(value.getValue());
-	}
-
-	@Override
-	public void saveFloat(SaveLoadFloat value, JsonGenerator json) throws IOException {
-		json.writeNumber(value.getValue());
-	}
-
-	@Override
-	public void saveInteger(SaveLoadInteger value, JsonGenerator json) throws IOException {
-		json.writeNumber(value.getValue());
-	}
-
-	@Override
-	public void saveList(SaveLoadList<?> saveLoadList, JsonGenerator json) throws IOException {
-		json.writeStartArray();
-		for (SaveLoadValue<?> value : saveLoadList.getValue()) {
-			value.save(this, json);
-		}
-		json.writeEndArray();
-	}
-
-	@Override
-	public void saveLong(SaveLoadLong value, JsonGenerator json) throws IOException {
-		json.writeNumber(value.getValue());
-	}
-
-	@Override
-	public void saveShort(SaveLoadShort value, JsonGenerator json) throws IOException {
-		json.writeNumber(value.getValue());
-	}
-
-	@Override
-	public void saveString(SaveLoadString value, JsonGenerator json) throws IOException {
-		json.writeString(value.getValue());
-	}
-
-	@Override
-	public void loadBoolean(SaveLoadBoolean value, JsonNode json) throws IOException {
-		value.setValue(json.asBoolean());
-	}
-
-	@Override
-	public void loadByte(SaveLoadByte value, JsonNode json) throws IOException {
-		value.setValue((byte) json.asLong());
-	}
-
-	@Override
-	public void loadCharacter(SaveLoadCharacter value, JsonNode json) throws IOException {
-		String stringValue = json.asText();
-		if (stringValue.length() != 1) {
-			throw new IllegalArgumentException("Character value is not a single character: " + stringValue);
-		}
-		value.setValue(stringValue.charAt(0));
-	}
-
-	@Override
-	public void loadDouble(SaveLoadDouble value, JsonNode json) throws IOException {
-		value.setValue(json.asDouble());
-	}
-
-	@Override
-	public void loadFloat(SaveLoadFloat value, JsonNode json) throws IOException {
-		value.setValue((float) json.asDouble());
-	}
-
-	@Override
-	public void loadInteger(SaveLoadInteger value, JsonNode json) throws IOException {
-		value.setValue(json.asInt());
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
-	public void loadList(SaveLoadList<?> saveLoadList, JsonNode json) throws IOException {
-		if (json instanceof ArrayNode array) {
-			List<SaveLoadValue<?>> elements = new ArrayList<>();
-			for (var element : array) {
-				var value = saveLoadList.createElement();
-				value.load(this, element);
-				elements.add(value);
-			}
-			// Cast to raw list is necessary here to make javac happy. Otherwise
-			// we wind up with errors about mismatching captures.
-			saveLoadList.setValue((List)elements);
-		}
-	}
-
-	@Override
-	public void loadLong(SaveLoadLong value, JsonNode json) throws IOException {
-		value.setValue(json.asLong());
-	}
-
-	@Override
-	public void loadShort(SaveLoadShort value, JsonNode json) throws IOException {
-		value.setValue(json.shortValue());
-	}
-
-	@Override
-	public void loadString(SaveLoadString value, JsonNode json) throws IOException {
-		value.setValue(json.asText());
-	}
-
-	private static class CustomPrettyPrinter implements PrettyPrinter {
-
-		private int nesting = 0;
-
-		@Override
-		public void writeRootValueSeparator(JsonGenerator gen) throws IOException {
-			gen.writeRaw(System.lineSeparator());
-		}
-
-		@Override
-		public void writeStartObject(JsonGenerator gen) throws IOException {
-			gen.writeRaw('{');
-			nesting++;
-		}
-
-		@Override
-		public void writeEndObject(JsonGenerator gen, int nrOfEntries) throws IOException {
-			nesting--;
-			if (nrOfEntries > 0) {
-				indent(gen);
-			}
-			gen.writeRaw('}');
-		}
-
-		@Override
-		public void writeObjectEntrySeparator(JsonGenerator gen) throws IOException {
-			gen.writeRaw(',');
-			gen.writeRaw(System.lineSeparator());
-		}
-
-		@Override
-		public void writeObjectFieldValueSeparator(JsonGenerator gen) throws IOException {
-			gen.writeRaw(": ");
-		}
-
-		@Override
-		public void writeStartArray(JsonGenerator gen) throws IOException {
-			gen.writeRaw('[');
-			nesting++;
-		}
-
-		@Override
-		public void writeEndArray(JsonGenerator gen, int nrOfValues) throws IOException {
-			nesting--;
-			if (nrOfValues > 0) {
-				indent(gen);
-			}
-			gen.writeRaw(']');
-		}
-
-		@Override
-		public void writeArrayValueSeparator(JsonGenerator gen) throws IOException {
-			gen.writeRaw(',');
-			indent(gen);
-		}
-
-		@Override
-		public void beforeArrayValues(JsonGenerator gen) throws IOException {
-			indent(gen);
-		}
-
-		@Override
-		public void beforeObjectEntries(JsonGenerator gen) throws IOException {
-			indent(gen);
-		}
-
-		private void indent(JsonGenerator gen) throws IOException {
-			gen.writeRaw(System.lineSeparator());
-			for (int i = 0; i < nesting; i++) {
-				gen.writeRaw('\t');
-			}
-		}
-
 	}
 
 }

@@ -1,288 +1,396 @@
 package net.calebscode.langforge.app.data;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class JsonDataStoreTest {
 
-	private ByteArrayOutputStream output;
-	private JsonDataStore dataStore;
+	JsonDataStore store;
+	DynamicModel testModel;
 
 	@BeforeEach
 	void beforeEach() {
-		dataStore = new JsonDataStore();
-		output = new ByteArrayOutputStream();
+		store = new JsonDataStore();
+		testModel = new DynamicModel();
 	}
-
-	@AfterEach
-	void afterEach() throws IOException {
-		output.close();
-	}
-
+	
 	@Test
-	void testSaveBoolean() throws IOException {
-		var boolModel = new TestModel<>(false);
-		boolModel.persistBoolean("isSunny", boolModel::getValue, boolModel::setValue);
-		var models = Map.<String, SaveLoadModel>of("boolModel", boolModel);
+	void saveNullThrows() {
+		var model = new SaveLoadModel() {{
+			persist("null", null);
+		}};
+		var output = new ByteArrayOutputStream();
+		
+		assertThrows(NullPointerException.class, () -> store.save(output, Map.of("model", model)));
+	}
+	
+	@Test
+	void saveStringObject() throws Exception {
+		testModel.add("value", "test");
+		var output = new ByteArrayOutputStream();
+		
+		store.save(output, Map.of("model", testModel));
+		var json = output.toString(StandardCharsets.UTF_8);
+
 		var expected =
-		"""
-		{
-			"boolModel": {
-				"isSunny": false
+			"""
+			{
+				"model": {
+					"value": "test"
+				}
 			}
-		}
-		""";
+			""";
 
-		dataStore.save(models, output);
-		var actual = output.toString();
-
-		assertStringsEqualNewLineInsensitive(expected, actual);
+		assertEquals(expected, json);
 	}
-
+	
 	@Test
-	void testSaveByte() throws IOException {
-		var byteModel = new TestModel<>((byte) 42);
-		byteModel.persistByte("answer", byteModel::getValue, byteModel::setValue);
-		var models = Map.<String, SaveLoadModel>of("byteModel", byteModel);
-		var expected =
-		"""
-		{
-			"byteModel": {
-				"answer": 42
+	void loadStringObject() throws Exception {
+		testModel.<String>add("value");
+		var source =
+			"""
+			{
+				"model": {
+					"value": "bar"
+				}
 			}
-		}
-		""";
+			""";
+		
+		var input = new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
+		store.load(input, Map.of("model", testModel));
 
-		dataStore.save(models, output);
-		var actual = output.toString();
-
-		assertStringsEqualNewLineInsensitive(expected, actual);
+		assertEquals("bar", testModel.<String>get("value"));
 	}
 
 	@Test
-	void testSaveCharacter() throws IOException {
-		var characterModel = new TestModel<>('!');
-		characterModel.persistCharacter("punctuation", characterModel::getValue, characterModel::setValue);
-		var models = Map.<String, SaveLoadModel>of("characterModel", characterModel);
+	void saveString() throws Exception {
+		testModel.addString("value", "test");
+		var output = new ByteArrayOutputStream();
+		
+		store.save(output, Map.of("model", testModel));
+		var json = output.toString(StandardCharsets.UTF_8);
+
 		var expected =
-		"""
-		{
-			"characterModel": {
-				"punctuation": "!"
+			"""
+			{
+				"model": {
+					"value": "test"
+				}
 			}
-		}
-		""";
+			""";
 
-		dataStore.save(models, output);
-		var actual = output.toString();
-
-		assertStringsEqualNewLineInsensitive(expected, actual);
+		assertEquals(expected, json);
 	}
 
 	@Test
-	void testSaveDouble() throws IOException {
-		var doubleModel = new TestModel<>(1234.56789);
-		doubleModel.persistDouble("number", doubleModel::getValue, doubleModel::setValue);
-		var models = Map.<String, SaveLoadModel>of("doubleModel", doubleModel);
-		var expected =
-		"""
-		{
-			"doubleModel": {
-				"number": 1234.56789
+	void loadString() throws Exception {
+		testModel.addString("value");
+		var source =
+			"""
+			{
+				"model": {
+					"value": "bar"
+				}
 			}
-		}
-		""";
+			""";
+		
+		var input = new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
+		store.load(input, Map.of("model", testModel));
 
-		dataStore.save(models, output);
-		var actual = output.toString();
-
-		assertStringsEqualNewLineInsensitive(expected, actual);
+		assertEquals("bar", testModel.<String>get("value"));
 	}
 
 	@Test
-	void testSaveFloat() throws IOException {
-		var floatModel = new TestModel<>((float) 2.5);
-		floatModel.persistFloat("number", floatModel::getValue, floatModel::setValue);
-		var models = Map.<String, SaveLoadModel>of("floatModel", floatModel);
+	void saveList() throws Exception {
+		testModel.addList("strings", new RuntimeType<String>() {}, List.of("hello", "world"));
+		var output = new ByteArrayOutputStream();
+		
+		store.save(output, Map.of("model", testModel));
+		var json = output.toString(StandardCharsets.UTF_8);
+
 		var expected =
-		"""
-		{
-			"floatModel": {
-				"number": 2.5
-			}
-		}
-		""";
-
-		dataStore.save(models, output);
-		var actual = output.toString();
-
-		assertStringsEqualNewLineInsensitive(expected, actual);
-	}
-
-	@Test
-	void testSaveInteger() throws IOException {
-		var intModel = new TestModel<>(42);
-		intModel.persistInteger("answer", intModel::getValue, intModel::setValue);
-		var models = Map.<String, SaveLoadModel>of("intModel", intModel);
-		var expected =
-		"""
-		{
-			"intModel": {
-				"answer": 42
-			}
-		}
-		""";
-
-		dataStore.save(models, output);
-		var actual = output.toString();
-
-		assertStringsEqualNewLineInsensitive(expected, actual);
-	}
-
-	@Test
-	void testSaveLong() throws IOException {
-		var longModel = new TestModel<>(Long.MAX_VALUE);
-		longModel.persistLong("bigNumber", longModel::getValue, longModel::setValue);
-		var models = Map.<String, SaveLoadModel>of("longModel", longModel);
-		var expected =
-		"""
-		{
-			"longModel": {
-				"bigNumber": %d
-			}
-		}
-		""";
-		expected = String.format(expected, Long.MAX_VALUE);
-
-		dataStore.save(models, output);
-		var actual = output.toString();
-
-		assertStringsEqualNewLineInsensitive(expected, actual);
-	}
-
-	@Test
-	void testSaveShort() throws IOException {
-		var shortModel = new TestModel<>((short) 42);
-		shortModel.persistShort("answer", shortModel::getValue, shortModel::setValue);
-		var models = Map.<String, SaveLoadModel>of("shortModel", shortModel);
-		var expected =
-		"""
-		{
-			"shortModel": {
-				"answer": 42
-			}
-		}
-		""";
-
-		dataStore.save(models, output);
-		var actual = output.toString();
-
-		assertStringsEqualNewLineInsensitive(expected, actual);
-	}
-
-	@Test
-	void testSaveString() throws IOException {
-		var stringModel = new TestModel<>("Creative AI");
-		stringModel.persistString("selectedCard", stringModel::getValue, stringModel::setValue);
-		var models = Map.<String, SaveLoadModel>of("stringModel", stringModel);
-		var expected =
-		"""
-		{
-			"stringModel": {
-				"selectedCard": "Creative AI"
-			}
-		}
-		""";
-
-		dataStore.save(models, output);
-		var actual = output.toString();
-
-		assertStringsEqualNewLineInsensitive(expected, actual);
-	}
-
-	@Test
-	void testSaveList() throws IOException {
-		var listModel = new TestModel<List<String>>(List.of("Hello", "World"));
-		listModel.persistList("messages", String::new, new TypeInfo<String>(){}, listModel::getValue, listModel::setValue);
-		var models = Map.<String, SaveLoadModel>of("listModel", listModel);
-		var expected =
-		"""
-		{
-			"listModel": {
-				"messages": [
-					"Hello",
-					"World"
-				]
-			}
-		}
-		""";
-
-		dataStore.save(models, output);
-		var actual = output.toString();
-
-		assertStringsEqualNewLineInsensitive(expected, actual);
-	}
-
-	@Test
-	void testSaveListOfLists() throws IOException {
-		var listModel = new TestModel<List<List<Integer>>>(List.of(List.of(1, 2), List.of(3, 4)));
-		listModel.persistList("numbers", () -> List.of(), new TypeInfo<List<Integer>>(){}, listModel::getValue, listModel::setValue);
-		var models = Map.<String, SaveLoadModel>of("listModel", listModel);
-		var expected =
-		"""
-		{
-			"listModel": {
-				"numbers": [
-					[
-						1,
-						2
-					],
-					[
-						3,
-						4
+			"""
+			{
+				"model": {
+					"strings": [
+						"hello",
+						"world"
 					]
-				]
+				}
 			}
-		}
-		""";
+			""";
 
-		dataStore.save(models, output);
-		var actual = output.toString();
-
-		assertStringsEqualNewLineInsensitive(expected, actual);
+		assertEquals(expected, json);
 	}
+	
+	@Test
+	void loadList() throws Exception {
+		testModel.addList("strings", new RuntimeType<String>() {});
+		var source =
+			"""
+			{
+				"model": {
+					"strings": [
+						"foo",
+						"bar"
+					]
+				}
+			}
+			""";
+		
+		var input = new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
+		store.load(input, Map.of("model", testModel));
 
-	private static void assertStringsEqualNewLineInsensitive(String expected, String actual) {
-		expected = expected.replace("\r\n", "\n");
-		actual = actual.replace("\r\n", "\n");
-
-		assertEquals(expected, actual);
+		assertEquals(List.of("foo", "bar"), testModel.get("strings"));
 	}
+	
+	@Test
+	void saveModelList() throws Exception {
+		testModel.addList("models", new RuntimeType<DynamicModel>() {}, List.of(
+			new DynamicModel() {{ addString("value", "hello"); }},
+			new DynamicModel() {{ addString("value", "world"); }}
+		));
+		var output = new ByteArrayOutputStream();
+		
+		store.save(output, Map.of("model", testModel));
+		var json = output.toString(StandardCharsets.UTF_8);
 
-	private static class TestModel<T> extends SaveLoadModel {
+		var expected =
+			"""
+			{
+				"model": {
+					"models": [
+						{
+							"value": "hello"
+						},
+						{
+							"value": "world"
+						}
+					]
+				}
+			}
+			""";
 
-		T value;
-
-		TestModel(T initialValue) {
-			value = initialValue;
-		}
-
-		T getValue() {
-			return value;
-		}
-
-		void setValue(T newValue) {
-			value = newValue;
-		}
-
+		assertEquals(expected, json);
 	}
+	
+	@Test
+	void loadModelList() throws Exception {
+		testModel.addList("models", new RuntimeType<DynamicModel>() {}, () -> new DynamicModel() {{
+			addString("value");
+		}});
+		var source =
+			"""
+			{
+				"model": {
+					"models": [
+						{
+							"value": "foo"
+						},
+						{
+							"value": "bar"
+						}
+					]
+				}
+			}
+			""";
+		
+		var input = new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
+		store.load(input, Map.of("model", testModel));
 
+		var expected = List.of(
+			new DynamicModel() {{ addString("value", "foo"); }},
+			new DynamicModel() {{ addString("value", "bar"); }}
+		);
+		assertEquals(expected, testModel.get("models"));
+	}
+	
+	@Test
+	void loadModelListThrowsIfArrayDoesNotContainObjects() {
+		testModel.addList("models", new RuntimeType<DynamicModel>() {}, () -> new DynamicModel() {{
+			addString("value");
+		}});
+
+		var source =
+			"""
+			{
+				"model": {
+					"models": [
+						"not",
+						"an",
+						"object"
+					]
+				}
+			}
+			""";
+		
+		var input = new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
+		assertThrows(RuntimeException.class, () -> store.load(input, Map.of("model", testModel)));
+	}
+	
+	@Test
+	void saveModelListNested() throws Exception {
+		testModel.addList("outer", new RuntimeType<DynamicModel>() {}, List.of(
+			new DynamicModel() {{
+				addList("inner", new RuntimeType<DynamicModel>() {}, List.of(
+					new DynamicModel() {{ addString("value", "hello"); }},
+					new DynamicModel() {{ addString("value", "world"); }}
+				));
+			}}
+		));
+		var output = new ByteArrayOutputStream();
+		
+		store.save(output, Map.of("model", testModel));
+		var json = output.toString(StandardCharsets.UTF_8);
+
+		var expected =
+			"""
+			{
+				"model": {
+					"outer": [
+						{
+							"inner": [
+								{
+									"value": "hello"
+								},
+								{
+									"value": "world"
+								}
+							]
+						}
+					]
+				}
+			}
+			""";
+
+		assertEquals(expected, json);
+	}
+	
+	@Test
+	void loadModelListNested() throws Exception {
+		testModel.addList("outer", new RuntimeType<DynamicModel>() {}, () -> new DynamicModel() {{
+			addList("inner", new RuntimeType<DynamicModel>() {}, () -> new DynamicModel() {{
+				addString("value");
+			}});
+		}});
+
+		var source =
+			"""
+			{
+				"model": {
+					"outer": [
+						{
+							"inner": [
+								{
+									"value": "foo"
+								},
+								{
+									"value": "bar"
+								}
+							]
+						}
+					]
+				}
+			}
+			""";
+		
+		var input = new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
+		store.load(input, Map.of("model", testModel));
+
+		var expected = new DynamicModel() {{
+			addList("outer", new RuntimeType<DynamicModel>() {}, List.of(
+				new DynamicModel() {{
+					addList("inner", new RuntimeType<DynamicModel>() {}, List.of(
+						new DynamicModel() {{ addString("value", "foo"); }},
+						new DynamicModel() {{ addString("value", "bar"); }}
+					));
+				}}
+			));
+		}};
+		assertEquals(expected, testModel);
+	}
+	
+	static class DynamicModel extends SaveLoadModel {
+		
+		Map<String, Object> values = new HashMap<>();
+		
+		@SuppressWarnings("unchecked")
+		<T> T get(String name) {
+			return (T) values.get(name);
+		}
+		
+		<T> void add(String name) {
+			add(name, null);
+		}
+		
+		<T> void add(String name, T value) {
+			values.put(name, value);
+			persist(name, new RuntimeType<T>() {}, () -> (T) values.get(name), v -> values.put(name, v));
+		}
+		
+		void addString(String name) {
+			addString(name, null);
+		}
+		
+		void addString(String name, String initial) {
+			values.put(name, initial);
+			persistString(name, () -> (String) values.get(name), s -> values.put(name, s));
+		}
+		
+		<T> void addList(String name, RuntimeType<T> elementType) {
+			addList(name, elementType, (List<T>)null);
+		}
+		
+		@SuppressWarnings("unchecked")
+		<T> void addList(String name, RuntimeType<T> elementType, List<T> list) {
+			values.put(name, list);
+			persistList(name, elementType, () -> (List<T>) values.get(name), l -> values.put(name, l));
+		}
+		
+		@SuppressWarnings("unchecked")
+		<T> void addList(String name, RuntimeType<T> elementType, Supplier<T> elementFactory) {
+			var list = List.<T>of();
+			values.put(name, list);
+			persistList(name, elementType, () -> (List<T>) values.get(name), l -> values.put(name, l), elementFactory);
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if (!(obj instanceof DynamicModel other)) {
+				return false;
+			}
+			return values.equals(other.values);
+		}
+		
+		@Override
+		public String toString() {
+			var entries = new ArrayList<String>();
+			for (var entry : values.entrySet()) {
+				var key = entry.getKey();
+				var value = entry.getValue();
+				entries.add(String.format("%s=%s", key, value.toString()));
+			}
+
+			var sb = new StringBuilder();
+			sb.append("{");
+			sb.append(String.join(", ", entries));
+			sb.append("}");
+			return sb.toString();
+		}
+		
+	}
+	
 }
