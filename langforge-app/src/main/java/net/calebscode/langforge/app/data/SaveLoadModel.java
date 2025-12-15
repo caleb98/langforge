@@ -10,17 +10,20 @@ import java.util.function.Supplier;
 
 import net.calebscode.langforge.app.data.SaveLoadValue.SaveLoadList;
 import net.calebscode.langforge.app.data.SaveLoadValue.SaveLoadObject;
-import net.calebscode.langforge.app.data.SaveLoadValue.SaveLoadString;
+import net.calebscode.langforge.app.functional.IntegerConsumer;
+import net.calebscode.langforge.app.functional.IntegerSupplier;
+import net.calebscode.langforge.app.functional.StringConsumer;
+import net.calebscode.langforge.app.functional.StringSupplier;
 
 public class SaveLoadModel {
 
 	private Map<String, SaveLoadValue<?>> values = new HashMap<>();
 
-	public Map<String, SaveLoadValue<?>> getValues() {
+	Map<String, SaveLoadValue<?>> getValues() {
 		return Collections.unmodifiableMap(values);
 	}
 
-	protected void persist(String valueName, SaveLoadValue<?> value) {
+	private void persist(String valueName, SaveLoadValue<?> value) {
 		if (values.containsKey(valueName)) {
 			throw new IllegalArgumentException("Value with name '" + valueName + "' already registered.");
 		}
@@ -31,9 +34,13 @@ public class SaveLoadModel {
 	protected <T> void persist(String valueName, RuntimeType<T> runtimeType, Supplier<T> getter, Consumer<T> setter) {
 		persist(valueName, new SaveLoadObject<T>(runtimeType.getType(), getter, setter));
 	}
-
-	protected void persistString(String valueName, Supplier<String> getter, Consumer<String> setter) {
-		persist(valueName, new SaveLoadString(getter, setter));
+	
+	protected void persist(String valueName, StringSupplier getter, StringConsumer setter) {
+		persist(valueName, new SaveLoadObject<String>(String.class, getter, setter));
+	}
+	
+	protected void persist(String valueName, IntegerSupplier getter, IntegerConsumer setter) {
+		persist(valueName, new SaveLoadObject<Integer>(Integer.class, getter, setter));
 	}
 
 	protected <T> void persistList(String valueName, RuntimeType<T> type, Supplier<List<T>> getter, Consumer<List<T>> setter) {
@@ -59,11 +66,11 @@ public class SaveLoadModel {
 			}
 		};
 		
-		persistList(valueName, type, getter, setter, elementFactory);
+		persistList(valueName, type, elementFactory, getter, setter);
 	}
 	
-	protected <T> void persistList(String valueName, RuntimeType<T> type, Supplier<List<T>> getter, Consumer<List<T>> setter, Supplier<T> elementFactory) {
-		persist(valueName, new SaveLoadList<>(getter, setter, type.getType(), elementFactory));
+	protected <T> void persistList(String valueName, RuntimeType<T> type, Supplier<T> elementFactory, Supplier<List<T>> getter, Consumer<List<T>> setter) {
+		persist(valueName, new SaveLoadList<>(type.getType(), elementFactory, getter, setter));
 	}
 
 }

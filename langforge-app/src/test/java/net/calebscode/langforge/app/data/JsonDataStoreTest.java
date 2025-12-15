@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,54 +27,6 @@ public class JsonDataStoreTest {
 	}
 	
 	@Test
-	void saveNullThrows() {
-		var model = new SaveLoadModel() {{
-			persist("null", null);
-		}};
-		var output = new ByteArrayOutputStream();
-		
-		assertThrows(NullPointerException.class, () -> store.save(output, Map.of("model", model)));
-	}
-	
-	@Test
-	void saveStringObject() throws Exception {
-		testModel.add("value", "test");
-		var output = new ByteArrayOutputStream();
-		
-		store.save(output, Map.of("model", testModel));
-		var json = output.toString(StandardCharsets.UTF_8);
-
-		var expected =
-			"""
-			{
-				"model": {
-					"value": "test"
-				}
-			}
-			""";
-
-		assertEquals(expected, json);
-	}
-	
-	@Test
-	void loadStringObject() throws Exception {
-		testModel.<String>add("value");
-		var source =
-			"""
-			{
-				"model": {
-					"value": "bar"
-				}
-			}
-			""";
-		
-		var input = new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
-		store.load(input, Map.of("model", testModel));
-
-		assertEquals("bar", testModel.<String>get("value"));
-	}
-
-	@Test
 	void saveString() throws Exception {
 		testModel.addString("value", "test");
 		var output = new ByteArrayOutputStream();
@@ -94,7 +45,7 @@ public class JsonDataStoreTest {
 
 		assertEquals(expected, json);
 	}
-
+	
 	@Test
 	void loadString() throws Exception {
 		testModel.addString("value");
@@ -111,6 +62,44 @@ public class JsonDataStoreTest {
 		store.load(input, Map.of("model", testModel));
 
 		assertEquals("bar", testModel.<String>get("value"));
+	}
+	
+	@Test
+	void saveInteger() throws Exception {
+		testModel.addInteger("value", 42);
+		var output = new ByteArrayOutputStream();
+		
+		store.save(output, Map.of("model", testModel));
+		var json = output.toString(StandardCharsets.UTF_8);
+
+		var expected =
+			"""
+			{
+				"model": {
+					"value": 42
+				}
+			}
+			""";
+
+		assertEquals(expected, json);
+	}
+	
+	@Test
+	void loadInteger() throws Exception {
+		testModel.addInteger("value");
+		var source =
+			"""
+			{
+				"model": {
+					"value": 123
+				}
+			}
+			""";
+		
+		var input = new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
+		store.load(input, Map.of("model", testModel));
+
+		assertEquals(123, testModel.<Integer>get("value"));
 	}
 
 	@Test
@@ -332,22 +321,22 @@ public class JsonDataStoreTest {
 			return (T) values.get(name);
 		}
 		
-		<T> void add(String name) {
-			add(name, null);
-		}
-		
-		<T> void add(String name, T value) {
-			values.put(name, value);
-			persist(name, new RuntimeType<T>() {}, () -> (T) values.get(name), v -> values.put(name, v));
-		}
-		
 		void addString(String name) {
 			addString(name, null);
 		}
 		
-		void addString(String name, String initial) {
-			values.put(name, initial);
-			persistString(name, () -> (String) values.get(name), s -> values.put(name, s));
+		void addString(String name, String value) {
+			values.put(name, value);
+			persist(name, () -> (String) values.get(name), v -> values.put(name, v));
+		}
+		
+		void addInteger(String name) {
+			addInteger(name, null);
+		}
+		
+		void addInteger(String name, Integer value) {
+			values.put(name, value);
+			persist(name, () -> (Integer) values.get(name), v -> values.put(name, v));
 		}
 		
 		<T> void addList(String name, RuntimeType<T> elementType) {
@@ -364,7 +353,7 @@ public class JsonDataStoreTest {
 		<T> void addList(String name, RuntimeType<T> elementType, Supplier<T> elementFactory) {
 			var list = List.<T>of();
 			values.put(name, list);
-			persistList(name, elementType, () -> (List<T>) values.get(name), l -> values.put(name, l), elementFactory);
+			persistList(name, elementType, elementFactory, () -> (List<T>) values.get(name), l -> values.put(name, l));
 		}
 		
 		@Override

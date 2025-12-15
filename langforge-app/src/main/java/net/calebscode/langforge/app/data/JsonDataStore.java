@@ -16,8 +16,6 @@ import com.google.gson.JsonObject;
 
 import net.calebscode.langforge.app.data.SaveLoadValue.SaveLoadList;
 import net.calebscode.langforge.app.data.SaveLoadValue.SaveLoadObject;
-import net.calebscode.langforge.app.data.SaveLoadValue.SaveLoadString;
-
 
 public class JsonDataStore implements DataStore {
 
@@ -31,7 +29,6 @@ public class JsonDataStore implements DataStore {
 
 	@Override
 	public void save(OutputStream output, Map<String, SaveLoadModel> models) throws IOException {
-		
 		try (
 			var writer = gson.newJsonWriter(new OutputStreamWriter(output))
 		) {
@@ -59,7 +56,6 @@ public class JsonDataStore implements DataStore {
 	
 	@Override
 	public void load(InputStream input, Map<String, SaveLoadModel> models) throws IOException {
-
 		try (
 			var reader = gson.newJsonReader(new InputStreamReader(input))
 		 ) {
@@ -89,17 +85,10 @@ public class JsonDataStore implements DataStore {
 	
 	private void writeValue(JsonObject output, String name, SaveLoadValue<?> value) {
 		switch (value) {
-			case SaveLoadString(var getter, _) -> output.addProperty(name, getter.get());
-			
 			case SaveLoadObject<?> saveLoadObject -> {
-				var object = saveLoadObject.getter().get();
-				
-				switch (object) {
-					
-					case String string -> output.addProperty(name, string);
-					default -> throw new IllegalArgumentException("Unexpected value: " + object);
-					
-				}
+				var object = saveLoadObject.getValue();
+				var type = saveLoadObject.type();
+				output.add(name, gson.toJsonTree(object, type));
 			}
 	
 			case SaveLoadList<?> saveLoadList -> {
@@ -127,10 +116,10 @@ public class JsonDataStore implements DataStore {
 	
 	private void readValue(JsonElement input, SaveLoadValue<?> value) {
 		switch (value) {
-			case SaveLoadString(_, var setter) -> setter.accept(input.getAsString());
-			
 			case SaveLoadObject<?> saveLoadObject -> {
-				
+				var type = saveLoadObject.type();
+				var object = gson.fromJson(input, type);
+				value.setValueUnchecked(object);
 			}
 	
 			case SaveLoadList<?> saveLoadList -> {
