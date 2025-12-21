@@ -14,7 +14,6 @@ import net.calebscode.langforge.app.LangforgePluginException;
 import net.calebscode.langforge.app.phonology.api.LangforgeCorePhonologyApi;
 import net.calebscode.langforge.app.phonology.controller.PhonologyController;
 import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
-import net.calebscode.langforge.app.phonology.model.PhonologicalRuleCollectionModel;
 import net.calebscode.langforge.app.phonology.model.SyllablePatternCategoryMapModel;
 import net.calebscode.langforge.app.plugin.MenuItemDefinition;
 import net.calebscode.langforge.app.util.VersionNumber;
@@ -67,7 +66,7 @@ public final class LangforgeCorePhonologyPlugin implements LangforgePlugin {
 		phonologyModel = new LanguagePhonologyModel(
 			createModelWithDefaultFeatures(),
 			new SyllablePatternCategoryMapModel(),
-			new PhonologicalRuleCollectionModel(),
+			observableArrayList(),
 			observableArrayList()
 		);
 

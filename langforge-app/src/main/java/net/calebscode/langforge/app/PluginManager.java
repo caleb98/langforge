@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.calebscode.langforge.app.data.JsonDataStore;
-import net.calebscode.langforge.app.data.JsonDataStore;
 import net.calebscode.langforge.app.util.VersionNumber;
 
 public final class PluginManager {

@@ -1,5 +1,6 @@
 package net.calebscode.langforge.app.phonology.controller;
 
+import javafx.beans.property.ListProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
@@ -7,7 +8,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.VBox;
 import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
-import net.calebscode.langforge.app.phonology.model.PhonologicalRuleCollectionModel;
 import net.calebscode.langforge.app.phonology.model.PhonologicalRuleModel;
 import net.calebscode.langforge.app.ui.FXMLController;
 import net.calebscode.langforge.app.ui.WrappingTableCell;
@@ -20,13 +20,13 @@ public class PhonologicalRuleManagementController extends VBox implements FXMLCo
 	@FXML private TableColumn<PhonologicalRuleModel, String> ruleSourceColumn;
 	@FXML private TableColumn<PhonologicalRuleModel, String> ruleStatusColumn;
 
-	private PhonologicalRuleCollectionModel rules;
+	private ListProperty<PhonologicalRuleModel> rules;
 
 	public PhonologicalRuleManagementController(LanguagePhonologyModel phonologyModel) {
-		rules = phonologyModel.getPhonologicalRules();
+		rules = phonologyModel.phonologicalRulesProperty();
 
 		load(() -> {
-			rulesTable.itemsProperty().bindBidirectional(rules.rulesProperty());
+			rulesTable.itemsProperty().bindBidirectional(rules);
 			rulesTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
 			ruleNameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -43,16 +43,16 @@ public class PhonologicalRuleManagementController extends VBox implements FXMLCo
 	@FXML
 	private void addNewRule() {
 		var model = new PhonologicalRuleModel(StandardPhonemes.IPA_PHONEME_REPRESENTATION_MAPPER);
-		var ruleNumber = rules.rulesProperty().size() + 1;
+		var ruleNumber = rules.size() + 1;
 		model.setName("Rule " + ruleNumber);
-		rules.rulesProperty().add(model);
+		rules.add(model);
 	}
 
 	@FXML
 	private void deleteSelectedRules() {
 		var rulesToRemove = rulesTable.getSelectionModel().getSelectedItems().stream().toList();
 		for (var rule : rulesToRemove) {
-			rules.rulesProperty().remove(rule);
+			rules.remove(rule);
 		}
 	}
 

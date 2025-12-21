@@ -1,7 +1,20 @@
 package net.calebscode.langforge.app.phonology.model;
 
 import static javafx.collections.FXCollections.observableArrayList;
-import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.*;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.BACKNESS;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.CATEGORY;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.OPENNESS;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.PLACE;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.ROUNDEDNESS;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.STANDARD_BACKNESSES;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.STANDARD_CATEGORIES;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.STANDARD_OPENNESSES;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.STANDARD_PLACES;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.STANDARD_ROUNDEDNESSES;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.STANDARD_TYPES;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.STANDARD_VOICINGS;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.TYPE;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.VOICING;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -12,9 +25,11 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.ListChangeListener.Change;
+import net.calebscode.langforge.app.data.RuntimeType;
+import net.calebscode.langforge.app.data.SaveLoadModel;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 
-public class PhonologicalInventoryModel {
+public class PhonologicalInventoryModel extends SaveLoadModel {
 
 	private ListProperty<Phoneme> phonemes;
 	private ListProperty<PhonemeFeatureModel> features;
@@ -25,6 +40,9 @@ public class PhonologicalInventoryModel {
 
 		features = new SimpleListProperty<>(observableArrayList(element -> new Observable[] { element.valuesProperty() }));
 		features.addListener(this::validatePhonemeFeatures);
+		
+		persistList("phonemes", new RuntimeType<Phoneme>(){}, phonemes::get);
+		persistList("features", new RuntimeType<PhonemeFeatureModel>(){}, features::get);
 	}
 
 	public ReadOnlyListProperty<Phoneme> phonemesProperty() {

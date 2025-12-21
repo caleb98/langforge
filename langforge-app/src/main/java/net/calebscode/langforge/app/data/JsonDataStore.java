@@ -5,12 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.lang.reflect.WildcardType;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Map;
 
 import com.google.gson.Gson;
@@ -19,8 +14,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import net.calebscode.langforge.app.data.SaveLoadValue.SaveLoadList;
-import net.calebscode.langforge.app.data.SaveLoadValue.SaveLoadObject;
+import net.calebscode.langforge.app.data.SaveLoadValue.SaveLoadListValue;
+import net.calebscode.langforge.app.data.SaveLoadValue.SaveLoadMapValue;
+import net.calebscode.langforge.app.data.SaveLoadValue.SaveLoadModelValue;
+import net.calebscode.langforge.app.data.SaveLoadValue.SaveLoadObjectValue;
 
 public class JsonDataStore implements DataStore {
 
@@ -40,13 +37,9 @@ public class JsonDataStore implements DataStore {
 			var storeObject = new JsonObject();
 			
 			for (var entry : models.entrySet()) {
-				var modelObject = new JsonObject();
 				var modelName = entry.getKey();
 				var model = entry.getValue();
-				
-				writeModel(modelObject, model);
-				
-				storeObject.add(modelName, modelObject);
+				writeModel(storeObject, modelName, model);
 			}
 			
 			writer.setIndent("\t");
@@ -88,110 +81,82 @@ public class JsonDataStore implements DataStore {
 		}
 	}
 	
-	private void writeModel(JsonObject output, SaveLoadModel model) {
-		for (var entry : model.getValues().entrySet()) {
-			var key = entry.getKey();
-			var value = entry.getValue();
-			writeValue(output, key, value);
-		}
-	}
-	
-	private void writeValue(JsonObject output, String name, SaveLoadValue<?> value) {
+	private void writeValue(JsonObject output, String name, SaveLoadValue value) {
 		switch (value) {
-			case SaveLoadObject<?> saveLoadObject -> {
-				var object = saveLoadObject.getValue();
-				var type = saveLoadObject.type();
-				
-				if (object instanceof SaveLoadModel saveLoadModel) {
-					var modelObject = new JsonObject();
-					writeModel(modelObject, saveLoadModel);
-					output.add(name, modelObject);
-				}
-				else {
-					output.add(name, gson.toJsonTree(object, type));
-				}
-			}
-	
-			case SaveLoadList<?> saveLoadList -> {
-				var list = saveLoadList.getValue();
-				var type = saveLoadList.elementType();
-				
-				var array = new JsonArray(list.size());
-				for (var element : list) {
-					if (element instanceof SaveLoadModel model) {
-						var obj = new JsonObject();
-						writeModel(obj, model);
-						array.add(obj);
-					}
-					else {
-						array.add(gson.toJsonTree(element, type));
-					}
-					
-				}
-				output.add(name, array);
-			}
-	
-			case null -> throw new NullPointerException("SaveLoadModel value may not be null.");
+			case SaveLoadObjectValue<?> object -> writeObject(output, name, object);
+			case SaveLoadModelValue model -> writeModel(output, name, model.getValue());
+			case SaveLoadListValue<?> list -> writeList(output, name, list);
+			case SaveLoadMapValue<?, ?> map -> writeMap(output, name, map);
 		}
 	}
-	
-	private void readValue(JsonElement input, SaveLoadValue<?> value) {
-		switch (value) {
-			case SaveLoadObject<?> saveLoadObject -> {
-				var type = saveLoadObject.type();
-				
-				if (isTypeSaveLoadModel(type)) {
-					var object = value.getValue();
-					// TODO: throw a useful error if object is null
-					if (!(object instanceof SaveLoadModel model)) {
-						// TODO: throw error if the object isn't a save load model
-						// shouldn't be possible based on the type check, but still
-						return;
-					}
-					readModel(input.getAsJsonObject(), model);
-				}
-				else {
-					var object = gson.fromJson(input, type);
-					value.setValueUnchecked(object);
-				}
-			}
-	
-			case SaveLoadList<?> saveLoadList -> {
-				var array = input.getAsJsonArray();
-				readList(array, saveLoadList);
-			}
-	
-			case null -> {}
-		}
+
+	private void writeObject(JsonObject output, String name, SaveLoadObjectValue<?> object) {
+		var value = object.getValue();
+		var type = object.type();
+		output.add(name, gson.toJsonTree(value, type));
 	}
 	
-	private <E> void readList(JsonArray array, SaveLoadList<E> list) {
-		var type = list.elementType();
-		var result = list.newTypedList();
+	private void writeModel(JsonObject output, String name, SaveLoadModel model) {
+		var object = createJsonObjectForModel(model);
+		output.add(name, object);
+	}
+	
+	private void writeList(JsonObject output, String name, SaveLoadListValue<?> saveLoadList) {
+		var list = saveLoadList.getValue();
+		var type = saveLoadList.elementType();
 		
-		var isListOfModels = type instanceof Class<?> clazz && SaveLoadModel.class.isAssignableFrom(clazz);
-		if (isListOfModels) {
-			for (var element : array) {
-				if (!(element instanceof JsonObject elementObject)) {
-					throw new RuntimeException("Expected array of objects");
-				}
-				
-				var newElement = list.elementFactory().get();
-				if (!(newElement instanceof SaveLoadModel model)) {
-					throw new RuntimeException("SaveLoadList element factory produced object not of type SaveLoadModel");
-				}
-				
-				readModel(elementObject, model);
-				result.add(newElement);
+		var array = new JsonArray(list.size());
+		for (var element : list) {
+			if (element instanceof SaveLoadModel model) {
+				array.add(createJsonObjectForModel(model));
 			}
+			else {
+				array.add(gson.toJsonTree(element, type));
+			}
+			
 		}
-		else {
-			for (var element : array) {
-				result.add(gson.fromJson(element, type));
-			}
+		output.add(name, array);
+	}
+	
+	private <K, V> void writeMap(JsonObject output, String name, SaveLoadMapValue<K, V> saveLoadMap) {
+		var map = saveLoadMap.getValue();
+		var keyType = saveLoadMap.keyType();
+		var valueType = saveLoadMap.valueType();
+
+		var array = new JsonArray(map.size());
+		for (K key : map.keySet()) {
+			V value = map.get(key);
+			
+			var keyElement = (key instanceof SaveLoadModel keyModel) ?
+				createJsonObjectForModel(keyModel) :
+				gson.toJsonTree(key, keyType);
+			
+			var valueElement = (value instanceof SaveLoadModel valueModel) ?
+				createJsonObjectForModel(valueModel) :
+				gson.toJsonTree(value, valueType);
+			
+			var entryObject = new JsonObject();
+			entryObject.add("key", keyElement);
+			entryObject.add("value", valueElement);
+			array.add(entryObject);
 		}
 		
-		list.setValue(result);
+		output.add(name, array);
+	}
+	
+	private void readValue(JsonElement input, SaveLoadValue value) {
+		switch (value) {
+			case SaveLoadObjectValue<?> object -> readObject(input, object);
+			case SaveLoadModelValue model -> readModel(input.getAsJsonObject(), model.getValue());
+			case SaveLoadListValue<?> list -> readList(input.getAsJsonArray(), list);
+			case SaveLoadMapValue<?, ?> map -> readMap(input.getAsJsonArray(), map);
+		}
+	}
+
+	private void readObject(JsonElement input, SaveLoadObjectValue<?> object) {
+		var type = object.type();
+		var loaded = gson.fromJson(input, type);
+		object.setValueUnchecked(loaded);
 	}
 	
 	private void readModel(JsonObject input, SaveLoadModel model) {
@@ -209,15 +174,97 @@ public class JsonDataStore implements DataStore {
 		}
 	}
 	
-	private static boolean isTypeSaveLoadModel(Type type) {
-		if (type instanceof Class<?> c) {
-			return SaveLoadModel.class.isAssignableFrom(c);
-		}
-		else if (type instanceof ParameterizedType p) {
-			return isTypeSaveLoadModel(p.getRawType());
-		}
+	private <T> void readList(JsonArray input, SaveLoadListValue<T> list) {
+		var type = list.elementType();
+		list.getValue().clear();
 		
-		return false;
+		var isListOfModels = SaveLoadModel.isTypeSaveLoadModel(type);
+		if (isListOfModels) {
+			for (var element : input) {
+				if (!(element instanceof JsonObject elementObject)) {
+					throw new RuntimeException("Expected array of objects");
+				}
+				
+				T newElement = list.elementFactory().get();
+				if (!(newElement instanceof SaveLoadModel model)) {
+					throw new RuntimeException("SaveLoadListValue element factory produced object not of type SaveLoadModel");
+				}
+				
+				readModel(elementObject, model);
+				list.getValue().add(newElement);
+			}
+		}
+		else {
+			for (var element : input) {
+				list.getValue().add(gson.fromJson(element, type));
+			}
+		}
+	}
+	
+	private <K, V> void readMap(JsonArray input, SaveLoadMapValue<K, V> map) {
+		var keyType = map.keyType();
+		var valueType = map.valueType();
+		map.getValue().clear();
+		
+		var areKeysModels = SaveLoadModel.isTypeSaveLoadModel(keyType);
+		var areValuesModels = SaveLoadModel.isTypeSaveLoadModel(valueType);
+		
+		for (var entry : input) {
+			var entryObject = entry.getAsJsonObject();
+			var keyElement = entryObject.get("key");
+			var valueElement = entryObject.get("value");
+			
+			K key = null;
+			V value = null;
+			
+			if (areKeysModels) {
+				if (!(keyElement instanceof JsonObject keyObject)) {
+					throw new RuntimeException("Expected map key to be an object.");
+				}
+				
+				key = map.keyFactory().get();
+				if (!(key instanceof SaveLoadModel keyModel)) {
+					throw new RuntimeException("SaveLoadMapValue key factory produced object not of type SaveLoadModel");
+				}
+				
+				readModel(keyObject, keyModel);
+			}
+			else {
+				key = gson.fromJson(keyElement, keyType);
+			}
+			
+			if (areValuesModels) {
+				if (!(valueElement instanceof JsonObject valueObject)) {
+					throw new RuntimeException("Expected map value to be an object.");
+				}
+				
+				value = map.valueFactory().get();
+				if (!(value instanceof SaveLoadModel valueModel)) {
+					throw new RuntimeException("SaveLoadMapValue value factory produced object not of type SaveLoadModel");
+				}
+				
+				readModel(valueObject, valueModel);
+			}
+			else {
+				value = gson.fromJson(valueElement, valueType);
+			}
+			
+			if (key == null || value == null) {
+				throw new RuntimeException("Invalid entry when loading SaveLoadMapValue: null key or value.");
+			}
+			
+			map.getValue().put(key, value);
+		}
 	}
 
+	private JsonObject createJsonObjectForModel(SaveLoadModel model) {
+		var object = new JsonObject();
+		for (var entry : model.getValues().entrySet()) {
+			var key = entry.getKey();
+			var value = entry.getValue();
+			writeValue(object, key, value);
+		}
+		return object;
+	}
+	
 }

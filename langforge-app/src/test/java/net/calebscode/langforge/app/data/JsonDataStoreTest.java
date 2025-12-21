@@ -1,5 +1,8 @@
 package net.calebscode.langforge.app.data;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.in;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -429,6 +432,107 @@ public class JsonDataStoreTest {
 	}
 	
 	@Test
+	void saveMap() throws Exception {
+		testModel.addMap("users", new RuntimeType<String>() {}, new RuntimeType<DynamicModel>() {}, Map.of(
+			"john1234", new DynamicModel() {{
+				addInteger("id", 1);
+			}},
+			"sadako99", new DynamicModel() {{
+				addInteger("id", 2);
+			}}
+		));
+		var output = new ByteArrayOutputStream();
+		
+		store.save(output, Map.of("model", testModel));
+		var json = output.toString(StandardCharsets.UTF_8);
+
+		// Entry ordering isn't guaranteed for maps, so there's two valid outputs here.
+		var validOutputs = List.of(
+			"""
+			{
+				"model": {
+					"users": [
+						{
+							"key": "john1234",
+							"value": {
+								"id": 1
+							}
+						},
+						{
+							"key": "sadako99",
+							"value": {
+								"id": 2
+							}
+						}
+					]
+				}
+			}
+			""",
+			"""
+			{
+				"model": {
+					"users": [
+						{
+							"key": "sadako99",
+							"value": {
+								"id": 2
+							}
+						},
+						{
+							"key": "john1234",
+							"value": {
+								"id": 1
+							}
+						}
+					]
+				}
+			}
+			"""
+		);
+		
+		assertThat(json, is(in(validOutputs)));
+	}
+	
+	@Test
+	void loadMap() throws Exception {
+		testModel.addMap("users", new RuntimeType<String>() {}, new RuntimeType<DynamicModel>() {}, () -> "", () -> new DynamicModel() {{
+			addInteger("id");
+		}});
+		var source =
+			"""
+			{
+				"model": {
+					"users": [
+						{
+							"key": "caleb2",
+							"value": {
+								"id": 5
+							}
+						},
+						{
+							"key": "netguy",
+							"value": {
+								"id": 99
+							}
+						}
+					]
+				}
+			}
+			""";
+		
+		var input = new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
+		store.load(input, Map.of("model", testModel));
+
+		var expected = new DynamicModel() {{
+			addMap("users", new RuntimeType<String>() {}, new RuntimeType<DynamicModel>() {}, Map.of(
+				"caleb2", new DynamicModel() {{ addInteger("id", 5); }},
+				"netguy", new DynamicModel() {{ addInteger("id", 99); }}
+			));
+		}};
+		assertEquals(expected, testModel);
+	}
+	
+	@Test
 	void saveModelList() throws Exception {
 		testModel.addList("models", new RuntimeType<DynamicModel>() {}, List.of(
 			new DynamicModel() {{ addString("value", "hello"); }},
@@ -683,24 +787,39 @@ public class JsonDataStoreTest {
 		
 		void addModel(String name, SaveLoadModel model) {
 			values.put(name, model);
-			persist(name, () -> (SaveLoadModel) values.get(name), v -> values.put(name, v));
+			persist(name, () -> (SaveLoadModel) values.get(name));
 		}
 		
 		<T> void addList(String name, RuntimeType<T> elementType) {
-			addList(name, elementType, (List<T>)null);
+			addList(name, elementType, new ArrayList<>());
 		}
 		
 		@SuppressWarnings("unchecked")
 		<T> void addList(String name, RuntimeType<T> elementType, List<T> list) {
 			values.put(name, list);
-			persistList(name, elementType, () -> (List<T>) values.get(name), l -> values.put(name, l));
+			persistList(name, elementType, () -> (List<T>) values.get(name));
 		}
 		
 		@SuppressWarnings("unchecked")
 		<T> void addList(String name, RuntimeType<T> elementType, Supplier<T> elementFactory) {
-			var list = List.<T>of();
-			values.put(name, list);
-			persistList(name, elementType, elementFactory, () -> (List<T>) values.get(name), l -> values.put(name, l));
+			values.put(name, new ArrayList<>());
+			persistList(name, elementType, elementFactory, () -> (List<T>) values.get(name));
+		}
+		
+		<T> void addMap(String name, RuntimeType<T> keyType, RuntimeType<T> valueType) {
+			addMap(name, keyType, valueType, new HashMap<>());
+		}
+		
+		@SuppressWarnings("unchecked")
+		<K, V> void addMap(String name, RuntimeType<K> keyType, RuntimeType<V> valueType, Map<K, V> map) {
+			values.put(name, map);
+			persistMap(name, keyType, valueType, () -> (Map<K, V>) values.get(name));
+		}
+		
+		@SuppressWarnings("unchecked")
+		<K, V> void addMap(String name, RuntimeType<K> keyType, RuntimeType<V> valueType, Supplier<K> keyFactory, Supplier<V> valueFactory) {
+			values.put(name, new HashMap<K, V>());
+			persistMap(name, keyType, valueType, keyFactory, valueFactory, () -> (Map<K, V>) values.get(name));
 		}
 		
 		@Override

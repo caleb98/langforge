@@ -9,11 +9,12 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
+import net.calebscode.langforge.app.data.SaveLoadModel;
 import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMapper;
 import net.calebscode.langforge.phonology.rules.PhonologicalRule;
 import net.calebscode.langforge.phonology.rules.PhonologicalRuleCompiler;
 
-public class PhonologicalRuleModel {
+public class PhonologicalRuleModel extends SaveLoadModel {
 
 	private PhonologicalRuleCompiler compiler;
 
@@ -21,10 +22,13 @@ public class PhonologicalRuleModel {
 	private StringProperty source = new SimpleStringProperty("");
 	private ObjectProperty<Optional<PhonologicalRule>> rule = new SimpleObjectProperty<>(Optional.empty());
 	private StringProperty compileError = new SimpleStringProperty("");
-
+	
 	public PhonologicalRuleModel(PhonemeRepresentationMapper ipaMapper) {
 		compiler = new PhonologicalRuleCompiler(ipaMapper);
 		source.addListener(this::onSourceChanged);
+		
+		persist("name", name::get, name::set);
+		persist("source", source::get, source::set);
 	}
 
 	public StringProperty nameProperty() {

@@ -113,7 +113,6 @@ public class LexiconWordTableCell<S> extends TableCell<S, PhonemeString> {
 		try {
 			var activeRules = phonologyModel
 				.getPhonologicalRules()
-				.rulesProperty()
 				.stream()
 				.map(PhonologicalRuleModel::getRule)
 				.filter(Optional::isPresent)
