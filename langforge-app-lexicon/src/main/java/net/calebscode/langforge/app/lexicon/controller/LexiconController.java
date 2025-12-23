@@ -38,7 +38,7 @@ public class LexiconController extends HBox implements FXMLController {
 		load(() -> {
 			wordsTable.itemsProperty().bind(lexiconModel.entriesProperty());
 
-			wordColumn.setCellFactory(column -> {
+			wordColumn.setCellFactory(_ -> {
 				var cell = new LexiconWordTableCell<LexiconEntryModel>(phonologyModel);
 				cell.setEditable(true);
 				return cell;

@@ -95,7 +95,9 @@ public class LexiconWordTableCell<S> extends TableCell<S, PhonemeString> {
 		try {
 			var ipa = edit.getText();
 			sequence = new PhonemeStringBuilder()
+				.appendWordBoundary()
 				.append(ipa, IPA_PHONEME_REPRESENTATION_MAPPER)
+				.appendWordBoundary()
 				.build();
 		} catch (PhonemeRepresentationMappingException ex) {
 			var errorAlert = new Alert(AlertType.ERROR);
