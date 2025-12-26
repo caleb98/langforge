@@ -1,0 +1,7 @@
+ext {
+    pluginProjects = [
+        ':langforge-app-core',
+        ':langforge-app-phonology',
+        ':langforge-app-lexicon'
+    ]
+}

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.TabPane?>
+
+<?import javafx.scene.layout.HBox?>
+
+<fx:root type="net.calebscode.langforge.app.LangforgeApplicationController" xmlns:fx="http://javafx.com/fxml">
+	<top>
+		<MenuBar fx:id="menuBar"/>
+	</top>
+	<center>
+		<TabPane fx:id="tabPane"/>
+	</center>
+	<bottom>
+		<HBox style="-fx-border-width: 1 0 0 0; -fx-border-color: darkgrey; -fx-background-color: lightgrey; -fx-padding: 2 5 2 5;">
+			<Label fx:id="statusText"/>
+		</HBox>
+	</bottom>
+</fx:root>

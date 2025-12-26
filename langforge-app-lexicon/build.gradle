@@ -1,0 +1,8 @@
+plugins {
+    id 'buildlogic.langforge-plugin-conventions'
+}
+
+dependencies {
+    implementation project(":langforge-app-core")
+    implementation project(":langforge-app-phonology")
+}
