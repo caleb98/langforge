@@ -80,9 +80,9 @@ public final class PluginManager {
 			for (var pluginEntry : pluginContexts.entrySet()) {
 				var plugin = pluginEntry.getKey();
 				var context = pluginEntry.getValue();
-				var persistentModels = context.getPersistentModels();
+				var saveLoadObjects = context.getSaveLoadObjects();
 
-				if (persistentModels.isEmpty()) {
+				if (saveLoadObjects.isEmpty()) {
 					continue;
 				}
 
@@ -94,7 +94,7 @@ public final class PluginManager {
 				}
 
 				try (var outputStream = new FileOutputStream(filePath.toFile())) {
-					dataStore.save(outputStream, persistentModels);
+					dataStore.save(outputStream, saveLoadObjects);
 					outputStream.flush();
 				}
 			}
@@ -113,7 +113,7 @@ public final class PluginManager {
 			for (var pluginEntry : pluginContexts.entrySet()) {
 				var plugin = pluginEntry.getKey();
 				var context = pluginEntry.getValue();
-				var persistentModels = context.getPersistentModels();
+				var persistentModels = context.getSaveLoadObjects();
 
 				if (persistentModels.isEmpty()) {
 					continue;

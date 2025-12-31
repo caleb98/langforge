@@ -71,7 +71,7 @@ public final class LangforgeCorePhonologyPlugin implements LangforgePlugin {
 		);
 
 		context.registerApi(new LangforgeCorePhonologyApi(phonologyModel));
-		context.registerSaveLoadModel("phonologyModel", phonologyModel);
+		context.registerSaveLoadObject("phonologyModel", phonologyModel);
 	}
 
 	@Override

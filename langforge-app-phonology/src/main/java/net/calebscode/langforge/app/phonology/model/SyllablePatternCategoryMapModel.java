@@ -7,6 +7,7 @@ import static javafx.collections.FXCollections.unmodifiableObservableMap;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javafx.beans.property.MapProperty;
@@ -15,16 +16,25 @@ import javafx.beans.property.ReadOnlyMapWrapper;
 import javafx.beans.property.SimpleMapProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
-import net.calebscode.langforge.app.data.DynamicSaveLoadModel;
 import net.calebscode.langforge.app.data.RuntimeType;
-import net.calebscode.langforge.app.data.SaveLoadModel;
+import net.calebscode.langforge.app.data.SaveLoadSchema;
 import net.calebscode.langforge.app.data.SaveLoadable;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 import net.calebscode.langforge.phonology.syllable.SyllablePatternCategoryMap;
 
-public class SyllablePatternCategoryMapModel extends SyllablePatternCategoryMap implements SaveLoadable {
+public class SyllablePatternCategoryMapModel extends SyllablePatternCategoryMap implements SaveLoadable<SyllablePatternCategoryMapModel> {
 
-	private final DynamicSaveLoadModel saveLoadModel;
+	private static final SaveLoadSchema<SyllablePatternCategoryMapModel> schema = new SaveLoadSchema<>();
+
+	static {
+		schema.addMap(
+			"categories",
+			new RuntimeType<Character>() {},
+			new RuntimeType<Set<Phoneme>>() {},
+			m -> m.categoryMap
+		);
+	}
+	
 	private final MapProperty<Character, Set<Phoneme>> categoryMap;
 	private final ReadOnlyMapWrapper<Character, Set<Phoneme>> categoryWrapper;
 
@@ -39,21 +49,18 @@ public class SyllablePatternCategoryMapModel extends SyllablePatternCategoryMap 
 			}
 			return unmodifiableObservableMap(mapCopy);
 		}, categoryMap));
-
-		saveLoadModel = new DynamicSaveLoadModel();
-		saveLoadModel.persistMap(
-			"categories",
-			new RuntimeType<Character>() {},
-			new RuntimeType<Set<Phoneme>>() {},
-			categoryMap::get
-		);
 	}
 	
 	@Override
-	public SaveLoadModel getModel() {
-		return saveLoadModel;
+	public SyllablePatternCategoryMapModel getValue() {
+		return this;
 	}
-
+	
+	@Override
+	public SaveLoadSchema<SyllablePatternCategoryMapModel> getSchema() {
+		return schema;
+	}
+	
 	public ReadOnlyMapProperty<Character, Set<Phoneme>> categoryMapProperty() {
 		return categoryWrapper;
 	}

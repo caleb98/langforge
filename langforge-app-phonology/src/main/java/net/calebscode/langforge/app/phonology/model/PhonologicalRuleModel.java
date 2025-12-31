@@ -9,13 +9,21 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
-import net.calebscode.langforge.app.data.SaveLoadModel;
+import net.calebscode.langforge.app.data.SaveLoadSchema;
+import net.calebscode.langforge.app.data.SaveLoadable;
 import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMapper;
 import net.calebscode.langforge.phonology.rules.PhonologicalRule;
 import net.calebscode.langforge.phonology.rules.PhonologicalRuleCompiler;
 
-public class PhonologicalRuleModel extends SaveLoadModel {
+public class PhonologicalRuleModel implements SaveLoadable<PhonologicalRuleModel> {
 
+	private static final SaveLoadSchema<PhonologicalRuleModel> schema = new SaveLoadSchema<>();
+	
+	static {
+		schema.addProperty("name", m -> m.name);
+		schema.addProperty("source", m -> m.source);
+	}
+	
 	private PhonologicalRuleCompiler compiler;
 
 	private StringProperty name = new SimpleStringProperty("");
@@ -26,11 +34,18 @@ public class PhonologicalRuleModel extends SaveLoadModel {
 	public PhonologicalRuleModel(PhonemeRepresentationMapper ipaMapper) {
 		compiler = new PhonologicalRuleCompiler(ipaMapper);
 		source.addListener(this::onSourceChanged);
-		
-		persist("name", name::get, name::set);
-		persist("source", source::get, source::set);
 	}
 
+	@Override
+	public PhonologicalRuleModel getValue() {
+		return this;
+	}
+	
+	@Override
+	public SaveLoadSchema<PhonologicalRuleModel> getSchema() {
+		return schema;
+	}
+	
 	public StringProperty nameProperty() {
 		return name;
 	}

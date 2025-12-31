@@ -11,13 +11,21 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import net.calebscode.langforge.app.data.RuntimeType;
-import net.calebscode.langforge.app.data.SaveLoadModel;
+import net.calebscode.langforge.app.data.SaveLoadSchema;
+import net.calebscode.langforge.app.data.SaveLoadable;
 
-public class PhonemeFeatureModel extends SaveLoadModel {
+public class PhonemeFeatureModel implements SaveLoadable<PhonemeFeatureModel> {
 
+	private static final SaveLoadSchema<PhonemeFeatureModel> schema = new SaveLoadSchema<>();
+	
+	static {
+		schema.addProperty("name", m -> m.name);
+		schema.addList("values", new RuntimeType<String>() {}, PhonemeFeatureModel::valuesProperty);
+	}
+	
 	private BooleanProperty isDeleted;
 	private StringProperty name;
-	private ListProperty<String> values = new SimpleListProperty<>(observableArrayList());
+	private ListProperty<String> values;
 
 	public PhonemeFeatureModel() {
 		this("<unloaded>");
@@ -26,9 +34,17 @@ public class PhonemeFeatureModel extends SaveLoadModel {
 	public PhonemeFeatureModel(String featureName) {
 		isDeleted = new SimpleBooleanProperty(false);
 		name = new SimpleStringProperty(featureName);
-
-		persist("name", name::get, name::set);
-		persistList("values", new RuntimeType<String>() {}, values::get);
+		values = new SimpleListProperty<>(observableArrayList());
+	}
+	
+	@Override
+	public PhonemeFeatureModel getValue() {
+		return this;
+	}
+	
+	@Override
+	public SaveLoadSchema<PhonemeFeatureModel> getSchema() {
+		return schema;
 	}
 
 	public ReadOnlyBooleanProperty isDeletedProperty() {

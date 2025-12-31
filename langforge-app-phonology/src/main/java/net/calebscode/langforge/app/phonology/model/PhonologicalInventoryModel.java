@@ -26,11 +26,19 @@ import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.ListChangeListener.Change;
 import net.calebscode.langforge.app.data.RuntimeType;
-import net.calebscode.langforge.app.data.SaveLoadModel;
+import net.calebscode.langforge.app.data.SaveLoadSchema;
+import net.calebscode.langforge.app.data.SaveLoadable;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 
-public class PhonologicalInventoryModel extends SaveLoadModel {
+public class PhonologicalInventoryModel implements SaveLoadable<PhonologicalInventoryModel> {
 
+	private static final SaveLoadSchema<PhonologicalInventoryModel> schema = new SaveLoadSchema<>();
+	
+	static {
+		schema.addList("phonemes", new RuntimeType<Phoneme>(){}, PhonologicalInventoryModel::getPhonemes);
+		schema.addList("features", new RuntimeType<PhonemeFeatureModel>(){}, PhonologicalInventoryModel::getFeatures);
+	}
+	
 	private ListProperty<Phoneme> phonemes;
 	private ListProperty<PhonemeFeatureModel> features;
 
@@ -40,11 +48,18 @@ public class PhonologicalInventoryModel extends SaveLoadModel {
 
 		features = new SimpleListProperty<>(observableArrayList(element -> new Observable[] { element.valuesProperty() }));
 		features.addListener(this::validatePhonemeFeatures);
-		
-		persistList("phonemes", new RuntimeType<Phoneme>(){}, phonemes::get);
-		persistList("features", new RuntimeType<PhonemeFeatureModel>(){}, features::get);
 	}
-
+	
+	@Override
+	public PhonologicalInventoryModel getValue() {
+		return this;
+	}
+	
+	@Override
+	public SaveLoadSchema<PhonologicalInventoryModel> getSchema() {
+		return schema;
+	}
+	
 	public ReadOnlyListProperty<Phoneme> phonemesProperty() {
 		return phonemes;
 	}
@@ -96,6 +111,14 @@ public class PhonologicalInventoryModel extends SaveLoadModel {
 
 	public boolean isPhonemeInvalid(Phoneme phoneme) {
 		return !isPhonemeValid(phoneme);
+	}
+	
+	private ListProperty<Phoneme> getPhonemes() {
+		return phonemes;
+	}
+	
+	private ListProperty<PhonemeFeatureModel> getFeatures() {
+		return features;
 	}
 
 	private void validatePhonemes(Change<? extends Phoneme> change) {

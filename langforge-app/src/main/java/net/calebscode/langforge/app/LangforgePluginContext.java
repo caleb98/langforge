@@ -9,7 +9,9 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.scene.control.Tab;
-import net.calebscode.langforge.app.data.SaveLoadModel;
+import net.calebscode.langforge.app.data.SaveLoadObject;
+import net.calebscode.langforge.app.data.SaveLoadSchema;
+import net.calebscode.langforge.app.data.SaveLoadable;
 import net.calebscode.langforge.app.plugin.MenuDefinition;
 import net.calebscode.langforge.app.plugin.MenuItemDefinition;
 
@@ -22,7 +24,7 @@ public class LangforgePluginContext {
 
 	private final LangforgeApplicationModel appModel;
 	private final LangforgePluginApiProvider apiProvider;
-	private final Map<String, SaveLoadModel> persistentModels = new HashMap<>();
+	private final Map<String, SaveLoadObject<?>> saveLoadObjects = new HashMap<>();
 
 	private final ListProperty<MenuDefinition> menus = new SimpleListProperty<>(FXCollections.observableArrayList());
 	private final ListProperty<MenuItemDefinition> menuItems = new SimpleListProperty<>(FXCollections.observableArrayList());
@@ -67,11 +69,15 @@ public class LangforgePluginContext {
 		appModel.tabs.add(tab);
 	}
 
-	public void registerSaveLoadModel(String key, SaveLoadModel model) {
-		if (persistentModels.containsKey(key)) {
-			throw new IllegalArgumentException("PersistentModel with key '" + key + "' already registered.");
+	public <T> void registerSaveLoadObject(String key, SaveLoadable<T> object) {
+		if (saveLoadObjects.containsKey(key)) {
+			throw new IllegalArgumentException(SaveLoadSchema.class.getSimpleName() + " with key '" + key + "' already registered.");
 		}
-		persistentModels.put(key, model);
+		
+		var context = object.getValue();
+		var schema = object.getSchema();
+		
+		saveLoadObjects.put(key, new SaveLoadObject<>(context, schema));
 	}
 
 	public <T> void registerApi(T api) {
@@ -94,8 +100,8 @@ public class LangforgePluginContext {
 		return menuItems;
 	}
 
-	Map<String, SaveLoadModel> getPersistentModels() {
-		return Collections.unmodifiableMap(persistentModels);
+	Map<String, SaveLoadObject<?>> getSaveLoadObjects() {
+		return Collections.unmodifiableMap(saveLoadObjects);
 	}
 
 }

@@ -1,10 +1,13 @@
 package net.calebscode.langforge.app.data;
 
+import static net.calebscode.langforge.app.data.SaveLoadable.isTypeSaveLoadable;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
@@ -14,10 +17,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import net.calebscode.langforge.app.data.SaveLoadValue.SaveLoadListValue;
-import net.calebscode.langforge.app.data.SaveLoadValue.SaveLoadMapValue;
-import net.calebscode.langforge.app.data.SaveLoadValue.SaveLoadModelValue;
-import net.calebscode.langforge.app.data.SaveLoadValue.SaveLoadObjectValue;
+import net.calebscode.langforge.app.data.SaveLoadProperty.SaveLoadListProperty;
+import net.calebscode.langforge.app.data.SaveLoadProperty.SaveLoadMapProperty;
+import net.calebscode.langforge.app.data.SaveLoadProperty.SaveLoadObjectProperty;
 
 public class JsonDataStore implements DataStore {
 
@@ -30,20 +32,20 @@ public class JsonDataStore implements DataStore {
 	}
 
 	@Override
-	public void save(OutputStream output, Map<String, SaveLoadModel> models) throws IOException {
+	public void save(OutputStream output, Map<String, SaveLoadObject<?>> objects) throws IOException {
 		try (
 			var writer = gson.newJsonWriter(new OutputStreamWriter(output))
 		) {
-			var storeObject = new JsonObject();
+			var json = new JsonObject();
 			
-			for (var entry : models.entrySet()) {
-				var modelName = entry.getKey();
-				var model = entry.getValue();
-				writeModel(storeObject, modelName, model);
+			for (var entry : objects.entrySet()) {
+				var name = entry.getKey();
+				var object = entry.getValue();
+				writeObject(json, name, object);
 			}
 			
 			writer.setIndent("\t");
-			gson.toJson(storeObject, writer);
+			gson.toJson(json, writer);
 			writer.flush();
 			output.write("\n".getBytes(StandardCharsets.UTF_8));
 		} catch (IOException e) {
@@ -53,26 +55,26 @@ public class JsonDataStore implements DataStore {
 	}
 	
 	@Override
-	public void load(InputStream input, Map<String, SaveLoadModel> models) throws IOException {
+	public void load(InputStream input, Map<String, SaveLoadObject<?>> objects) throws IOException {
 		try (
 			var reader = gson.newJsonReader(new InputStreamReader(input))
 		) {
-			JsonObject storeObject = gson.fromJson(reader, JsonObject.class);
+			JsonObject store = gson.fromJson(reader, JsonObject.class);
 			
-			for (var modelName : storeObject.keySet()) {
-				if (!models.containsKey(modelName)) {
+			for (var objectName : store.keySet()) {
+				if (!objects.containsKey(objectName)) {
 					// TODO: error, the loaded json has an entry that does not map to a model in the code
 					continue;
 				}
 				
-				var modelObject = storeObject.get(modelName);
+				var modelObject = store.get(objectName);
 				if (!modelObject.isJsonObject()) {
 					// TODO: error, the value for the model entry was not an object
 					continue;
 				}
 				
-				var model = models.get(modelName);
-				readModel(modelObject.getAsJsonObject(), model);
+				var model = objects.get(objectName);
+				readObject(modelObject.getAsJsonObject(), model);
 			}
 			
 		 } catch (IOException e) {
@@ -81,135 +83,209 @@ public class JsonDataStore implements DataStore {
 		}
 	}
 	
-	private void writeValue(JsonObject output, String name, SaveLoadValue value) {
-		switch (value) {
-			case SaveLoadObjectValue<?> object -> writeObject(output, name, object);
-			case SaveLoadModelValue model -> writeModel(output, name, model.getValue());
-			case SaveLoadListValue<?> list -> writeList(output, name, list);
-			case SaveLoadMapValue<?, ?> map -> writeMap(output, name, map);
+	private <T> void writeObject(JsonObject target, String name, SaveLoadObject<T> object) {
+		var json = createJsonForSaveLoadObject(object);
+		target.add(name, json);
+	}
+	
+	private <T> void writeProperty(JsonObject target, String name, SaveLoadProperty<T> property, T context) {
+		switch (property) {
+			case SaveLoadObjectProperty<T, ?> object -> writeObjectProperty(target, name, object, context);
+			case SaveLoadListProperty<T, ?> list -> writeListProperty(target, name, list, context);
+			case SaveLoadMapProperty<T, ?, ?> map -> writeMapProperty(target, name, map, context);
 		}
 	}
-
-	private void writeObject(JsonObject output, String name, SaveLoadObjectValue<?> object) {
-		var value = object.getValue();
-		var type = object.type();
-		output.add(name, gson.toJsonTree(value, type));
+	
+	private <T, S> void writeObjectProperty(JsonObject target, String name, SaveLoadObjectProperty<T, S> property, T context) {
+		var value = property.getValue(context);
+		var type = property.type();
+		
+		if (value instanceof SaveLoadable<?> saveLoadable) {
+			@SuppressWarnings("unchecked")
+			var schema = (SaveLoadSchema<S>) saveLoadable.getSchema();
+			var object = new SaveLoadObject<>(value, schema);
+			writeObject(target, name, object);
+		}
+		else {
+			var json = gson.toJsonTree(value, type);
+			target.add(name, json);
+		}
 	}
 	
-	private void writeModel(JsonObject output, String name, SaveLoadModel model) {
-		var object = createJsonObjectForModel(model);
-		output.add(name, object);
-	}
 	
-	private void writeList(JsonObject output, String name, SaveLoadListValue<?> saveLoadList) {
-		var list = saveLoadList.getValue();
-		var type = saveLoadList.elementType();
+	private <T, E> void writeListProperty(JsonObject target, String name, SaveLoadListProperty<T, E> property, T context) {
+		var list = property.getValue(context);
+		var type = property.elementType();
 		
 		var array = new JsonArray(list.size());
 		for (var element : list) {
-			if (element instanceof SaveLoadModel model) {
-				array.add(createJsonObjectForModel(model));
-			}
-			else {
-				array.add(gson.toJsonTree(element, type));
-			}
-			
-		}
-		output.add(name, array);
-	}
-	
-	private <K, V> void writeMap(JsonObject output, String name, SaveLoadMapValue<K, V> saveLoadMap) {
-		var map = saveLoadMap.getValue();
-		var keyType = saveLoadMap.keyType();
-		var valueType = saveLoadMap.valueType();
-
-		var array = new JsonArray(map.size());
-		for (K key : map.keySet()) {
-			V value = map.get(key);
-			
-			var keyElement = (key instanceof SaveLoadModel keyModel) ?
-				createJsonObjectForModel(keyModel) :
-				gson.toJsonTree(key, keyType);
-			
-			var valueElement = (value instanceof SaveLoadModel valueModel) ?
-				createJsonObjectForModel(valueModel) :
-				gson.toJsonTree(value, valueType);
-			
-			var entryObject = new JsonObject();
-			entryObject.add("key", keyElement);
-			entryObject.add("value", valueElement);
-			array.add(entryObject);
+			array.add(createJsonForObject(element, type));
 		}
 		
-		output.add(name, array);
+		target.add(name, array);
 	}
 	
-	private void readValue(JsonElement input, SaveLoadValue value) {
-		switch (value) {
-			case SaveLoadObjectValue<?> object -> readObject(input, object);
-			case SaveLoadModelValue model -> readModel(input.getAsJsonObject(), model.getValue());
-			case SaveLoadListValue<?> list -> readList(input.getAsJsonArray(), list);
-			case SaveLoadMapValue<?, ?> map -> readMap(input.getAsJsonArray(), map);
+	private <T, K, V> void writeMapProperty(JsonObject target, String name, SaveLoadMapProperty<T, K, V> property, T context) {
+		var map = property.getValue(context);
+		var keyType = property.keyType();
+		var valueType = property.valueType();
+		
+		var array = new JsonArray(map.size());
+		for (var entry : map.entrySet()) {
+			K key = entry.getKey();
+			V value = entry.getValue();
+			
+			JsonElement keyElement = createJsonForObject(key, keyType);
+			JsonElement valueElement = createJsonForObject(value, valueType);
+			
+			var entryJson = new JsonObject();
+			entryJson.add("key", keyElement);
+			entryJson.add("value", valueElement);
+			array.add(entryJson);
 		}
+		
+		target.add(name, array);
 	}
 
-	private void readObject(JsonElement input, SaveLoadObjectValue<?> object) {
-		var type = object.type();
-		var loaded = gson.fromJson(input, type);
-		object.setValueUnchecked(loaded);
+	private <T> JsonElement createJsonForObject(T value, Type type) {
+		JsonElement element;
+		
+		if (value instanceof SaveLoadable<?> saveLoadable) {
+			@SuppressWarnings("unchecked")
+			var schema = (SaveLoadSchema<T>) saveLoadable.getSchema();
+			var object = new SaveLoadObject<>(value, schema);
+			element = createJsonForSaveLoadObject(object);
+		}
+		else {
+			element = gson.toJsonTree(value, type);
+		}
+		
+		return element;
+	}
+
+	private <T> JsonObject createJsonForSaveLoadObject(SaveLoadObject<T> object) {
+		var context = object.context();
+		var schema = object.schema();
+		var json = new JsonObject();
+		
+		for (var entry : schema.getProperties().entrySet()) {
+			var propertyName = entry.getKey();
+			var property = entry.getValue();
+			writeProperty(json, propertyName, property, context);
+		}
+		
+		return json;
 	}
 	
-	private void readModel(JsonObject input, SaveLoadModel model) {
-		for (var entry : input.entrySet()) {
+	private <T> void readObject(JsonObject source, SaveLoadObject<T> object) {
+		var context = object.context();
+		var schema = object.schema();
+		
+		for (var entry : source.entrySet()) {
 			var key = entry.getKey();
 			var value = entry.getValue();
-
-			var modelProperty = model.getValues().get(key);
-			if (modelProperty == null) {
-				// TODO: log or throw
+			
+			var property = schema.getProperties().get(key);
+			if (property == null) {
+				// TODO: log error indicating missing property in schema
 				continue;
 			}
-
-			readValue(value, modelProperty);
+			
+			readProperty(value, property, context);
 		}
 	}
 	
-	private <T> void readList(JsonArray input, SaveLoadListValue<T> list) {
-		var type = list.elementType();
-		list.getValue().clear();
+	private <T> void readProperty(JsonElement source, SaveLoadProperty<T> property, T context) {
+		switch (property) {
+			case SaveLoadObjectProperty<T, ?> object -> readObjectProperty(source, object, context);
+			case SaveLoadListProperty<T, ?> list -> readListProperty(source, list, context);
+			case SaveLoadMapProperty<T, ?, ?> map -> readMapProperty(source, map, context);
+		}
+	}
+
+	private <T, S> void readObjectProperty(JsonElement source, SaveLoadObjectProperty<T, S> property, T context) {
+		var type = property.type();
 		
-		var isListOfModels = SaveLoadModel.isTypeSaveLoadModel(type);
-		if (isListOfModels) {
-			for (var element : input) {
-				if (!(element instanceof JsonObject elementObject)) {
-					throw new RuntimeException("Expected array of objects");
+		if (isTypeSaveLoadable(type)) {
+			var value = property.getValue(context);
+			@SuppressWarnings("unchecked")
+			var saveLoadable = (SaveLoadable<S>) value;
+			var schema = saveLoadable.getSchema();
+			var object = new SaveLoadObject<>(value, schema);
+			
+			if (!source.isJsonObject()) {
+				// TODO: log error
+				return;
+			}
+			
+			readObject(source.getAsJsonObject(), object);
+		}
+		else {
+			S loaded = gson.fromJson(source, type);
+			property.setValue(context, loaded);
+		}
+	}
+
+	private <T, E> void readListProperty(JsonElement source, SaveLoadListProperty<T, E> property, T context) {
+		if (!source.isJsonArray()) {
+			// TODO: log error
+			return;
+		}
+		
+		var array = source.getAsJsonArray();
+		var list = property.getValue(context);
+		var type = property.elementType();
+		
+		list.clear();
+		
+		if (isTypeSaveLoadable(type)) {
+			for (var element : array) {
+				var value = property.elementFactory().apply(context);
+				@SuppressWarnings("unchecked")
+				var saveLoadable = (SaveLoadable<E>) value;
+				var schema = saveLoadable.getSchema();
+				var object = new SaveLoadObject<>(value, schema);
+				
+				if (!element.isJsonObject()) {
+					// TODO: log error
+					continue;
 				}
 				
-				T newElement = list.elementFactory().get();
-				if (!(newElement instanceof SaveLoadModel model)) {
-					throw new RuntimeException("SaveLoadListValue element factory produced object not of type SaveLoadModel");
-				}
-				
-				readModel(elementObject, model);
-				list.getValue().add(newElement);
+				readObject(element.getAsJsonObject(), object);
+				list.add(value);
 			}
 		}
 		else {
-			for (var element : input) {
-				list.getValue().add(gson.fromJson(element, type));
+			for (var element : array) {
+				E value = gson.fromJson(element, type);
+				list.add(value);
 			}
 		}
 	}
-	
-	private <K, V> void readMap(JsonArray input, SaveLoadMapValue<K, V> map) {
-		var keyType = map.keyType();
-		var valueType = map.valueType();
-		map.getValue().clear();
+
+	private <T, K, V> void readMapProperty(JsonElement source, SaveLoadMapProperty<T, K, V> property, T context) {
+		if (!source.isJsonArray()) {
+			// TODO: log error
+			return;
+		}
 		
-		var areKeysModels = SaveLoadModel.isTypeSaveLoadModel(keyType);
-		var areValuesModels = SaveLoadModel.isTypeSaveLoadModel(valueType);
+		var array = source.getAsJsonArray();
 		
-		for (var entry : input) {
+		var keyType = property.keyType();
+		var valueType = property.valueType();
+		var map = property.getValue(context);
+		
+		var areKeysSaveLoadable = isTypeSaveLoadable(keyType);
+		var areValuesSaveLoadable = isTypeSaveLoadable(valueType);
+		
+		map.clear();
+		
+		for (var entry : array) {
+			if (!entry.isJsonObject()) {
+				// TODO: log error
+				continue;
+			}
+			
 			var entryObject = entry.getAsJsonObject();
 			var keyElement = entryObject.get("key");
 			var valueElement = entryObject.get("value");
@@ -217,54 +293,58 @@ public class JsonDataStore implements DataStore {
 			K key = null;
 			V value = null;
 			
-			if (areKeysModels) {
-				if (!(keyElement instanceof JsonObject keyObject)) {
-					throw new RuntimeException("Expected map key to be an object.");
+			if (areKeysSaveLoadable) {
+				key = property.keyFactory().apply(context);
+				@SuppressWarnings("unchecked")
+				var saveLoadable = (SaveLoadable<K>) key;
+				var schema = saveLoadable.getSchema();
+				var object = new SaveLoadObject<>(key, schema);
+				
+				if (!keyElement.isJsonObject()) {
+					// TODO: log error
+					continue;
 				}
 				
-				key = map.keyFactory().get();
-				if (!(key instanceof SaveLoadModel keyModel)) {
-					throw new RuntimeException("SaveLoadMapValue key factory produced object not of type SaveLoadModel");
-				}
-				
-				readModel(keyObject, keyModel);
+				readObject(keyElement.getAsJsonObject(), object);
 			}
 			else {
 				key = gson.fromJson(keyElement, keyType);
 			}
 			
-			if (areValuesModels) {
-				if (!(valueElement instanceof JsonObject valueObject)) {
-					throw new RuntimeException("Expected map value to be an object.");
+			if (key == null) {
+				// TODO: log error
+				continue;
+			}
+			
+			if (areValuesSaveLoadable) {
+				value = property.valueFactory().apply(context);
+				@SuppressWarnings("unchecked")
+				var saveLoadable = (SaveLoadable<V>) value;
+				var schema = saveLoadable.getSchema();
+				var object = new SaveLoadObject<>(value, schema);
+				
+				if (!valueElement.isJsonObject()) {
+					// TODO: log error
+					continue;
 				}
 				
-				value = map.valueFactory().get();
-				if (!(value instanceof SaveLoadModel valueModel)) {
-					throw new RuntimeException("SaveLoadMapValue value factory produced object not of type SaveLoadModel");
-				}
-				
-				readModel(valueObject, valueModel);
+				readObject(valueElement.getAsJsonObject(), object);
 			}
 			else {
 				value = gson.fromJson(valueElement, valueType);
 			}
 			
-			if (key == null || value == null) {
-				throw new RuntimeException("Invalid entry when loading SaveLoadMapValue: null key or value.");
+			if (value == null) {
+				// TODO: log error
+				continue;
 			}
 			
-			map.getValue().put(key, value);
+			if (map.containsKey(key)) {
+				// TODO: log warning, decide whether or not to overwrite
+			}
+			
+			map.put(key, value);
 		}
-	}
-
-	private JsonObject createJsonObjectForModel(SaveLoadModel model) {
-		var object = new JsonObject();
-		for (var entry : model.getValues().entrySet()) {
-			var key = entry.getKey();
-			var value = entry.getValue();
-			writeValue(object, key, value);
-		}
-		return object;
 	}
 	
 }

@@ -7,7 +7,7 @@ import java.util.Map;
 
 public interface DataStore {
 
-	public void save(OutputStream output, Map<String, SaveLoadModel> models) throws IOException;
-	public void load(InputStream input, Map<String, SaveLoadModel> models) throws IOException;
+	public void save(OutputStream output, Map<String, SaveLoadObject<?>> objects) throws IOException;
+	public void load(InputStream input, Map<String, SaveLoadObject<?>> objects) throws IOException;
 	
 }

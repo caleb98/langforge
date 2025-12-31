@@ -4,11 +4,26 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.ObservableList;
 import net.calebscode.langforge.app.data.RuntimeType;
-import net.calebscode.langforge.app.data.SaveLoadModel;
+import net.calebscode.langforge.app.data.SaveLoadSchema;
+import net.calebscode.langforge.app.data.SaveLoadable;
 import net.calebscode.langforge.phonology.phoneme.StandardPhonemes;
 
-public class LanguagePhonologyModel extends SaveLoadModel {
+public class LanguagePhonologyModel implements SaveLoadable<LanguagePhonologyModel> {
 
+	private static final SaveLoadSchema<LanguagePhonologyModel> schema = new SaveLoadSchema<>();
+	
+	static {
+		schema.add("phonologicalInventory", LanguagePhonologyModel::getPhonologicalInventory);
+		schema.add("syllablePatternCategories", LanguagePhonologyModel::getSyllablePatternCategories);
+		schema.addList("syllablePatterns", new RuntimeType<String>(){}, LanguagePhonologyModel::getSyllablePatterns);
+		schema.addList(
+			"phonologicalRules",
+			new RuntimeType<PhonologicalRuleModel>() {},
+			_ -> new PhonologicalRuleModel(StandardPhonemes.IPA_PHONEME_REPRESENTATION_MAPPER),
+			LanguagePhonologyModel::getPhonologicalRules
+		);
+	}
+	
 	private final PhonologicalInventoryModel phonologicalInventory;
 	private final SyllablePatternCategoryMapModel syllablePatternCategories;
 	private final ListProperty<PhonologicalRuleModel> phonologicalRules;
@@ -25,16 +40,17 @@ public class LanguagePhonologyModel extends SaveLoadModel {
 		this.phonologicalRules = new SimpleListProperty<>(phonologicalRules);
 		this.syllablePatterns = new SimpleListProperty<>(syllablePatterns);
 
-		persist("phonologicalInventory", this::getPhonologicalInventory);
-		persist("syllablePatternCategories", syllablePatternCategories::getModel);
-		persistList("syllablePatterns", new RuntimeType<String>(){}, this::getSyllablePatterns);
-		
-		persistList(
-			"phonologicalRules",
-			new RuntimeType<PhonologicalRuleModel>() {},
-			() -> new PhonologicalRuleModel(StandardPhonemes.IPA_PHONEME_REPRESENTATION_MAPPER),
-			this::getPhonologicalRules
-		);
+
+	}
+	
+	@Override
+	public LanguagePhonologyModel getValue() {
+		return this;
+	}
+	
+	@Override
+	public SaveLoadSchema<LanguagePhonologyModel> getSchema() {
+		return schema;
 	}
 
 	public PhonologicalInventoryModel getPhonologicalInventory() {
