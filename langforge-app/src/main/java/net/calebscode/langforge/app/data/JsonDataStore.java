@@ -11,18 +11,24 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import net.calebscode.langforge.app.PluginManager;
 import net.calebscode.langforge.app.data.SaveLoadProperty.SaveLoadListProperty;
 import net.calebscode.langforge.app.data.SaveLoadProperty.SaveLoadMapProperty;
 import net.calebscode.langforge.app.data.SaveLoadProperty.SaveLoadObjectProperty;
 
 public class JsonDataStore implements DataStore {
 
+	private final static Logger logger = LoggerFactory.getLogger(JsonDataStore.class);
+	
 	private final Gson gson;
 
 	public JsonDataStore() {
@@ -48,9 +54,6 @@ public class JsonDataStore implements DataStore {
 			gson.toJson(json, writer);
 			writer.flush();
 			output.write("\n".getBytes(StandardCharsets.UTF_8));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 	
@@ -63,24 +66,20 @@ public class JsonDataStore implements DataStore {
 			
 			for (var objectName : store.keySet()) {
 				if (!objects.containsKey(objectName)) {
-					// TODO: error, the loaded json has an entry that does not map to a model in the code
+					logger.warn("Unexpected property '{}' encountered while loading. This property will be ignored.", objectName);
 					continue;
 				}
 				
 				var modelObject = store.get(objectName);
 				if (!modelObject.isJsonObject()) {
-					// TODO: error, the value for the model entry was not an object
+					logger.warn("Failed to load property '{}': Expected object value.", objectName);
 					continue;
 				}
 				
 				var model = objects.get(objectName);
 				readObject(modelObject.getAsJsonObject(), model);
 			}
-			
-		 } catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		 }
 	}
 	
 	private <T> void writeObject(JsonObject target, String name, SaveLoadObject<T> object) {
@@ -187,7 +186,7 @@ public class JsonDataStore implements DataStore {
 			
 			var property = schema.getProperties().get(key);
 			if (property == null) {
-				// TODO: log error indicating missing property in schema
+				logger.warn("Unexpected property '{}' encountered while loading. This property will be ignored.", key);
 				continue;
 			}
 			
@@ -214,7 +213,7 @@ public class JsonDataStore implements DataStore {
 			var object = new SaveLoadObject<>(value, schema);
 			
 			if (!source.isJsonObject()) {
-				// TODO: log error
+				logger.warn("Failed to load object of type {}. Expected object value in json, but got: {}", type, source);
 				return;
 			}
 			
@@ -227,14 +226,15 @@ public class JsonDataStore implements DataStore {
 	}
 
 	private <T, E> void readListProperty(JsonElement source, SaveLoadListProperty<T, E> property, T context) {
+		var type = property.elementType();
+		
 		if (!source.isJsonArray()) {
-			// TODO: log error
+			logger.warn("Failed to load list of type List<{}>. Expected array value in json, but got: {}", type, source);
 			return;
 		}
 		
 		var array = source.getAsJsonArray();
 		var list = property.getValue(context);
-		var type = property.elementType();
 		
 		list.clear();
 		
@@ -247,7 +247,7 @@ public class JsonDataStore implements DataStore {
 				var object = new SaveLoadObject<>(value, schema);
 				
 				if (!element.isJsonObject()) {
-					// TODO: log error
+					logger.warn("Failed to load object of type {}. Expected object value in json, but got: {}", type, element);
 					continue;
 				}
 				
@@ -264,15 +264,15 @@ public class JsonDataStore implements DataStore {
 	}
 
 	private <T, K, V> void readMapProperty(JsonElement source, SaveLoadMapProperty<T, K, V> property, T context) {
+		var keyType = property.keyType();
+		var valueType = property.valueType();
+
 		if (!source.isJsonArray()) {
-			// TODO: log error
+			logger.warn("Failed to load object of type Map<{}, {}>. Expected array value in json, but got: {}", keyType, valueType, source);
 			return;
 		}
 		
 		var array = source.getAsJsonArray();
-		
-		var keyType = property.keyType();
-		var valueType = property.valueType();
 		var map = property.getValue(context);
 		
 		var areKeysSaveLoadable = isTypeSaveLoadable(keyType);
@@ -282,7 +282,7 @@ public class JsonDataStore implements DataStore {
 		
 		for (var entry : array) {
 			if (!entry.isJsonObject()) {
-				// TODO: log error
+				logger.warn("Failed to load entry for Map<{}, {}>. Expected object value in json, but got: {}", keyType, valueType, entry);
 				continue;
 			}
 			
@@ -301,7 +301,7 @@ public class JsonDataStore implements DataStore {
 				var object = new SaveLoadObject<>(key, schema);
 				
 				if (!keyElement.isJsonObject()) {
-					// TODO: log error
+					logger.warn("Failed to load entry for Map<{}, {}>. Expected object value for key property, but got: {}", keyType, valueType, entry);
 					continue;
 				}
 				
@@ -312,7 +312,7 @@ public class JsonDataStore implements DataStore {
 			}
 			
 			if (key == null) {
-				// TODO: log error
+				logger.warn("Failed to load entry for Map<{}, {}>. Unable to parse key from: {}", keyType, valueType, entry);
 				continue;
 			}
 			
@@ -324,7 +324,7 @@ public class JsonDataStore implements DataStore {
 				var object = new SaveLoadObject<>(value, schema);
 				
 				if (!valueElement.isJsonObject()) {
-					// TODO: log error
+					logger.warn("Failed to load entry for Map<{}, {}>. Expected object for value property, but got: {}", keyType, valueType, entry);
 					continue;
 				}
 				
@@ -335,12 +335,13 @@ public class JsonDataStore implements DataStore {
 			}
 			
 			if (value == null) {
-				// TODO: log error
+				logger.warn("Failed to load entry for Map<{}, {}>. Unable to parse value from: {}", keyType, valueType, entry);
 				continue;
 			}
 			
 			if (map.containsKey(key)) {
-				// TODO: log warning, decide whether or not to overwrite
+				logger.warn("Duplicate key encountered while loading Map<{}, {}>. This entry will be ignored: {}", keyType, valueType, entry);
+				continue;
 			}
 			
 			map.put(key, value);
