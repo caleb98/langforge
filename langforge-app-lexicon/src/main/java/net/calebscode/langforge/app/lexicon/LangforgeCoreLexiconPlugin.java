@@ -73,7 +73,7 @@ public final class LangforgeCoreLexiconPlugin implements LangforgePlugin {
 		phonologyApi = maybePhonologyApi.orElseThrow(() -> new LangforgePluginException("Failed to retrieve phonology API."));
 
 		var lexiconMenuItem = new MenuItem("Lexicon");
-		lexiconMenuItem.setOnAction(event -> {
+		lexiconMenuItem.setOnAction(_ -> {
 			showLexiconTab();
 		});
 		context.addMenuItem(new MenuItemDefinition("Edit", () -> lexiconMenuItem));
@@ -88,7 +88,7 @@ public final class LangforgeCoreLexiconPlugin implements LangforgePlugin {
 		var lexiconController = new LexiconController(lexiconModel, phonologyApi.getPhonologyModel());
 		lexiconTabVisible = true;
 		var tab = new Tab("Lexicon", lexiconController);
-		tab.setOnClosed(event -> lexiconTabVisible = false);
+		tab.setOnClosed(_ -> lexiconTabVisible = false);
 
 		context.createTab(tab);
 	}

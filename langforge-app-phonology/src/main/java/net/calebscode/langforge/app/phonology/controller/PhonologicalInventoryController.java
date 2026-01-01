@@ -61,9 +61,9 @@ public class PhonologicalInventoryController extends VBox implements FXMLControl
 
 		var deleteColumn = new TableColumn<Phoneme, Phoneme>();
 		deleteColumn.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-		deleteColumn.setCellFactory(column -> {
+		deleteColumn.setCellFactory(_ -> {
 			var button = new ButtonTableCell<Phoneme, Phoneme>("Delete");
-			button.setButtonClicked((phoneme, p) -> {
+			button.setButtonClicked((phoneme, _) -> {
 				phonologicalInventory.phonemesProperty().remove(phoneme);
 			});
 			return button;
@@ -83,7 +83,7 @@ public class PhonologicalInventoryController extends VBox implements FXMLControl
 		stage.setTitle("IPA Consonants");
 		stage.setScene(scene);
 		stage.show();
-		stage.setOnCloseRequest(e -> consonantPicker = Optional.empty());
+		stage.setOnCloseRequest(_ -> consonantPicker = Optional.empty());
 
 		consonantPicker = Optional.of(stage);
 	}
@@ -100,7 +100,7 @@ public class PhonologicalInventoryController extends VBox implements FXMLControl
 		stage.setTitle("IPA Vowels");
 		stage.setScene(scene);
 		stage.show();
-		stage.setOnCloseRequest(e -> vowelPicker = Optional.empty());
+		stage.setOnCloseRequest(_ -> vowelPicker = Optional.empty());
 
 		vowelPicker = Optional.of(stage);
 	}

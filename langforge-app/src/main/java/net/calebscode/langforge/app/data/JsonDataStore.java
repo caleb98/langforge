@@ -20,7 +20,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import net.calebscode.langforge.app.PluginManager;
 import net.calebscode.langforge.app.data.SaveLoadProperty.SaveLoadListProperty;
 import net.calebscode.langforge.app.data.SaveLoadProperty.SaveLoadMapProperty;
 import net.calebscode.langforge.app.data.SaveLoadProperty.SaveLoadObjectProperty;

@@ -10,17 +10,11 @@ import net.calebscode.langforge.app.ui.FXMLController;
 
 public class LangforgeApplicationController extends BorderPane implements FXMLController {
 
-	private final LangforgeApplicationModel model;
-
 	@FXML private Label statusText;
 	@FXML private MenuBar menuBar;
 	@FXML private TabPane tabPane;
 
-//	private Scene scene = new Scene(root, 640, 480);
-
 	public LangforgeApplicationController(LangforgeApplicationModel model) {
-		this.model = model;
-
 		load(() -> {
 			Bindings.bindContentBidirectional(model.menus, menuBar.getMenus());
 			Bindings.bindContentBidirectional(model.tabs, tabPane.getTabs());

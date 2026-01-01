@@ -4,7 +4,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.in;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -17,11 +16,8 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import net.calebscode.langforge.app.data.JsonDataStoreTest.TestModel;
 
 public class JsonDataStoreTest {
 
@@ -746,7 +742,7 @@ public class JsonDataStoreTest {
 		
 		void addNested(String name, TestModel model) {
 			values.put(name, model);
-			schema.addProperty(name, m -> m.get(name));
+			schema.add(name, m -> m.get(name));
 		}
 		
 		<T> void addList(String name, RuntimeType<T> elementType) {

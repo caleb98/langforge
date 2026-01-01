@@ -77,7 +77,7 @@ public final class LangforgeCorePhonologyPlugin implements LangforgePlugin {
 	@Override
 	public void load(LangforgePluginContext context) throws LangforgePluginException {
 		var phonologyMenuItem = new MenuItem("Phonology");
-		phonologyMenuItem.setOnAction(event -> {
+		phonologyMenuItem.setOnAction(_ -> {
 			showPhonologyTab();
 		});
 		context.addMenuItem(new MenuItemDefinition("Edit", () -> phonologyMenuItem));
@@ -94,7 +94,7 @@ public final class LangforgeCorePhonologyPlugin implements LangforgePlugin {
 
 		phonologyTabVisible = true;
 		var tab = new Tab("Phonology", phonologyController);
-		tab.setOnClosed(event -> phonologyTabVisible = false);
+		tab.setOnClosed(_ -> phonologyTabVisible = false);
 
 		context.createTab(tab);
 	}

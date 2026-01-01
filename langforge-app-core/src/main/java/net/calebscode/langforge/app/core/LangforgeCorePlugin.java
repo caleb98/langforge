@@ -69,12 +69,12 @@ public class LangforgeCorePlugin implements LangforgePlugin {
 			new MenuDefinition("Help", HELP_MENU_INDEX));
 
 		var exitMenuItem = new MenuItem("Exit");
-		exitMenuItem.setOnAction(event -> {
+		exitMenuItem.setOnAction(_ -> {
 			Platform.exit();
 		});
 
 		var appInfoMenuItem = new MenuItem("Application Info");
-		appInfoMenuItem.setOnAction(event -> {
+		appInfoMenuItem.setOnAction(_ -> {
 			infoDisplay.show();
 		});
 

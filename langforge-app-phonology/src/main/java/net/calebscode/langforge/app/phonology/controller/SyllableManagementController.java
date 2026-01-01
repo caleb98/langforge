@@ -88,7 +88,7 @@ public class SyllableManagementController extends AnchorPane implements FXMLCont
 		categoryDialog.setGraphic(null);
 		categoryDialog.setHeaderText(null);
 
-		categoryDialog.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+		categoryDialog.getEditor().textProperty().addListener((_, _, newValue) -> {
 			String corrected = newValue.toUpperCase().replaceAll("[^A-Za-z]*", "");
 
 			if (!newValue.equals(corrected)) {

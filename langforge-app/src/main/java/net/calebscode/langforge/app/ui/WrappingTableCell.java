@@ -72,6 +72,6 @@ public class WrappingTableCell<S, T> extends TableCell<S, T> {
 	}
 
 	public static <S, T> Callback<TableColumn<S, T>, TableCell<S, T>> forTableColumn() {
-		return column -> new WrappingTableCell<>();
+		return _ -> new WrappingTableCell<>();
 	}
 }

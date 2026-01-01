@@ -76,7 +76,7 @@ public class ButtonTableCell<S, T> extends TableCell<S, T> {
 	}
 
 	public static <S> Callback<TableColumn<S, String>, ButtonTableCell<S, String>> forTableColumn() {
-		return column -> new ButtonTableCell<>("");
+		return _ -> new ButtonTableCell<>("");
 	}
 
 }

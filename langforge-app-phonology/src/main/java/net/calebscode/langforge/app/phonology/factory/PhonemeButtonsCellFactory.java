@@ -48,7 +48,7 @@ public class PhonemeButtonsCellFactory implements Callback<TableColumn<String, L
 				var newButtons = new ArrayList<Node>();
 				for (var phoneme : item) {
 					var button = new Button(IPA_PHONEME_SEQUENCE_RENDERER.render(phoneme));
-					button.setOnMouseClicked(event -> {
+					button.setOnMouseClicked(_ -> {
 						model.phonemesProperty().add(phoneme);
 					});
 					newButtons.add(button);

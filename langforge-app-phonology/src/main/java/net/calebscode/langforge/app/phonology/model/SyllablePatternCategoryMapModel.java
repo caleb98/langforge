@@ -7,7 +7,6 @@ import static javafx.collections.FXCollections.unmodifiableObservableMap;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import javafx.beans.property.MapProperty;
@@ -85,7 +84,7 @@ public class SyllablePatternCategoryMapModel extends SyllablePatternCategoryMap 
 	public void addPhoneme(Character category, Phoneme phoneme) {
 		super.addPhoneme(category, phoneme);
 
-		var set = categoryMap.computeIfAbsent(category, c -> new HashSet<>());
+		var set = categoryMap.computeIfAbsent(category, _ -> new HashSet<>());
 		set = new HashSet<>(set);
 		if (set.add(phoneme)) {
 			// Calling put is necessary to trigger listener callbacks
