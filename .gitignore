@@ -124,3 +124,6 @@ gradle-app.setting
 
 # VS Code
 .vscode
+
+# IntelliJ
+.idea
