@@ -1,19 +1,13 @@
 package net.calebscode.langforge.app;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.scene.control.Tab;
-import net.calebscode.langforge.app.data.SaveLoadObject;
-import net.calebscode.langforge.app.data.SaveLoadSchema;
-import net.calebscode.langforge.app.data.SaveLoadable;
 import net.calebscode.langforge.app.plugin.MenuDefinition;
 import net.calebscode.langforge.app.plugin.MenuItemDefinition;
+
+import java.util.Optional;
 
 /**
  * A {@code LangforgePluginContext} serves as the interface between a plugin and the rest of the Langforge Application.
@@ -24,12 +18,11 @@ public class LangforgePluginContext {
 
 	private final LangforgeApplicationModel appModel;
 	private final LangforgePluginApiProvider apiProvider;
-	private final Map<String, SaveLoadObject<?>> saveLoadObjects = new HashMap<>();
 
 	private final ListProperty<MenuDefinition> menus = new SimpleListProperty<>(FXCollections.observableArrayList());
 	private final ListProperty<MenuItemDefinition> menuItems = new SimpleListProperty<>(FXCollections.observableArrayList());
 
-	public LangforgePluginContext(
+	LangforgePluginContext(
 		LangforgeApplicationModel appModel,
 		LangforgePluginApiProvider apiProvider
 	) {
@@ -69,17 +62,6 @@ public class LangforgePluginContext {
 		appModel.tabs.add(tab);
 	}
 
-	public <T> void registerSaveLoadObject(String key, SaveLoadable<T> object) {
-		if (saveLoadObjects.containsKey(key)) {
-			throw new IllegalArgumentException(SaveLoadSchema.class.getSimpleName() + " with key '" + key + "' already registered.");
-		}
-		
-		var context = object.getValue();
-		var schema = object.getSchema();
-		
-		saveLoadObjects.put(key, new SaveLoadObject<>(context, schema));
-	}
-
 	public <T> void registerApi(T api) {
 		apiProvider.registerApi(api);
 	}
@@ -98,10 +80,6 @@ public class LangforgePluginContext {
 
 	ListProperty<MenuItemDefinition> menuItemsProperty() {
 		return menuItems;
-	}
-
-	Map<String, SaveLoadObject<?>> getSaveLoadObjects() {
-		return Collections.unmodifiableMap(saveLoadObjects);
 	}
 
 }

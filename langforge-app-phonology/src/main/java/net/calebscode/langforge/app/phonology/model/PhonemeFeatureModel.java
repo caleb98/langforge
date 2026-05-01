@@ -1,28 +1,11 @@
 package net.calebscode.langforge.app.phonology.model;
 
+import javafx.beans.property.*;
+
 import static javafx.collections.FXCollections.observableArrayList;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import net.calebscode.langforge.app.data.RuntimeType;
-import net.calebscode.langforge.app.data.SaveLoadSchema;
-import net.calebscode.langforge.app.data.SaveLoadable;
+public class PhonemeFeatureModel {
 
-public class PhonemeFeatureModel implements SaveLoadable<PhonemeFeatureModel> {
-
-	private static final SaveLoadSchema<PhonemeFeatureModel> schema = new SaveLoadSchema<>();
-	
-	static {
-		schema.addProperty("name", m -> m.name);
-		schema.addList("values", new RuntimeType<String>() {}, PhonemeFeatureModel::valuesProperty);
-	}
-	
 	private BooleanProperty isDeleted;
 	private StringProperty name;
 	private ListProperty<String> values;
@@ -37,16 +20,6 @@ public class PhonemeFeatureModel implements SaveLoadable<PhonemeFeatureModel> {
 		values = new SimpleListProperty<>(observableArrayList());
 	}
 	
-	@Override
-	public PhonemeFeatureModel getValue() {
-		return this;
-	}
-	
-	@Override
-	public SaveLoadSchema<PhonemeFeatureModel> getSchema() {
-		return schema;
-	}
-
 	public ReadOnlyBooleanProperty isDeletedProperty() {
 		return isDeleted;
 	}

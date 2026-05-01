@@ -51,7 +51,6 @@ public final class LangforgeApplication extends Application {
 	}
 
 	private void onApplicationClose(WindowEvent event) {
-		pluginManager.savePluginStates();
 	}
 
 	private void displayDuplicatePluginIdAlert(DuplicatePluginIdException duplicate) {

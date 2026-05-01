@@ -1,29 +1,15 @@
 package net.calebscode.langforge.app.phonology.model;
 
-import java.util.Optional;
-
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
-import net.calebscode.langforge.app.data.SaveLoadSchema;
-import net.calebscode.langforge.app.data.SaveLoadable;
 import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMapper;
 import net.calebscode.langforge.phonology.rules.PhonologicalRule;
 import net.calebscode.langforge.phonology.rules.PhonologicalRuleCompiler;
 
-public class PhonologicalRuleModel implements SaveLoadable<PhonologicalRuleModel> {
+import java.util.Optional;
 
-	private static final SaveLoadSchema<PhonologicalRuleModel> schema = new SaveLoadSchema<>();
-	
-	static {
-		schema.addProperty("name", m -> m.name);
-		schema.addProperty("source", m -> m.source);
-	}
-	
+public class PhonologicalRuleModel {
+
 	private PhonologicalRuleCompiler compiler;
 
 	private StringProperty name = new SimpleStringProperty("");
@@ -35,17 +21,6 @@ public class PhonologicalRuleModel implements SaveLoadable<PhonologicalRuleModel
 		compiler = new PhonologicalRuleCompiler(ipaMapper);
 		source.addListener(this::onSourceChanged);
 	}
-
-	@Override
-	public PhonologicalRuleModel getValue() {
-		return this;
-	}
-	
-	@Override
-	public SaveLoadSchema<PhonologicalRuleModel> getSchema() {
-		return schema;
-	}
-	
 	public StringProperty nameProperty() {
 		return name;
 	}

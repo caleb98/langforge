@@ -1,39 +1,25 @@
 package net.calebscode.langforge.app.phonology.model;
 
-import static java.util.Collections.unmodifiableSet;
-import static javafx.beans.binding.Bindings.createObjectBinding;
-import static javafx.collections.FXCollections.observableHashMap;
-import static javafx.collections.FXCollections.unmodifiableObservableMap;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyMapWrapper;
 import javafx.beans.property.SimpleMapProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
-import net.calebscode.langforge.app.data.RuntimeType;
-import net.calebscode.langforge.app.data.SaveLoadSchema;
-import net.calebscode.langforge.app.data.SaveLoadable;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 import net.calebscode.langforge.phonology.syllable.SyllablePatternCategoryMap;
 
-public class SyllablePatternCategoryMapModel extends SyllablePatternCategoryMap implements SaveLoadable<SyllablePatternCategoryMapModel> {
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
-	private static final SaveLoadSchema<SyllablePatternCategoryMapModel> schema = new SaveLoadSchema<>();
+import static java.util.Collections.unmodifiableSet;
+import static javafx.beans.binding.Bindings.createObjectBinding;
+import static javafx.collections.FXCollections.observableHashMap;
+import static javafx.collections.FXCollections.unmodifiableObservableMap;
 
-	static {
-		schema.addMap(
-			"categories",
-			new RuntimeType<Character>() {},
-			new RuntimeType<Set<Phoneme>>() {},
-			m -> m.categoryMap
-		);
-	}
-	
+public class SyllablePatternCategoryMapModel extends SyllablePatternCategoryMap {
+
 	private final MapProperty<Character, Set<Phoneme>> categoryMap;
 	private final ReadOnlyMapWrapper<Character, Set<Phoneme>> categoryWrapper;
 
@@ -49,17 +35,7 @@ public class SyllablePatternCategoryMapModel extends SyllablePatternCategoryMap 
 			return unmodifiableObservableMap(mapCopy);
 		}, categoryMap));
 	}
-	
-	@Override
-	public SyllablePatternCategoryMapModel getValue() {
-		return this;
-	}
-	
-	@Override
-	public SaveLoadSchema<SyllablePatternCategoryMapModel> getSchema() {
-		return schema;
-	}
-	
+
 	public ReadOnlyMapProperty<Character, Set<Phoneme>> categoryMapProperty() {
 		return categoryWrapper;
 	}
@@ -104,7 +80,7 @@ public class SyllablePatternCategoryMapModel extends SyllablePatternCategoryMap 
 
 		var set = categoryMap.get(category);
 		set = new HashSet<>(set);
-		if (set != null && set.remove(phoneme)) {
+		if (set.remove(phoneme)) {
 			// Calling put is necessary to trigger listener callbacks
 			categoryMap.put(category, new HashSet<>(set));
 		}

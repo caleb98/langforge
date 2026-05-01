@@ -1,23 +1,12 @@
 package net.calebscode.langforge.app;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ServiceLoader;
-import java.util.ServiceLoader.Provider;
-import java.util.stream.Collectors;
-
+import net.calebscode.langforge.app.util.VersionNumber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.calebscode.langforge.app.data.JsonDataStore;
-import net.calebscode.langforge.app.util.VersionNumber;
+import java.util.*;
+import java.util.ServiceLoader.Provider;
+import java.util.stream.Collectors;
 
 public final class PluginManager {
 
@@ -49,7 +38,6 @@ public final class PluginManager {
 		var initResults = plugins.stream().collect(Collectors.partitioningBy(this::initPlugin));
 		var initializedPlugins = initResults.get(true);
 
-		loadPluginStates();
 		apiProvider.setInitialized();
 
 		var pluginDependencies = initializedPlugins.stream()
@@ -68,71 +56,6 @@ public final class PluginManager {
 
 		loadOrder.forEach(this::loadPlugin);
 		pluginsLoaded = true;
-	}
-
-	public void savePluginStates() {
-		try {
-			var dataStore = new JsonDataStore();
-			var saveDir = Path.of("test");
-
-			Files.createDirectories(saveDir);
-
-			for (var pluginEntry : pluginContexts.entrySet()) {
-				var plugin = pluginEntry.getKey();
-				var context = pluginEntry.getValue();
-				var saveLoadObjects = context.getSaveLoadObjects();
-
-				if (saveLoadObjects.isEmpty()) {
-					continue;
-				}
-
-				var fileName = String.format("%s.json", plugin.getId());
-				var filePath = saveDir.resolve(fileName);
-
-				if (Files.notExists(filePath) ) {
-					Files.createFile(filePath);
-				}
-
-				try (var outputStream = new FileOutputStream(filePath.toFile())) {
-					dataStore.save(outputStream, saveLoadObjects);
-					outputStream.flush();
-				}
-			}
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
-	}
-
-	public void loadPluginStates() {
-		try {
-			var dataStore = new JsonDataStore();
-			var saveDir = Path.of("test");
-
-			Files.createDirectories(saveDir);
-
-			for (var pluginEntry : pluginContexts.entrySet()) {
-				var plugin = pluginEntry.getKey();
-				var context = pluginEntry.getValue();
-				var persistentModels = context.getSaveLoadObjects();
-
-				if (persistentModels.isEmpty()) {
-					continue;
-				}
-
-				var fileName = String.format("%s.json", plugin.getId());
-				var filePath = saveDir.resolve(fileName);
-
-				if (Files.notExists(filePath)) {
-					continue;
-				}
-
-				try (var inputStream = new FileInputStream(filePath.toFile())) {
-					dataStore.load(inputStream, persistentModels);
-				}
-			}
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
 	}
 
 	private void logPluginsWithUnsatisfiedDependencies(
@@ -211,7 +134,7 @@ public final class PluginManager {
 	}
 
 	private void verifyNoDuplicatePluginIds(List<LangforgePlugin> plugins) throws DuplicatePluginIdException {
-		var grouped = plugins.stream().collect(Collectors.groupingBy(plugin -> plugin.getId()));
+		var grouped = plugins.stream().collect(Collectors.groupingBy(LangforgePlugin::getId));
 
 		for (var entry : grouped.entrySet()) {
 			var pluginsForId = entry.getValue();
