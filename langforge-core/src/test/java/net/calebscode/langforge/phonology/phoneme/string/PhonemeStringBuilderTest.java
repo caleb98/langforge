@@ -1,6 +1,9 @@
 package net.calebscode.langforge.phonology.phoneme.string;
 
-import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.*;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.IPA_PHONEME_REPRESENTATION_MAPPER;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.OPEN_FRONT_UNROUNDED_VOWEL;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.VOICELESS_ALVEOLAR_PLOSIVE;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.VOICELESS_VELAR_PLOSIVE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -13,8 +16,6 @@ import net.calebscode.langforge.Word;
 import net.calebscode.langforge.phonology.phoneme.PhonemeContext;
 import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMap;
 import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMappingException;
-import net.calebscode.langforge.phonology.phoneme.string.PhonemeString;
-import net.calebscode.langforge.phonology.phoneme.string.PhonemeStringBuilder;
 import net.calebscode.langforge.phonology.syllable.Syllable;
 
 public class PhonemeStringBuilderTest {

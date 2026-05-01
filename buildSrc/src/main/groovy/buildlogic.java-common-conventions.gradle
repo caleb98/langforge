@@ -22,7 +22,8 @@ java {
 }
 
 compileJava {
-    options.compilerArgs += ["-Xdiags:verbose"]
+    options.compilerArgs += ['-Xdiags:verbose']
+    options.encoding = 'UTF-8'
 }
 
 tasks.named('test') {

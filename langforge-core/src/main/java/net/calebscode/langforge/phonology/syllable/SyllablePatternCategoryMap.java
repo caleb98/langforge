@@ -26,7 +26,7 @@ public class SyllablePatternCategoryMap {
 	}
 
 	public void addPhoneme(Character category, Phoneme phoneme) {
-		var entry = categories.computeIfAbsent(category, c -> new HashSet<>());
+		var entry = categories.computeIfAbsent(category, HashSet::new);
 		entry.add(phoneme);
 	}
 

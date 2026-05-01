@@ -10,10 +10,6 @@ import org.junit.jupiter.api.Test;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMappingException;
 import net.calebscode.langforge.phonology.phoneme.PhonemeSequenceRenderer;
-import net.calebscode.langforge.phonology.phoneme.string.PhonemeString;
-import net.calebscode.langforge.phonology.phoneme.string.PhonemeStringBuilder;
-import net.calebscode.langforge.phonology.phoneme.string.PhonemeStringValidationException;
-import net.calebscode.langforge.phonology.phoneme.string.SyllablePatternValidator;
 import net.calebscode.langforge.phonology.syllable.SyllablePatternCategoryMap;
 import net.calebscode.langforge.phonology.syllable.SyllableUtils;
 

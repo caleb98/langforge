@@ -1,7 +1,11 @@
 package net.calebscode.langforge.phonology.phoneme.string;
 
-import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.IPA_PHONEME_REPRESENTATION_MAPPER;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.OPEN_FRONT_UNROUNDED_VOWEL;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemes.VOICELESS_ALVEOLAR_PLOSIVE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 import net.calebscode.langforge.phonology.phoneme.PhonemeContext;
 import net.calebscode.langforge.phonology.phoneme.PhonemeSequenceRenderer;
-import net.calebscode.langforge.phonology.phoneme.string.PhonemeString;
 import net.calebscode.langforge.phonology.phoneme.string.PhonemeString.PhonemeTransition;
 
 public class PhonemeStringTest {

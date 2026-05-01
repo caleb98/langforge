@@ -1,6 +1,5 @@
 package net.calebscode.langforge.phonology.phoneme;
 
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -52,7 +51,7 @@ public class PhonemeSequenceRenderer {
 			.mapToObj(index -> {
 				var phoneme = phonemes.get(index);
 				var context = contexts.get(index);
-				
+
 				var representation = phonemeMapper.getRepresentation(phoneme).orElse("?");
 
 				if (context.isWordStart()) {

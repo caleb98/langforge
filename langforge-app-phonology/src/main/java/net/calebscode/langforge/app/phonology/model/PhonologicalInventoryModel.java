@@ -1,18 +1,31 @@
 package net.calebscode.langforge.app.phonology.model;
 
+import static javafx.collections.FXCollections.observableArrayList;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.BACKNESS;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.CATEGORY;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.OPENNESS;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.PLACE;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.ROUNDEDNESS;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.STANDARD_BACKNESSES;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.STANDARD_CATEGORIES;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.STANDARD_OPENNESSES;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.STANDARD_PLACES;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.STANDARD_ROUNDEDNESSES;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.STANDARD_TYPES;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.STANDARD_VOICINGS;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.TYPE;
+import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.VOICING;
+
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Optional;
+
 import javafx.beans.Observable;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.ListChangeListener.Change;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
-
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Optional;
-
-import static javafx.collections.FXCollections.observableArrayList;
-import static net.calebscode.langforge.phonology.phoneme.StandardPhonemeFeatures.*;
 
 public class PhonologicalInventoryModel {
 
@@ -78,14 +91,6 @@ public class PhonologicalInventoryModel {
 
 	public boolean isPhonemeInvalid(Phoneme phoneme) {
 		return !isPhonemeValid(phoneme);
-	}
-	
-	private ListProperty<Phoneme> getPhonemes() {
-		return phonemes;
-	}
-	
-	private ListProperty<PhonemeFeatureModel> getFeatures() {
-		return features;
 	}
 
 	private void validatePhonemes(Change<? extends Phoneme> change) {

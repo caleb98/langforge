@@ -57,10 +57,10 @@ public class PhonologicalRuleApplicator implements PhonemeRepresentationMatcher 
 				// Check for insertion
 				if (rule.getMatch() instanceof NullPhoneme) {
 					sequence = switch(rule.getReplacement()) {
-						case NullPhoneme nullPhoneme -> sequence; // TODO: warning here? The rule does nothing since it's replacing nothing with nothing...
+						case NullPhoneme _ -> sequence; // TODO: warning here? The rule does nothing since it's replacing nothing with nothing...
 						case PhonemeLiteral literal -> insertPhoneme(literal);
 
-						case PhonemeFeatureset f -> throw new PhonologicalRuleApplicationException("Can only apply insertion rule when replacement is a phoneme literal.");
+						case PhonemeFeatureset _ -> throw new PhonologicalRuleApplicationException("Can only apply insertion rule when replacement is a phoneme literal.");
 						case null -> throw new PhonologicalRuleApplicationException("Invalid replacement type: null");
 						default -> throw new PhonologicalRuleApplicationException("Invalid replacement type: " + rule.getMatch().getClass());
 					};
@@ -68,7 +68,7 @@ public class PhonologicalRuleApplicator implements PhonemeRepresentationMatcher 
 				// Otherwise, we're updating the existing feature
 				else {
 					sequence = switch(rule.getReplacement()) {
-						case NullPhoneme nullPhoneme -> deletePhoneme();
+						case NullPhoneme _ -> deletePhoneme();
 						case PhonemeLiteral literal -> sequence.replaceAt(replacePosition, literal.phoneme());
 						case PhonemeFeatureset features -> replaceFeatures(features);
 
