@@ -11,11 +11,9 @@ import net.calebscode.langforge.app.util.VersionNumber;
 
 public final class LangforgeApplication extends Application {
 
-	public static final int VERSION_MAJOR = 0;
-	public static final int VERSION_MINOR = 0;
-	public static final int VERSION_PATCH = 1;
+	public static final VersionNumber VERSION_0_0_1 = new VersionNumber(0, 0, 1);
 
-	public static final VersionNumber VERSION = new VersionNumber(VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+	static final VersionNumber CURRENT_VERSION = VERSION_0_0_1;
 
 	private PluginManager pluginManager;
 
@@ -30,7 +28,7 @@ public final class LangforgeApplication extends Application {
 		pluginManager = new PluginManager(appModel);
 
 		try {
-			pluginManager.loadPlugins();
+			pluginManager.initializePlugins();
 		} catch (DuplicatePluginIdException duplicate) {
 			displayDuplicatePluginIdAlert(duplicate);
 			return;
@@ -51,6 +49,7 @@ public final class LangforgeApplication extends Application {
 	}
 
 	private void onApplicationClose(WindowEvent event) {
+		pluginManager.savePluginStates();
 	}
 
 	private void displayDuplicatePluginIdAlert(DuplicatePluginIdException duplicate) {

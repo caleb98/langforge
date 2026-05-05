@@ -6,11 +6,6 @@ import java.util.Optional;
 class LangforgePluginApiProvider {
 
 	private HashMap<Class<?>, Object> apis = new HashMap<>();
-	private boolean isInitialized = false;
-
-	void setInitialized() {
-		isInitialized = true;
-	}
 
 	<T> boolean registerApi(T api) {
 		var apiClass = api.getClass();
@@ -27,10 +22,6 @@ class LangforgePluginApiProvider {
 	}
 
 	<T> Optional<T> getApi(Class<T> apiClass) {
-		if (!isInitialized) {
-			return Optional.empty();
-		}
-
 		var api = apis.get(apiClass);
 		if (api == null) {
 			return Optional.empty();

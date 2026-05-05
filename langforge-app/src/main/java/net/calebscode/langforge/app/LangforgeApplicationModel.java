@@ -25,7 +25,7 @@ import net.calebscode.langforge.app.plugin.MenuDefinition;
 import net.calebscode.langforge.app.plugin.MenuItemDefinition;
 import net.calebscode.langforge.app.util.AggregateSet;
 
-public class LangforgeApplicationModel {
+class LangforgeApplicationModel {
 
 	private AggregateSet<MenuDefinition> menusInternal = new AggregateSet<>(new TreeSet<>());
 	private final SetProperty<MenuDefinition> menuDefinitions = new SimpleSetProperty<>(menusInternal.getAggregate());

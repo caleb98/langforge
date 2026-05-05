@@ -1,11 +1,20 @@
 package net.calebscode.langforge.app.phonology;
 
+import static javafx.collections.FXCollections.observableArrayList;
+import static net.calebscode.langforge.app.phonology.model.PhonologicalInventoryModel.createModelWithDefaultFeatures;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import net.calebscode.langforge.app.LangforgeApplication;
 import net.calebscode.langforge.app.LangforgePlugin;
-import net.calebscode.langforge.app.LangforgePluginContext;
 import net.calebscode.langforge.app.LangforgePluginException;
+import net.calebscode.langforge.app.data.Migration;
+import net.calebscode.langforge.app.data.SaveLoadValue;
 import net.calebscode.langforge.app.phonology.api.LangforgeCorePhonologyApi;
 import net.calebscode.langforge.app.phonology.controller.PhonologyController;
 import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
@@ -13,18 +22,12 @@ import net.calebscode.langforge.app.phonology.model.SyllablePatternCategoryMapMo
 import net.calebscode.langforge.app.plugin.MenuItemDefinition;
 import net.calebscode.langforge.app.util.VersionNumber;
 
-import java.util.Map;
-
-import static javafx.collections.FXCollections.observableArrayList;
-import static net.calebscode.langforge.app.phonology.model.PhonologicalInventoryModel.createModelWithDefaultFeatures;
-
-public final class LangforgeCorePhonologyPlugin implements LangforgePlugin {
+public final class LangforgeCorePhonologyPlugin extends LangforgePlugin {
 
 	public static final String ID = "langforge.phonology";
 	public static final String NAME = "Langforge Core - Phonology";
 	public static final String DESCRIPTION = "The core Langforge phonology features.";
 
-	private LangforgePluginContext context;
 	private LanguagePhonologyModel phonologyModel;
 
 	private boolean phonologyTabVisible = false;
@@ -46,40 +49,47 @@ public final class LangforgeCorePhonologyPlugin implements LangforgePlugin {
 
 	@Override
 	public VersionNumber getVersion() {
-		return LangforgeApplication.VERSION;
+		return LangforgeApplication.VERSION_0_0_1;
 	}
 
 	@Override
 	public VersionNumber getRequiredLangforgeVersion() {
-		return LangforgeApplication.VERSION;
+		return LangforgeApplication.VERSION_0_0_1;
 	}
 
 	@Override
 	public Map<String, VersionNumber> getDependencies() {
-		return Map.of("langforge.core", LangforgeApplication.VERSION);
+		return Map.of("langforge.core", LangforgeApplication.VERSION_0_0_1);
 	}
 
 	@Override
-	public void init(LangforgePluginContext context) throws LangforgePluginException {
-		this.context = context;
+	public Optional<SaveLoadValue> getState() {
+		return Optional.empty();
+	}
 
+	@Override
+	public void setState(Optional<SaveLoadValue> maybeState) {
 		phonologyModel = new LanguagePhonologyModel(
-			createModelWithDefaultFeatures(),
-			new SyllablePatternCategoryMapModel(),
-			observableArrayList(),
-			observableArrayList()
-		);
-
-		context.registerApi(new LangforgeCorePhonologyApi(phonologyModel));
+				createModelWithDefaultFeatures(),
+				new SyllablePatternCategoryMapModel(),
+				observableArrayList(),
+				observableArrayList()
+			);
 	}
 
 	@Override
-	public void load(LangforgePluginContext context) throws LangforgePluginException {
+	public Collection<Migration> getMigrations() {
+		return List.of();
+	}
+
+	@Override
+	public void initialize() throws LangforgePluginException {
+		getContext().registerApi(new LangforgeCorePhonologyApi(phonologyModel));
 		var phonologyMenuItem = new MenuItem("Phonology");
 		phonologyMenuItem.setOnAction(_ -> {
 			showPhonologyTab();
 		});
-		context.addMenuItem(new MenuItemDefinition("Edit", () -> phonologyMenuItem));
+		getContext().addMenuItem(new MenuItemDefinition("Edit", () -> phonologyMenuItem));
 
 		showPhonologyTab();
 	}
@@ -95,7 +105,7 @@ public final class LangforgeCorePhonologyPlugin implements LangforgePlugin {
 		var tab = new Tab("Phonology", phonologyController);
 		tab.setOnClosed(_ -> phonologyTabVisible = false);
 
-		context.createTab(tab);
+		getContext().createTab(tab);
 	}
 
 }

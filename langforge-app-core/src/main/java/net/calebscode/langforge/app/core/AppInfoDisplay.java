@@ -6,14 +6,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import net.calebscode.langforge.app.LangforgeApplication;
 
 public class AppInfoDisplay {
 
 	private Stage window;
 
-	public AppInfoDisplay() {
-		Label appName = new Label("Langforge " + LangforgeApplication.VERSION);
+	public AppInfoDisplay(String langforgeVersion) {
+		Label appName = new Label("Langforge " + langforgeVersion);
 		appName.setStyle("-fx-font-size: 20px; -fx-font-weight: bold");
 
 		Label javaInfo = new Label(String.format(

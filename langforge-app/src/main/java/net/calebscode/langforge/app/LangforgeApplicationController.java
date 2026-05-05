@@ -22,7 +22,7 @@ public class LangforgeApplicationController extends BorderPane implements FXMLCo
 			leftProperty().bindBidirectional(model.leftPanel);
 			rightProperty().bindBidirectional(model.rightPanel);
 
-			statusText.setText("Langforge " + LangforgeApplication.VERSION);
+			statusText.setText("Langforge " + LangforgeApplication.CURRENT_VERSION);
 		});
 	}
 

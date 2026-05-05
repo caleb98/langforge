@@ -1,5 +1,7 @@
 package net.calebscode.langforge.app;
 
+import java.util.Optional;
+
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
@@ -7,13 +9,9 @@ import javafx.scene.control.Tab;
 import net.calebscode.langforge.app.plugin.MenuDefinition;
 import net.calebscode.langforge.app.plugin.MenuItemDefinition;
 
-import java.util.Optional;
-
-/**
- * A {@code LangforgePluginContext} serves as the interface between a plugin and the rest of the Langforge Application.
- * Each plugin receives its own {@code LangforgePluginContext} through which it can perform common UI operations or interact
- * with other plugins.
- */
+/// A {@code LangforgePluginContext} serves as the interface between a plugin and the rest of the Langforge Application.
+/// Each plugin receives its own {@code LangforgePluginContext} through which it can perform common UI operations or interact
+/// with other plugins.
 public class LangforgePluginContext {
 
 	private final LangforgeApplicationModel appModel;
