@@ -10,7 +10,6 @@ import javafx.scene.control.MenuItem;
 import net.calebscode.langforge.app.LangforgeAppInfoApi;
 import net.calebscode.langforge.app.LangforgeApplication;
 import net.calebscode.langforge.app.LangforgePlugin;
-import net.calebscode.langforge.app.LangforgePluginException;
 import net.calebscode.langforge.app.data.Migration;
 import net.calebscode.langforge.app.data.SaveLoadValue;
 import net.calebscode.langforge.app.plugin.MenuDefinition;
@@ -60,25 +59,10 @@ public final class LangforgeCorePlugin extends LangforgePlugin {
 	}
 
 	@Override
-	public Optional<SaveLoadValue> getState() {
-		return Optional.empty();
-	}
-
-	@Override
-	public void setState(Optional<SaveLoadValue> maybeState) {
-
-	}
-
-	@Override
-	public Collection<Migration> getMigrations() {
-		return List.of();
-	}
-
-	@Override
-	public void initialize() throws LangforgePluginException {
+	public void initialize() {
 		var maybeInfo = getContext().getApi(LangforgeAppInfoApi.class);
 		if (maybeInfo.isEmpty()) {
-			throw new LangforgePluginException("Couldn't get the LangforgeAppInfoApi.");
+			throw new IllegalStateException("Couldn't get the LangforgeAppInfoApi.");
 		}
 
 		var appInfo = maybeInfo.get();
@@ -102,6 +86,36 @@ public final class LangforgeCorePlugin extends LangforgePlugin {
 		getContext().addMenuItems(
 			new MenuItemDefinition("File", () -> exitMenuItem),
 			new MenuItemDefinition("Help", () -> appInfoMenuItem));
+	}
+
+	@Override
+	public void deinitialize() {
+
+	}
+
+	@Override
+	public void load() {
+
+	}
+
+	@Override
+	public void load(SaveLoadValue state) {
+
+	}
+
+	@Override
+	public Optional<SaveLoadValue> save() {
+		return Optional.empty();
+	}
+
+	@Override
+	public void unload() {
+
+	}
+
+	@Override
+	public Collection<Migration> getMigrations() {
+		return List.of();
 	}
 
 }

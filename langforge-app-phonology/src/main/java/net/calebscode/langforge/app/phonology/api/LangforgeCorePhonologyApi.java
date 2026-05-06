@@ -4,7 +4,7 @@ import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
 
 public class LangforgeCorePhonologyApi {
 
-	private final LanguagePhonologyModel phonologyModel;
+	private LanguagePhonologyModel phonologyModel;
 
 	public LangforgeCorePhonologyApi(LanguagePhonologyModel phonologyModel) {
 		this.phonologyModel = phonologyModel;
@@ -12,6 +12,10 @@ public class LangforgeCorePhonologyApi {
 
 	public LanguagePhonologyModel getPhonologyModel() {
 		return phonologyModel;
+	}
+
+	void setPhonologyModel(LanguagePhonologyModel phonologyModel) {
+		this.phonologyModel = phonologyModel;
 	}
 
 }

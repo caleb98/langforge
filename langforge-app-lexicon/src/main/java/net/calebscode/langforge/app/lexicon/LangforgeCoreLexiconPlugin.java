@@ -8,7 +8,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import net.calebscode.langforge.app.LangforgeApplication;
 import net.calebscode.langforge.app.LangforgePlugin;
-import net.calebscode.langforge.app.LangforgePluginException;
 import net.calebscode.langforge.app.core.LangforgeCorePlugin;
 import net.calebscode.langforge.app.data.Migration;
 import net.calebscode.langforge.app.data.SaveLoadValue;
@@ -68,31 +67,48 @@ public final class LangforgeCoreLexiconPlugin extends LangforgePlugin {
 	}
 
 	@Override
-	public Optional<SaveLoadValue> getState() {
-		return Optional.empty();
-	}
-
-	@Override
-	public void setState(Optional<SaveLoadValue> maybeState) {
-		// TODO: hook up to state loading
-	}
-
-	@Override
-	public Collection<Migration> getMigrations() {
-		return List.of();
-	}
-
-	@Override
-	public void initialize() throws LangforgePluginException {
-		var maybePhonologyApi =  getContext().getApi(LangforgeCorePhonologyApi.class);
-		phonologyApi = maybePhonologyApi.orElseThrow(() -> new LangforgePluginException("Failed to retrieve phonology API."));
+	public void initialize() {
+		var maybePhonologyApi = getContext().getApi(LangforgeCorePhonologyApi.class);
+		phonologyApi = maybePhonologyApi.orElseThrow(
+			() -> new IllegalStateException("Failed to retrieve phonology API.")
+		);
 
 		var lexiconMenuItem = new MenuItem("Lexicon");
 		lexiconMenuItem.setOnAction(_ -> {
 			showLexiconTab();
 		});
 		getContext().addMenuItem(new MenuItemDefinition("Edit", () -> lexiconMenuItem));
+	}
+
+	@Override
+	public void deinitialize() {
+
+	}
+
+	@Override
+	public void load() {
 		showLexiconTab();
+	}
+
+	@Override
+	public void load(SaveLoadValue state) {
+		// TODO: hook up to state loading
+	}
+
+	@Override
+	public Optional<SaveLoadValue> save() {
+		// TODO: saving
+		return Optional.empty();
+	}
+
+	@Override
+	public void unload() {
+		lexiconTabVisible = false;
+	}
+
+	@Override
+	public Collection<Migration> getMigrations() {
+		return List.of();
 	}
 
 	private void showLexiconTab() {

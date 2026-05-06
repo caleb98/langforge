@@ -12,7 +12,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import net.calebscode.langforge.app.LangforgeApplication;
 import net.calebscode.langforge.app.LangforgePlugin;
-import net.calebscode.langforge.app.LangforgePluginException;
 import net.calebscode.langforge.app.data.Migration;
 import net.calebscode.langforge.app.data.SaveLoadValue;
 import net.calebscode.langforge.app.phonology.api.LangforgeCorePhonologyApi;
@@ -72,30 +71,44 @@ public final class LangforgeCorePhonologyPlugin extends LangforgePlugin {
 	}
 
 	@Override
-	public Optional<SaveLoadValue> getState() {
-		return Optional.of(phonologyModel.getState());
-	}
-
-	@Override
-	public void setState(Optional<SaveLoadValue> maybeState) {
-		// TODO: hook up to state loading
-	}
-
-	@Override
-	public Collection<Migration> getMigrations() {
-		return List.of();
-	}
-
-	@Override
-	public void initialize() throws LangforgePluginException {
+	public void initialize() {
 		getContext().registerApi(new LangforgeCorePhonologyApi(phonologyModel));
 		var phonologyMenuItem = new MenuItem("Phonology");
 		phonologyMenuItem.setOnAction(_ -> {
 			showPhonologyTab();
 		});
 		getContext().addMenuItem(new MenuItemDefinition("Edit", () -> phonologyMenuItem));
+	}
 
+	@Override
+	public void deinitialize() {
+
+	}
+
+	@Override
+	public void load() {
 		showPhonologyTab();
+	}
+
+	@Override
+	public void load(SaveLoadValue state) {
+		// TODO: hook up to state loading
+		showPhonologyTab();
+	}
+
+	@Override
+	public Optional<SaveLoadValue> save() {
+		return Optional.of(phonologyModel.getState());
+	}
+
+	@Override
+	public void unload() {
+		phonologyTabVisible = false;
+	}
+
+	@Override
+	public Collection<Migration> getMigrations() {
+		return List.of();
 	}
 
 	private void showPhonologyTab() {

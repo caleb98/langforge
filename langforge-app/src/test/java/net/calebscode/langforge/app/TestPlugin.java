@@ -19,7 +19,7 @@ public class TestPlugin extends LangforgePlugin {
 	private static final String NAME = "Langforge Test";
 	private static final String DESCRIPTION = "A plugin for the Langforge Unit tests.";
 
-	private Optional<SaveLoadValue> state;
+	private SaveLoadValue state;
 
 	@Override
 	public String getId() {
@@ -52,13 +52,33 @@ public class TestPlugin extends LangforgePlugin {
 	}
 
 	@Override
-	public Optional<SaveLoadValue> getState() {
-		return state;
+	public void initialize() {
+		getContext().registerApi(this);
 	}
 
 	@Override
-	public void setState(Optional<SaveLoadValue> maybeState) {
-		state = maybeState;
+	public void deinitialize() {
+
+	}
+
+	@Override
+	public void load() {
+		state = null;
+	}
+
+	@Override
+	public void load(SaveLoadValue state) {
+		this.state = state;
+	}
+
+	@Override
+	public Optional<SaveLoadValue> save() {
+		return Optional.ofNullable(state);
+	}
+
+	@Override
+	public void unload() {
+		state = null;
 	}
 
 	@Override
@@ -67,11 +87,6 @@ public class TestPlugin extends LangforgePlugin {
 			Migration.forVersion(new VersionNumber(2, 0, 0), TestPlugin::migrateToVersionTwo),
 			Migration.forVersion(new VersionNumber(3, 0, 0), TestPlugin::migrateToVersionThree)
 		);
-	}
-
-	@Override
-	public void initialize() throws LangforgePluginException {
-		getContext().registerApi(this);
 	}
 
 	private static SaveLoadValue migrateToVersionTwo(SaveLoadValue oldState) {

@@ -1,17 +1,16 @@
 package net.calebscode.langforge.app;
 
+import static net.calebscode.langforge.app.test.util.JsonAssertions.assertJsonEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import net.calebscode.langforge.app.data.SaveLoadString;
-import net.calebscode.langforge.app.test.util.JsonAssertions;
 
 public class PluginManagerTest {
 
@@ -27,17 +26,17 @@ public class PluginManagerTest {
 
 	@Test
 	void pluginStateSavedWithInfo() throws Exception {
-		testPlugin.setState(Optional.of(new SaveLoadString("state")));
+		testPlugin.load(new SaveLoadString("state"));
 		var output = new ByteArrayOutputStream();
 
 		manager.savePluginStates(output);
 
 		var result = output.toString(StandardCharsets.UTF_8);
-		JsonAssertions.assertJsonEquals(
+		assertJsonEquals(
 			"""
 			{
 				"langforge.test": {
-					"version": "1.2.3",
+					"version": "3.0.0",
 					"state": "state"
 				}
 			}
@@ -63,7 +62,7 @@ public class PluginManagerTest {
 
 		manager.loadPluginStates(input);
 
-		var migratedState = testPlugin.getState().get();
+		var migratedState = testPlugin.save().get();
 		assertEquals("SOMEVALUE", migratedState.asObject().get("someKey").asString().value());
 	}
 
@@ -82,7 +81,7 @@ public class PluginManagerTest {
 
 		manager.loadPluginStates(input);
 
-		var migratedState = testPlugin.getState().get();
+		var migratedState = testPlugin.save().get();
 		assertEquals("SOMEVALUE", migratedState.asObject().get("someKey").asString().value());
 	}
 

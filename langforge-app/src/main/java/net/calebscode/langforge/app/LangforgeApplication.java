@@ -2,6 +2,8 @@ package net.calebscode.langforge.app;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -9,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import net.calebscode.langforge.app.util.VersionNumber;
@@ -36,7 +39,12 @@ public final class LangforgeApplication extends Application {
 		} catch (DuplicatePluginIdException duplicate) {
 			displayDuplicatePluginIdAlert(duplicate);
 			return;
+		} catch (LangforgePluginException ex) {
+			displayPluginInitializationErrorAlert(ex);
+			return;
 		}
+
+		pluginManager.loadPluginStates();
 
 		primaryStage.setOnCloseRequest(this::onApplicationClose);
 
@@ -55,6 +63,8 @@ public final class LangforgeApplication extends Application {
 	private void onApplicationClose(WindowEvent event) {
 		try (var output = new FileOutputStream("./save.json")) {
 			pluginManager.savePluginStates(output);
+			pluginManager.unloadPlugins();
+			pluginManager.deinitializePlugins();
 		} catch (IOException ex) {
 			var cancelButton = new ButtonType("Cancel");
 			var exitButton = new ButtonType("Exit Anyway");
@@ -71,6 +81,25 @@ public final class LangforgeApplication extends Application {
 				event.consume();
 			}
 		}
+	}
+
+	private void displayPluginInitializationErrorAlert(LangforgePluginException ex) {
+		Alert alert = new Alert(
+			AlertType.ERROR,
+			String.format("An exception occurred while initializing plugins:")
+		);
+
+		alert.setHeaderText("Plugin Exception");
+
+		var stringWriter = new StringWriter();
+		var printWriter = new PrintWriter(stringWriter);
+		ex.printStackTrace(printWriter);
+		var textArea = new TextArea(stringWriter.toString());
+
+		alert.getDialogPane().setExpandableContent(textArea);
+
+		alert.showAndWait();
+		Platform.exit();
 	}
 
 	private void displayDuplicatePluginIdAlert(DuplicatePluginIdException duplicate) {
