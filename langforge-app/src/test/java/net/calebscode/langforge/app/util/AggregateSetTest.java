@@ -12,7 +12,6 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import javafx.collections.FXCollections;
-import net.calebscode.langforge.app.util.AggregateSet;
 
 public class AggregateSetTest {
 

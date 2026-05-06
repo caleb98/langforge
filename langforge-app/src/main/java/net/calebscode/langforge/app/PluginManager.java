@@ -64,23 +64,12 @@ public final class PluginManager {
 		var initializeOrder = computeInitializeOrder(plugins, pluginDependencies);
 		logPluginsWithUnsatisfiedDependencies(pluginDependencies);
 
-		// TODO: proper loading of plugin states
-		initializeOrder.forEach(p -> p.setState(Optional.empty()));
-
 		initializeOrder.forEach(this::initializePlugin);
 		pluginsInitialized = true;
 	}
 
-	public void loadPluginStates(InputStream input) {
-		SaveLoadObject infos;
-
-		try {
-			infos = persistenceBackend.load(input);
-		} catch (IOException e) {
-			// TODO: Display an error
-			e.printStackTrace();
-			return;
-		}
+	public void loadPluginStates(InputStream input) throws IOException {
+		SaveLoadObject infos = persistenceBackend.load(input);
 
 		for (var plugin : plugins.values()) {
 			plugin.setState(Optional.empty());

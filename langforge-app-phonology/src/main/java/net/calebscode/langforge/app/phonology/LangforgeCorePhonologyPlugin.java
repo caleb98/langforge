@@ -28,9 +28,18 @@ public final class LangforgeCorePhonologyPlugin extends LangforgePlugin {
 	public static final String NAME = "Langforge Core - Phonology";
 	public static final String DESCRIPTION = "The core Langforge phonology features.";
 
-	private LanguagePhonologyModel phonologyModel;
+	private final LanguagePhonologyModel phonologyModel;
 
 	private boolean phonologyTabVisible = false;
+
+	public LangforgeCorePhonologyPlugin() {
+		phonologyModel = new LanguagePhonologyModel(
+			createModelWithDefaultFeatures(),
+			new SyllablePatternCategoryMapModel(),
+			observableArrayList(),
+			observableArrayList()
+		);
+	}
 
 	@Override
 	public String getId() {
@@ -69,12 +78,7 @@ public final class LangforgeCorePhonologyPlugin extends LangforgePlugin {
 
 	@Override
 	public void setState(Optional<SaveLoadValue> maybeState) {
-		phonologyModel = new LanguagePhonologyModel(
-				createModelWithDefaultFeatures(),
-				new SyllablePatternCategoryMapModel(),
-				observableArrayList(),
-				observableArrayList()
-			);
+		// TODO: hook up to state loading
 	}
 
 	@Override

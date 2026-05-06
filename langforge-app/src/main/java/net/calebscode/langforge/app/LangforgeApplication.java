@@ -1,6 +1,5 @@
 package net.calebscode.langforge.app;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -9,6 +8,7 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import net.calebscode.langforge.app.util.VersionNumber;
@@ -55,12 +55,21 @@ public final class LangforgeApplication extends Application {
 	private void onApplicationClose(WindowEvent event) {
 		try (var output = new FileOutputStream("./save.json")) {
 			pluginManager.savePluginStates(output);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (IOException ex) {
+			var cancelButton = new ButtonType("Cancel");
+			var exitButton = new ButtonType("Exit Anyway");
+
+			Alert alert = new Alert(
+				AlertType.ERROR,
+				"Failed to save project: " + ex.getMessage(),
+				cancelButton,
+				exitButton
+			);
+
+			var selectedButton = alert.showAndWait().orElse(null);
+			if (selectedButton == cancelButton) {
+				event.consume();
+			}
 		}
 	}
 

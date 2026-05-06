@@ -25,10 +25,14 @@ public final class LangforgeCoreLexiconPlugin extends LangforgePlugin {
 	private static final String NAME = "Langforge Core - Lexicon";
 	private static final String DESCRIPTION = "The core Langforge lexicon features.";
 
-	private LexiconModel lexiconModel;
+	private final LexiconModel lexiconModel;
 	private LangforgeCorePhonologyApi phonologyApi;
 
 	private boolean lexiconTabVisible = false;
+
+	public LangforgeCoreLexiconPlugin() {
+		lexiconModel = new LexiconModel();
+	}
 
 	@Override
 	public String getId() {
@@ -70,12 +74,7 @@ public final class LangforgeCoreLexiconPlugin extends LangforgePlugin {
 
 	@Override
 	public void setState(Optional<SaveLoadValue> maybeState) {
-		if (maybeState.isEmpty()) {
-			lexiconModel = new LexiconModel();
-		}
-		else {
-			// TODO: configure from state
-		}
+		// TODO: hook up to state loading
 	}
 
 	@Override
