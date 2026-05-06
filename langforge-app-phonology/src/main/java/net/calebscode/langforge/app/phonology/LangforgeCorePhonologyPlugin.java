@@ -64,7 +64,7 @@ public final class LangforgeCorePhonologyPlugin extends LangforgePlugin {
 
 	@Override
 	public Optional<SaveLoadValue> getState() {
-		return Optional.empty();
+		return Optional.of(phonologyModel.getState());
 	}
 
 	@Override

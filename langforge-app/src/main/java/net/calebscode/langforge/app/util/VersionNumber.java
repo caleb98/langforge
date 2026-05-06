@@ -1,6 +1,27 @@
 package net.calebscode.langforge.app.util;
 
+import java.util.Optional;
+import java.util.regex.Pattern;
+
 public record VersionNumber(int major, int minor, int patch) implements Comparable<VersionNumber> {
+
+	private static final Pattern VERSION_STRING_PATTERN = Pattern.compile(
+		"^(\\d+)(?:\\.(\\d+)(?:\\.(\\d+))?)?$"
+	);
+
+	public static VersionNumber parse(String versionString) {
+		var matcher = VERSION_STRING_PATTERN.matcher(versionString.strip());
+
+		if (!matcher.matches()) {
+			throw new IllegalArgumentException(versionString + " is not a valid version string.");
+		}
+
+		int major = Integer.parseInt(matcher.group(1));
+		int minor = Optional.ofNullable(matcher.group(2)).map(Integer::parseInt).orElse(0);
+		int patch = Optional.ofNullable(matcher.group(3)).map(Integer::parseInt).orElse(0);
+
+		return new VersionNumber(major, minor, patch);
+	}
 
 	@Override
 	public int compareTo(VersionNumber other) {

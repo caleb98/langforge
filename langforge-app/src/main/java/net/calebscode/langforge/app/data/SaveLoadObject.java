@@ -1,20 +1,35 @@
 package net.calebscode.langforge.app.data;
 
+import static java.util.stream.Collectors.toMap;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 public final class SaveLoadObject implements SaveLoadValue, Map<String, SaveLoadValue> {
 
 	private final Map<String, SaveLoadValue> fields;
 
 	public SaveLoadObject() {
-		this(new HashMap<>());
+		fields = new HashMap<>();
 	}
 
-	public SaveLoadObject(Map<String, SaveLoadValue> fields) {
-		this.fields = fields;
+	public SaveLoadObject(Map<String, ? extends SaveLoadValue> fields) {
+		this.fields = new HashMap<>(fields);
+	}
+
+	public <T> SaveLoadObject(Map<String, T> fields, Function<T, SaveLoadValue> mapper) {
+		this.fields = new HashMap<>(
+			fields
+				.entrySet()
+				.stream()
+				.collect(toMap(
+					Entry::getKey,
+					e -> mapper.apply(e.getValue())
+				))
+		);
 	}
 
 	public SaveLoadObject getObject(String name) {

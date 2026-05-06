@@ -1,5 +1,6 @@
 package net.calebscode.langforge.app.data;
 
+import static net.calebscode.langforge.app.test.util.JsonAssertions.assertJsonEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -8,22 +9,12 @@ import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import tools.jackson.databind.ObjectMapper;
-
 public class JsonBackendTest {
 
-	private static ObjectMapper mapper;
-
 	JsonBackend backend;
-
-	@BeforeAll
-	static void beforeAll() {
-		mapper = new ObjectMapper();
-	}
 
 	@BeforeEach
 	void beforeEach() {
@@ -244,12 +235,6 @@ public class JsonBackendTest {
 		var result = backend.load(input);
 
 		assertEquals(new SaveLoadString("hello world!"), result.get("testString"));
-	}
-
-	private static void assertJsonEquals(String expected, String actual) {
-		var expectedNode = mapper.readTree(expected);
-		var actualNode = mapper.readTree(actual);
-		assertEquals(expectedNode, actualNode);
 	}
 
 }

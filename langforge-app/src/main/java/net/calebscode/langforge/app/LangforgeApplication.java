@@ -1,5 +1,9 @@
 package net.calebscode.langforge.app;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -49,7 +53,15 @@ public final class LangforgeApplication extends Application {
 	}
 
 	private void onApplicationClose(WindowEvent event) {
-		pluginManager.savePluginStates();
+		try (var output = new FileOutputStream("./save.json")) {
+			pluginManager.savePluginStates(output);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void displayDuplicatePluginIdAlert(DuplicatePluginIdException duplicate) {

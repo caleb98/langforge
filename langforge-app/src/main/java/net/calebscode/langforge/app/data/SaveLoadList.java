@@ -1,14 +1,29 @@
 package net.calebscode.langforge.app.data;
 
+import static java.util.stream.Collectors.toCollection;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.function.Function;
 
 public final class SaveLoadList implements SaveLoadValue, List<SaveLoadValue> {
 
-	private List<SaveLoadValue> list = new ArrayList<>();
+	private List<SaveLoadValue> list;
+
+	public SaveLoadList() {
+		list = new ArrayList<>();
+	}
+
+	public SaveLoadList(List<? extends SaveLoadValue> list) {
+		this.list = new ArrayList<>(list);
+	}
+
+	public <T> SaveLoadList(Collection<T> collection, Function<T, SaveLoadValue> mapper) {
+		list = collection.stream().map(mapper).collect(toCollection(ArrayList::new));
+	}
 
 	@Override
 	public boolean isList() {

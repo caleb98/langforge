@@ -15,8 +15,8 @@ import tools.jackson.databind.node.NumericIntNode;
 import tools.jackson.databind.node.ObjectNode;
 import tools.jackson.databind.node.StringNode;
 
-
 public class JsonBackend implements PersistenceBackend {
+
 	private ObjectMapper mapper;
 
 	public JsonBackend() {
@@ -100,6 +100,7 @@ public class JsonBackend implements PersistenceBackend {
 				for (var entry : object.entrySet()) {
 					writeToObject(node, entry.getKey(), entry.getValue());
 				}
+				target.add(node);
 			}
 
 			case SaveLoadInteger(int intValue) -> {
@@ -119,6 +120,7 @@ public class JsonBackend implements PersistenceBackend {
 				for (var element : list) {
 					writeToArray(node, element);
 				}
+				target.add(node);
 			}
 
 			case null -> {

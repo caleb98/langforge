@@ -25,6 +25,10 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.ListChangeListener.Change;
+import net.calebscode.langforge.app.data.SaveLoadList;
+import net.calebscode.langforge.app.data.SaveLoadObject;
+import net.calebscode.langforge.app.data.SaveLoadString;
+import net.calebscode.langforge.app.data.SaveLoadValue;
 import net.calebscode.langforge.phonology.phoneme.Phoneme;
 
 public class PhonologicalInventoryModel {
@@ -91,6 +95,22 @@ public class PhonologicalInventoryModel {
 
 	public boolean isPhonemeInvalid(Phoneme phoneme) {
 		return !isPhonemeValid(phoneme);
+	}
+
+	public SaveLoadValue getState() {
+		var state = new SaveLoadObject();
+
+		state.put(
+			"phonemes",
+			new SaveLoadList(
+				phonemes,
+				p -> new SaveLoadObject(p.features(), SaveLoadString::new)
+			)
+		);
+
+		state.put("features", new SaveLoadList(features, PhonemeFeatureModel::getState));
+
+		return state;
 	}
 
 	private void validatePhonemes(Change<? extends Phoneme> change) {

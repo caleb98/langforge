@@ -1,11 +1,15 @@
 package net.calebscode.langforge.app;
 
-import java.io.FileOutputStream;
+import static java.util.Comparator.comparing;
+
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
 import java.util.stream.Collectors;
@@ -14,8 +18,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.calebscode.langforge.app.data.JsonBackend;
+import net.calebscode.langforge.app.data.Migration;
 import net.calebscode.langforge.app.data.PersistenceBackend;
 import net.calebscode.langforge.app.data.SaveLoadObject;
+import net.calebscode.langforge.app.data.SaveLoadString;
 import net.calebscode.langforge.app.util.VersionNumber;
 
 public final class PluginManager {
@@ -25,8 +31,10 @@ public final class PluginManager {
 	private boolean pluginsInitialized = false;
 	private LangforgeApplicationModel appModel;
 	private LangforgePluginApiProvider apiProvider = createApiProvider();
-	private Map<LangforgePluginContext, LangforgePlugin> contexts = new HashMap<>();
 	private PersistenceBackend persistenceBackend = new JsonBackend();
+
+	private final Map<String, LangforgePlugin> plugins = new HashMap<>();
+	private final Map<LangforgePluginContext, LangforgePlugin> contexts = new HashMap<>();
 
 	public PluginManager(LangforgeApplicationModel appModel) {
 		this.appModel = appModel;
@@ -35,7 +43,7 @@ public final class PluginManager {
 	public void initializePlugins() throws DuplicatePluginIdException {
 		if (pluginsInitialized) {
 			throw new IllegalStateException(
-				"Cannot call loadPlugin() after plugins have already been loaded."
+				"Cannot call initializePlugins() after plugins have already been initialized."
 			);
 		}
 
@@ -56,25 +64,90 @@ public final class PluginManager {
 		var initializeOrder = computeInitializeOrder(plugins, pluginDependencies);
 		logPluginsWithUnsatisfiedDependencies(pluginDependencies);
 
+		// TODO: proper loading of plugin states
+		initializeOrder.forEach(p -> p.setState(Optional.empty()));
+
 		initializeOrder.forEach(this::initializePlugin);
 		pluginsInitialized = true;
 	}
 
-	public void savePluginStates() {
+	public void loadPluginStates(InputStream input) {
+		SaveLoadObject infos;
+
+		try {
+			infos = persistenceBackend.load(input);
+		} catch (IOException e) {
+			// TODO: Display an error
+			e.printStackTrace();
+			return;
+		}
+
+		for (var plugin : plugins.values()) {
+			plugin.setState(Optional.empty());
+		}
+
+		for (var info : infos.entrySet()) {
+			var pluginId = info.getKey();
+
+			if (!plugins.containsKey(pluginId)) {
+				// TODO: warn and ask if we should continue
+				continue;
+			}
+
+			var pluginInfo = info.getValue().asObject();
+			var stateVersion = VersionNumber.parse(pluginInfo.get("version").asString().value());
+			var state = pluginInfo.get("state");
+
+			var plugin = plugins.get(pluginId);
+			var migrations = plugin
+				.getMigrations()
+				.stream()
+				.filter(m -> m.targetVersion().compareTo(plugin.getVersion()) <= 0)
+				.sorted(comparing(Migration::targetVersion))
+				.toList();
+
+			for (var migration : migrations) {
+				if (stateVersion.compareTo(migration.targetVersion()) < 0) {
+					logger.info(
+						"Migrating save data for {} from version {} to {}",
+						pluginId,
+						stateVersion,
+						migration.targetVersion()
+					);
+					state = migration.migrate(state);
+					stateVersion = migration.targetVersion();
+				}
+			}
+
+			plugin.setState(Optional.of(state));
+		}
+	}
+
+	public void savePluginStates(OutputStream output) {
 		var saveState = new SaveLoadObject();
 		for (var plugin : contexts.values()) {
 			var pluginState = plugin.getState();
-			if (pluginState.isPresent()) {
-				saveState.put(plugin.getId(), pluginState.get());
+
+			if (pluginState.isEmpty()) {
+				continue;
 			}
+
+			var pluginInfo = new SaveLoadObject();
+			pluginInfo.put("state", pluginState.get());
+			pluginInfo.put("version", new SaveLoadString(plugin.getVersion().toString()));
+			saveState.put(plugin.getId(), pluginInfo);
 		}
 
-		try (var output = new FileOutputStream("./save.json")) {
+		try {
 			persistenceBackend.save(output, saveState);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public LangforgePluginApiProvider getApiProvider() {
+		return apiProvider;
 	}
 
 	private void logPluginsWithUnsatisfiedDependencies(
@@ -181,6 +254,8 @@ public final class PluginManager {
 			plugin.setContext(context);
 			plugin.initialize();
 			appModel.registerPlugin(context);
+
+			plugins.put(plugin.getId(), plugin);
 			contexts.put(context, plugin);
 
 			logger.info(
