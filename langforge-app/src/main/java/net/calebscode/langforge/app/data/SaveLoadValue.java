@@ -43,4 +43,16 @@ permits SaveLoadObject, SaveLoadInteger, SaveLoadDouble, SaveLoadString, SaveLoa
 		throw new SaveLoadValueException("SaveLoadValue is not a List.");
 	}
 
+	default long asIntegerValue() {
+		return asInteger().value();
+	}
+
+	default double asDoubleValue() {
+		return asDouble().value();
+	}
+
+	default String asStringValue() {
+		return asString().value();
+	}
+
 }

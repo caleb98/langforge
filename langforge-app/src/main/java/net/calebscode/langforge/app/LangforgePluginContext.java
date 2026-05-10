@@ -1,29 +1,36 @@
 package net.calebscode.langforge.app;
 
+import static javafx.collections.FXCollections.observableArrayList;
+
 import java.util.Optional;
 
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
-import javafx.collections.FXCollections;
 import javafx.scene.control.Tab;
 import net.calebscode.langforge.app.plugin.MenuDefinition;
 import net.calebscode.langforge.app.plugin.MenuItemDefinition;
 
-/// A {@code LangforgePluginContext} serves as the interface between a plugin and the rest of the Langforge Application.
-/// Each plugin receives its own {@code LangforgePluginContext} through which it can perform common UI operations or interact
-/// with other plugins.
+/// A {@code LangforgePluginContext} serves as the interface between a plugin and the rest of the
+/// Langforge Application. Each plugin receives its own {@code LangforgePluginContext} through which
+/// it can perform common UI operations or interact with other plugins.
 public class LangforgePluginContext {
 
+	private final ApplicationManager appManager;
 	private final LangforgeApplicationModel appModel;
 	private final LangforgePluginApiProvider apiProvider;
 
-	private final ListProperty<MenuDefinition> menus = new SimpleListProperty<>(FXCollections.observableArrayList());
-	private final ListProperty<MenuItemDefinition> menuItems = new SimpleListProperty<>(FXCollections.observableArrayList());
+	private final ListProperty<MenuDefinition> menus =
+		new SimpleListProperty<>(observableArrayList());
+
+	private final ListProperty<MenuItemDefinition> menuItems =
+		new SimpleListProperty<>(observableArrayList());
 
 	LangforgePluginContext(
+		ApplicationManager appManager,
 		LangforgeApplicationModel appModel,
 		LangforgePluginApiProvider apiProvider
 	) {
+		this.appManager = appManager;
 		this.appModel = appModel;
 		this.apiProvider = apiProvider;
 	}
@@ -66,6 +73,10 @@ public class LangforgePluginContext {
 
 	public <T> Optional<T> getApi(Class<T> apiClass) {
 		return apiProvider.getApi(apiClass);
+	}
+
+	public void requestSave() {
+		appManager.requestSave();
 	}
 
 	/*

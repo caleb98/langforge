@@ -1,26 +1,21 @@
 package net.calebscode.langforge.app.phonology.model;
 
-import javafx.beans.property.*;
-import javafx.beans.value.ObservableValue;
-import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMapper;
-import net.calebscode.langforge.phonology.rules.PhonologicalRule;
-import net.calebscode.langforge.phonology.rules.PhonologicalRuleCompiler;
-
 import java.util.Optional;
 
-public class PhonologicalRuleModel {
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import net.calebscode.langforge.phonology.rules.PhonologicalRule;
 
-	private PhonologicalRuleCompiler compiler;
+public class PhonologicalRuleModel {
 
 	private StringProperty name = new SimpleStringProperty("");
 	private StringProperty source = new SimpleStringProperty("");
 	private ObjectProperty<Optional<PhonologicalRule>> rule = new SimpleObjectProperty<>(Optional.empty());
 	private StringProperty compileError = new SimpleStringProperty("");
-	
-	public PhonologicalRuleModel(PhonemeRepresentationMapper ipaMapper) {
-		compiler = new PhonologicalRuleCompiler(ipaMapper);
-		source.addListener(this::onSourceChanged);
-	}
+
 	public StringProperty nameProperty() {
 		return name;
 	}
@@ -45,12 +40,16 @@ public class PhonologicalRuleModel {
 		this.source.set(source);
 	}
 
-	public ReadOnlyObjectProperty<Optional<PhonologicalRule>> ruleProperty() {
+	public ObjectProperty<Optional<PhonologicalRule>> ruleProperty() {
 		return rule;
 	}
 
 	public Optional<PhonologicalRule> getRule() {
 		return rule.get();
+	}
+
+	public void setRule(Optional<PhonologicalRule> rule) {
+		this.rule.set(rule);
 	}
 
 	public ReadOnlyStringProperty compileErrorProperty() {
@@ -61,20 +60,8 @@ public class PhonologicalRuleModel {
 		return compileError.get();
 	}
 
-	private void onSourceChanged(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-		rule.set(Optional.empty());
-		compileError.set("");
-
-		if (newValue.isBlank()) {
-			return;
-		}
-
-		try {
-			var result = compiler.compile(newValue);
-			rule.set(Optional.of(result));
-		} catch (RuntimeException compileEx) {
-			compileError.set(compileEx.getMessage());
-		}
+	public void setCompileError(String compileError) {
+		this.compileError.set(compileError);
 	}
 
 }

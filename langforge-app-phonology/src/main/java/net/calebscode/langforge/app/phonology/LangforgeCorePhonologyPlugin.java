@@ -16,10 +16,12 @@ import net.calebscode.langforge.app.data.Migration;
 import net.calebscode.langforge.app.data.SaveLoadValue;
 import net.calebscode.langforge.app.phonology.api.LangforgeCorePhonologyApi;
 import net.calebscode.langforge.app.phonology.controller.PhonologyController;
+import net.calebscode.langforge.app.phonology.data.LanguagePhonologyModelSaveLoadValue;
 import net.calebscode.langforge.app.phonology.model.LanguagePhonologyModel;
 import net.calebscode.langforge.app.phonology.model.SyllablePatternCategoryMapModel;
 import net.calebscode.langforge.app.plugin.MenuItemDefinition;
 import net.calebscode.langforge.app.util.VersionNumber;
+import net.calebscode.langforge.phonology.phoneme.StandardPhonemes;
 
 public final class LangforgeCorePhonologyPlugin extends LangforgePlugin {
 
@@ -36,7 +38,8 @@ public final class LangforgeCorePhonologyPlugin extends LangforgePlugin {
 			createModelWithDefaultFeatures(),
 			new SyllablePatternCategoryMapModel(),
 			observableArrayList(),
-			observableArrayList()
+			observableArrayList(),
+			StandardPhonemes.IPA_PHONEME_REPRESENTATION_MAPPER
 		);
 	}
 
@@ -98,7 +101,7 @@ public final class LangforgeCorePhonologyPlugin extends LangforgePlugin {
 
 	@Override
 	public Optional<SaveLoadValue> save() {
-		return Optional.of(phonologyModel.getState());
+		return Optional.of(new LanguagePhonologyModelSaveLoadValue(phonologyModel));
 	}
 
 	@Override

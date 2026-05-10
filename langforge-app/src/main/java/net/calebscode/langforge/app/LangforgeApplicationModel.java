@@ -1,14 +1,17 @@
 package net.calebscode.langforge.app;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import javafx.beans.binding.ListBinding;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SetProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -40,7 +43,11 @@ class LangforgeApplicationModel {
 	public final ListProperty<Tab> tabs = new SimpleListProperty<Tab>(FXCollections.observableArrayList());
 	public final ObjectProperty<Node> leftPanel = new SimpleObjectProperty<Node>(null);
 	public final ObjectProperty<Node> rightPanel = new SimpleObjectProperty<Node>(null);
-	public final StringProperty statusText = new SimpleStringProperty("");
+
+	private final StringProperty statusText = new SimpleStringProperty("");
+
+	private final ObjectProperty<Optional<File>> projectFile
+		= new SimpleObjectProperty<>(Optional.empty());
 
 	public LangforgeApplicationModel() {
 		menus.bind(new MenuListBinding());
@@ -54,6 +61,30 @@ class LangforgeApplicationModel {
 	public void unregisterPlugin(LangforgePluginContext context) {
 		menusInternal.remove(context.menusProperty());
 		menuItemsInternal.remove(context.menuItemsProperty());
+	}
+
+	public ReadOnlyObjectProperty<Optional<File>> projectFileProperty() {
+		return projectFile;
+	}
+
+	public Optional<File> getProjectFile() {
+		return projectFile.get();
+	}
+
+	void setProjectFile(Optional<File> projectFile) {
+		this.projectFile.set(projectFile);
+	}
+
+	public StringProperty statusTextProperty() {
+		return statusText;
+	}
+
+	public String getStatusText() {
+		return statusText.get();
+	}
+
+	public void setStatusText(String statusText) {
+		this.statusText.set(statusText);
 	}
 
 	private final class MenuListBinding extends ListBinding<Menu> {

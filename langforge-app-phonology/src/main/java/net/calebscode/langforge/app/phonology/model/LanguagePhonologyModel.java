@@ -1,10 +1,11 @@
 package net.calebscode.langforge.app.phonology.model;
 
 import javafx.beans.property.ListProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
-import net.calebscode.langforge.app.data.SaveLoadObject;
-import net.calebscode.langforge.app.data.SaveLoadValue;
+import net.calebscode.langforge.phonology.phoneme.PhonemeRepresentationMapper;
 
 public class LanguagePhonologyModel {
 
@@ -12,17 +13,20 @@ public class LanguagePhonologyModel {
 	private final SyllablePatternCategoryMapModel syllablePatternCategories;
 	private final ListProperty<PhonologicalRuleModel> phonologicalRules;
 	private final ListProperty<String> syllablePatterns;
+	private final ObjectProperty<PhonemeRepresentationMapper> phonemeMapper;
 
 	public LanguagePhonologyModel(
 		PhonologicalInventoryModel phonologicalInventory,
 		SyllablePatternCategoryMapModel syllablePatternCategories,
 		ObservableList<PhonologicalRuleModel> phonologicalRules,
-		ObservableList<String> syllablePatterns
+		ObservableList<String> syllablePatterns,
+		PhonemeRepresentationMapper phonemeMapper
 	) {
 		this.phonologicalInventory = phonologicalInventory;
 		this.syllablePatternCategories = syllablePatternCategories;
 		this.phonologicalRules = new SimpleListProperty<>(phonologicalRules);
 		this.syllablePatterns = new SimpleListProperty<>(syllablePatterns);
+		this.phonemeMapper = new SimpleObjectProperty<>(phonemeMapper);
 	}
 
 	public PhonologicalInventoryModel getPhonologicalInventory() {
@@ -53,12 +57,12 @@ public class LanguagePhonologyModel {
 		this.syllablePatterns.set(syllablePatterns);
 	}
 
-	public SaveLoadValue getState() {
-		var state = new SaveLoadObject();
+	public ObjectProperty<PhonemeRepresentationMapper> phonemeMapperProperty() {
+		return phonemeMapper;
+	}
 
-		state.put("inventory", phonologicalInventory.getState());
-
-		return state;
+	public PhonemeRepresentationMapper getPhonemeMapper() {
+		return phonemeMapper.get();
 	}
 
 }

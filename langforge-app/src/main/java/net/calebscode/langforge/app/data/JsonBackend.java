@@ -162,7 +162,7 @@ public class JsonBackend implements PersistenceBackend {
 			}
 
 			case NullNode _ -> {
-				target.put(name, null);
+				target.putNull(name);
 			}
 
 			default -> {

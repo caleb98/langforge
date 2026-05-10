@@ -73,6 +73,11 @@ public final class LangforgeCorePlugin extends LangforgePlugin {
 			new MenuDefinition("Edit", EDIT_MENU_INDEX),
 			new MenuDefinition("Help", HELP_MENU_INDEX));
 
+		var saveAsMenuItem = new MenuItem("Save As...");
+		saveAsMenuItem.setOnAction(_ -> {
+			getContext().requestSave();
+		});
+
 		var exitMenuItem = new MenuItem("Exit");
 		exitMenuItem.setOnAction(_ -> {
 			Platform.exit();
@@ -84,6 +89,7 @@ public final class LangforgeCorePlugin extends LangforgePlugin {
 		});
 
 		getContext().addMenuItems(
+			new MenuItemDefinition("File", () -> saveAsMenuItem),
 			new MenuItemDefinition("File", () -> exitMenuItem),
 			new MenuItemDefinition("Help", () -> appInfoMenuItem));
 	}

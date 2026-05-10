@@ -140,7 +140,7 @@ public class JsonBackendTest {
 	void testSaveNull() throws Exception {
 		var output = new ByteArrayOutputStream();
 		var object = new SaveLoadObject();
-		object.put("testNull", null);
+		object.putNull("testNull");
 
 		backend.save(output, object);
 

@@ -1,19 +1,12 @@
 package net.calebscode.langforge.app;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import static net.calebscode.langforge.app.ui.AlertHelper.displayDuplicatePluginIdAlert;
+import static net.calebscode.langforge.app.ui.AlertHelper.showExceptionAlert;
 
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import net.calebscode.langforge.app.util.VersionNumber;
 
 public final class LangforgeApplication extends Application {
@@ -22,7 +15,7 @@ public final class LangforgeApplication extends Application {
 
 	static final VersionNumber CURRENT_VERSION = VERSION_0_0_1;
 
-	private PluginManager pluginManager;
+	private ApplicationManager appManager;
 
 	private LangforgeApplicationModel appModel;
 	private LangforgeApplicationController ui;
@@ -32,21 +25,25 @@ public final class LangforgeApplication extends Application {
 		appModel = new LangforgeApplicationModel();
 		ui = new LangforgeApplicationController(appModel);
 
-		pluginManager = new PluginManager(appModel);
+		appManager = new ApplicationManager(primaryStage, appModel);
 
 		try {
-			pluginManager.initializePlugins();
+			appManager.initializePlugins();
 		} catch (DuplicatePluginIdException duplicate) {
 			displayDuplicatePluginIdAlert(duplicate);
-			return;
+			Platform.exit();
 		} catch (LangforgePluginException ex) {
-			displayPluginInitializationErrorAlert(ex);
-			return;
+			showExceptionAlert(
+				ex,
+				"Plugin Error",
+				"An exception occurred while initializing plugins."
+			);
+			Platform.exit();
 		}
 
-		pluginManager.loadPluginStates();
+		appManager.loadPluginStates();
 
-		primaryStage.setOnCloseRequest(this::onApplicationClose);
+		primaryStage.setOnCloseRequest(appManager::onApplicationClose);
 
 		primaryStage.setScene(new Scene(ui, 650, 480));
 		primaryStage.setTitle("Langforge");
@@ -58,74 +55,6 @@ public final class LangforgeApplication extends Application {
 		// Force the window to open in front of other windows at launch.
 		primaryStage.setAlwaysOnTop(true);
 		primaryStage.setAlwaysOnTop(false);
-	}
-
-	private void onApplicationClose(WindowEvent event) {
-		try (var output = new FileOutputStream("./save.json")) {
-			pluginManager.savePluginStates(output);
-			pluginManager.unloadPlugins();
-			pluginManager.deinitializePlugins();
-		} catch (IOException ex) {
-			var cancelButton = new ButtonType("Cancel");
-			var exitButton = new ButtonType("Exit Anyway");
-
-			Alert alert = new Alert(
-				AlertType.ERROR,
-				"Failed to save project: " + ex.getMessage(),
-				cancelButton,
-				exitButton
-			);
-
-			var selectedButton = alert.showAndWait().orElse(null);
-			if (selectedButton == cancelButton) {
-				event.consume();
-			}
-		}
-	}
-
-	private void displayPluginInitializationErrorAlert(LangforgePluginException ex) {
-		Alert alert = new Alert(
-			AlertType.ERROR,
-			String.format("An exception occurred while initializing plugins:")
-		);
-
-		alert.setHeaderText("Plugin Exception");
-
-		var stringWriter = new StringWriter();
-		var printWriter = new PrintWriter(stringWriter);
-		ex.printStackTrace(printWriter);
-		var textArea = new TextArea(stringWriter.toString());
-
-		alert.getDialogPane().setExpandableContent(textArea);
-
-		alert.showAndWait();
-		Platform.exit();
-	}
-
-	private void displayDuplicatePluginIdAlert(DuplicatePluginIdException duplicate) {
-		var messageBuilder = new StringBuilder();
-		messageBuilder.append(String.format(
-			"""
-			Multiple plugins found with the same plugin id.
-
-			Conflicting id: %s
-			""",
-			duplicate.getPluginId()
-		));
-
-		for (var plugin : duplicate.getPlugins()) {
-			messageBuilder.append(String.format(
-				"\t%s (%s)%n",
-				plugin.getName(),
-				plugin.getVersion()
-			));
-		}
-
-		messageBuilder.append("\nPlease address these conflicts then relaunch the application.");
-
-		Alert alert = new Alert(AlertType.ERROR, messageBuilder.toString());
-		alert.showAndWait();
-		Platform.exit();
 	}
 
 }

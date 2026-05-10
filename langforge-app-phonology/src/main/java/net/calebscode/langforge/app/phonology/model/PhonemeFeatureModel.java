@@ -2,8 +2,6 @@ package net.calebscode.langforge.app.phonology.model;
 
 import static javafx.collections.FXCollections.observableArrayList;
 
-import java.util.Map;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -12,10 +10,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import net.calebscode.langforge.app.data.SaveLoadList;
-import net.calebscode.langforge.app.data.SaveLoadObject;
-import net.calebscode.langforge.app.data.SaveLoadString;
-import net.calebscode.langforge.app.data.SaveLoadValue;
 
 public class PhonemeFeatureModel {
 
@@ -53,15 +47,12 @@ public class PhonemeFeatureModel {
 		return name.get();
 	}
 
-	public ListProperty<String> valuesProperty() {
-		return values;
+	public void setName(String name) {
+		this.name.set(name);
 	}
 
-	public SaveLoadValue getState() {
-		return new SaveLoadObject(Map.of(
-			"name", new SaveLoadString(name.get()),
-			"values", new SaveLoadList(values, SaveLoadString::new)
-		));
+	public ListProperty<String> valuesProperty() {
+		return values;
 	}
 
 }

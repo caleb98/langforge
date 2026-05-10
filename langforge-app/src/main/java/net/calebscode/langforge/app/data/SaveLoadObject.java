@@ -4,11 +4,12 @@ import static java.util.stream.Collectors.toMap;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-public final class SaveLoadObject implements SaveLoadValue, Map<String, SaveLoadValue> {
+public non-sealed class SaveLoadObject implements SaveLoadValue, Map<String, SaveLoadValue> {
 
 	private final Map<String, SaveLoadValue> fields;
 
@@ -32,93 +33,117 @@ public final class SaveLoadObject implements SaveLoadValue, Map<String, SaveLoad
 		);
 	}
 
-	public SaveLoadObject getObject(String name) {
+	public final SaveLoadObject getObject(String name) {
 		return fields.get(name).asObject();
 	}
 
-	public SaveLoadInteger getInteger(String name) {
+	public final SaveLoadInteger getInteger(String name) {
 		return fields.get(name).asInteger();
 	}
 
-	public SaveLoadDouble getFloat(String name) {
+	public final SaveLoadDouble getFloat(String name) {
 		return fields.get(name).asDouble();
 	}
 
-	public SaveLoadString getString(String name) {
+	public final SaveLoadString getString(String name) {
 		return fields.get(name).asString();
 	}
 
-	public SaveLoadList getList(String name) {
+	public final SaveLoadList getList(String name) {
 		return fields.get(name).asList();
 	}
 
+	public final SaveLoadValue putNull(String key) {
+		return ((Map<String, SaveLoadValue>)this).put(key, null);
+	}
+
+	public final SaveLoadValue put(String key, String value) {
+		return put(key, new SaveLoadString(value));
+	}
+
+	public final SaveLoadValue put(String key, int value) {
+		return put(key, new SaveLoadInteger(value));
+	}
+
+	public final SaveLoadValue put(String key, float value) {
+		return put(key, new SaveLoadDouble(value));
+	}
+
+	public final SaveLoadValue put(String key, double value) {
+		return put(key, new SaveLoadDouble(value));
+	}
+
+	public final <T> SaveLoadValue put(String key, List<T> list, Function<T, SaveLoadValue> converter) {
+		return put(key, new SaveLoadList(list, converter));
+	}
+
 	@Override
-	public boolean isObject() {
+	public final boolean isObject() {
 		return true;
 	}
 
 	@Override
-	public SaveLoadObject asObject() {
+	public final SaveLoadObject asObject() {
 		return this;
 	}
 
 	@Override
-	public int size() {
+	public final int size() {
 		return fields.size();
 	}
 
 	@Override
-	public boolean isEmpty() {
+	public final boolean isEmpty() {
 		return fields.isEmpty();
 	}
 
 	@Override
-	public boolean containsKey(Object key) {
+	public final boolean containsKey(Object key) {
 		return fields.containsKey(key);
 	}
 
 	@Override
-	public boolean containsValue(Object value) {
+	public final boolean containsValue(Object value) {
 		return fields.containsValue(value);
 	}
 
 	@Override
-	public SaveLoadValue get(Object key) {
+	public final SaveLoadValue get(Object key) {
 		return fields.get(key);
 	}
 
 	@Override
-	public SaveLoadValue put(String key, SaveLoadValue value) {
+	public final SaveLoadValue put(String key, SaveLoadValue value) {
 		return fields.put(key, value);
 	}
 
 	@Override
-	public SaveLoadValue remove(Object key) {
+	public final SaveLoadValue remove(Object key) {
 		return fields.remove(key);
 	}
 
 	@Override
-	public void putAll(Map<? extends String, ? extends SaveLoadValue> m) {
+	public final void putAll(Map<? extends String, ? extends SaveLoadValue> m) {
 		fields.putAll(m);
 	}
 
 	@Override
-	public void clear() {
+	public final void clear() {
 		fields.clear();
 	}
 
 	@Override
-	public Set<String> keySet() {
+	public final Set<String> keySet() {
 		return fields.keySet();
 	}
 
 	@Override
-	public Collection<SaveLoadValue> values() {
+	public final Collection<SaveLoadValue> values() {
 		return fields.values();
 	}
 
 	@Override
-	public Set<Entry<String, SaveLoadValue>> entrySet() {
+	public final Set<Entry<String, SaveLoadValue>> entrySet() {
 		return fields.entrySet();
 	}
 

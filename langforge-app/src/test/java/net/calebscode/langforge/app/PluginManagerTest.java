@@ -10,16 +10,17 @@ import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javafx.stage.Stage;
 import net.calebscode.langforge.app.data.SaveLoadString;
 
 public class PluginManagerTest {
 
-	PluginManager manager;
+	ApplicationManager manager;
 	TestPlugin testPlugin;
 
 	@BeforeEach
 	void beforeEach() throws Exception {
-		manager = new PluginManager(new LangforgeApplicationModel());
+		manager = new ApplicationManager(new Stage(), new LangforgeApplicationModel());
 		manager.initializePlugins();
 		testPlugin = manager.getApiProvider().getApi(TestPlugin.class).get();
 	}

@@ -2,7 +2,10 @@ package net.calebscode.langforge.app;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toMap;
+import static net.calebscode.langforge.app.ui.AlertHelper.showExceptionAlert;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
 import java.util.stream.Collectors;
@@ -18,6 +22,13 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import net.calebscode.langforge.app.data.JsonBackend;
 import net.calebscode.langforge.app.data.Migration;
 import net.calebscode.langforge.app.data.PersistenceBackend;
@@ -25,11 +36,11 @@ import net.calebscode.langforge.app.data.SaveLoadObject;
 import net.calebscode.langforge.app.data.SaveLoadString;
 import net.calebscode.langforge.app.util.VersionNumber;
 
-public final class PluginManager {
+public final class ApplicationManager {
 
-	private final static Logger logger = LoggerFactory.getLogger(PluginManager.class);
+	private final static Logger logger = LoggerFactory.getLogger(ApplicationManager.class);
 
-
+	private final Stage appStage;
 	private final LangforgeApplicationModel appModel;
 	private final LangforgePluginApiProvider apiProvider = createApiProvider();
 	private final PersistenceBackend persistenceBackend = new JsonBackend();
@@ -38,7 +49,8 @@ public final class PluginManager {
 	private boolean isInitialized = false;
 	private List<LangforgePlugin> pluginDependencyOrder = new ArrayList<>();
 
-	public PluginManager(LangforgeApplicationModel appModel) {
+	public ApplicationManager(Stage appStage, LangforgeApplicationModel appModel) {
+		this.appStage = appStage;
 		this.appModel = appModel;
 	}
 
@@ -154,8 +166,92 @@ public final class PluginManager {
 		return apiProvider;
 	}
 
+	public void save(File file) {
+		try (var output = new FileOutputStream(file)) {
+			savePluginStates(output);
+			appModel.setProjectFile(Optional.of(file));
+		} catch (IOException ex) {
+			showExceptionAlert(
+				ex,
+				"Save Error",
+				"Failed to save project file."
+			);
+		}
+	}
+
+	public void requestSave() {
+		showSaveAsDialog().ifPresent(this::save);
+	}
+
+	public void onApplicationClose(WindowEvent event) {
+		var projectFile = appModel.getProjectFile();
+
+		if (projectFile.isEmpty()) {
+			var exitWithoutSaving = new ButtonType("Exit without saving");
+			var alert = new Alert(
+				AlertType.CONFIRMATION,
+				"The current project has not been saved.",
+				ButtonType.CANCEL,
+				exitWithoutSaving,
+				ButtonType.OK
+			);
+
+			var result = alert.showAndWait().orElse(ButtonType.CANCEL);
+
+			if (result == ButtonType.CANCEL) {
+				event.consume();
+				return;
+			}
+			else if (result == ButtonType.OK) {
+				projectFile = showSaveAsDialog();
+			}
+		}
+
+		if (projectFile.isPresent()) {
+			try (var output = new FileOutputStream(projectFile.get())) {
+				savePluginStates(output);
+			}
+			catch (IOException ex) {
+				var cancelButton = new ButtonType("Cancel");
+				var exitButton = new ButtonType("Exit Anyway");
+
+				Alert alert = new Alert(
+					AlertType.ERROR,
+					"Failed to save project: " + ex.getMessage(),
+					cancelButton,
+					exitButton
+				);
+
+				var selectedButton = alert.showAndWait().orElse(null);
+				if (selectedButton == cancelButton) {
+					event.consume();
+				}
+			}
+		}
+
+		unloadPlugins();
+		deinitializePlugins();
+	}
+
+	private Optional<File> showSaveAsDialog() {
+		var saveDialog = new FileChooser();
+
+		appModel.getProjectFile().ifPresentOrElse(
+			projectFile -> {
+				saveDialog.setInitialDirectory(projectFile);
+				saveDialog.setInitialFileName(projectFile.getName());
+			},
+			() -> {
+				saveDialog.setInitialFileName("LangforgeProject.json");
+			}
+		);
+
+		saveDialog.getExtensionFilters().add(new ExtensionFilter("JSON", "*.json"));
+		return Optional.ofNullable(saveDialog.showSaveDialog(appStage));
+	}
+
 	private void initializePlugin(LangforgePlugin plugin) {
-		var context = new LangforgePluginContext(appModel, apiProvider);
+		var context = new LangforgePluginContext(this, appModel, apiProvider);
 		plugin.setContext(context);
 		appModel.registerPlugin(context);
 		contexts.put(context, plugin);
