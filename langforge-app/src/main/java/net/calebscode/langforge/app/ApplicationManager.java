@@ -187,23 +187,31 @@ public final class ApplicationManager {
 		var projectFile = appModel.getProjectFile();
 
 		if (projectFile.isEmpty()) {
-			var exitWithoutSaving = new ButtonType("Exit without saving");
-			var alert = new Alert(
-				AlertType.CONFIRMATION,
-				"The current project has not been saved.",
-				ButtonType.CANCEL,
-				exitWithoutSaving,
-				ButtonType.OK
-			);
+			var save = new ButtonType("Save");
+			var dontSave = new ButtonType("Don't Save");
+			var cancel = new ButtonType("Cancel");
 
-			var result = alert.showAndWait().orElse(ButtonType.CANCEL);
+			var alert = new Alert(AlertType.WARNING);
+			var pane = alert.getDialogPane();
 
-			if (result == ButtonType.CANCEL) {
+			alert.getButtonTypes().setAll(save, dontSave, cancel);
+			pane.setHeaderText("Do you want to save the changes made to this project?");
+			pane.setContentText("Your changes will be lost if you don't save them.");
+
+			var result = alert.showAndWait().orElse(cancel);
+
+			if (result == cancel) {
 				event.consume();
 				return;
 			}
-			else if (result == ButtonType.OK) {
+			else if (result == save) {
 				projectFile = showSaveAsDialog();
+				// projectFile will still be empty if the user cancelled out of the save-as dialog.
+				// We'll treat that as a cancel on the entire exit action.
+				if (projectFile.isEmpty()) {
+					event.consume();
+					return;
+				}
 			}
 		}
 
